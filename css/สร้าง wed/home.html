@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หน้าเเรก</title>
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+                <span class="jlpt-text">みさ<span class="red-p">こ。</span><span class="kanji-text"></span>
+        </div>
+        <div class="nav-right">
+    <!-- ช่องค้นหา -->
+    <div class="search-box">    
+      <input type="text" placeholder="ค้นหา..." />
+      <button type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+        </svg>
+      </button>
+    </div>
+        <div class="nav-menu">
+            <a href="home.html" class="nav-link">หน้าเเรก</a>
+            <a href="文法.html" class="nav-link">ศัพท์เเละไวยากรณ์ (文法)</a>
+            <a href="#" class="nav-link">เกี่ยวกับเรา</a>
+            <a href="#" class="nav-link">ติดต่อเรา</a>
+            <a href="index.html" class="nav-link">เข้าสู่ระบบ</a>
+            
+            <span class="icon" onclick="openNav()" style="cursor: pointer; font-size: 20px; margin-left: 15px;">☰</span>
+        </div>
+    </nav>
+
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        
+    <div class="sidebar-header">
+    <div class="user-info">
+        <h3 id="profileName" style="margin: 0; font-size: 18px;">塩キツさん</h3>
+        <a href="#" style="color: #888; text-decoration: underline; font-size: 13px;">การตั้งค่าบัญชี</a>
+        <script>
+    // 🚨 ทำงานทันทีก่อนโค้ดส่วนอื่น เพื่อไม่ให้โดน Error บล็อก
+    (function checkLoginUser() {
+        const savedName = localStorage.getItem('myAppUsername');
+        const profileElement = document.getElementById('profileName');
+
+        if (savedName && profileElement) {
+            profileElement.innerHTML = savedName;
+        }
+    })();
+
+    // --- โค้ด openNav(), closeNav() และ Slider ของคุณอยู่ต่อด้านล่างนี้ ---
+    function openNav() {
+        document.getElementById("mySidebar").style.width = "300px";
+    }
+</script>
+    </div>
+    </div>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+
+        <a href="#" class="sidebar-link">บริการ</a>
+        <a href="#" class="sidebar-link">สิ่งที่ชอบ</a>
+        <a href="#" class="sidebar-link">คำถามที่พบบ่อย</a>
+        <a href="#" class="sidebar-link">การสอบถาม</a>
+        <a href="#" class="sidebar-link">ผลิตภัณฑ์ที่เกี่ยวข้อง</a>
+        <a href="#" class="sidebar-link">นักเเปลมังงะ</a>
+        
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+        
+        <a href="javascript:void(0)" id="logoutBtn" class="logout" style="color: red;">ออกจากระบบ</a>
+    </div>
+
+    <script>
+        // ฟังก์ชันสำหรับเปิด Sidebar
+        function openNav() {
+            document.getElementById("mySidebar").style.width = "300px";
+        }
+        function closeNav() {  // ฟังก์ชันสำหรับปิด Sidebar
+            document.getElementById("mySidebar").style.width = "0";
+        }
+        const logoutButton = document.getElementById('logoutBtn');// ระบบออกจากระบบ (Logout)
+        logoutButton.addEventListener('click', function() { // แสดงกล่องยืนยันการออกจากระบบ
+            const confirmLogout = confirm("คุณต้องการออกจากระบบใช่หรือไม่?");
+            
+            if (confirmLogout) {
+                // ล้างข้อมูล Log ในเว็บบราวเซอร์
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                alert("ออกจากระบบเรียบร้อยแล้ว!");
+                
+                // หลังจากกดตกลง ให้รีเฟรชหน้าเว็บ (หรือเปลี่ยนไปหน้า index.html ก็ได้)
+                window.location.href = "index.html";
+            }
+        });
+</script>
+    <!-- นำเข้า Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    
+    <!-- เพิ่มสไตล์สำหรับ Slider (สามารถย้ายไปใส่ใน home.css ได้) -->
+    <style>
+        .slider-container {
+            width: 100%;
+            padding: 40px 0;
+            background-color: #f5f7fa; /* สีพื้นหลังคล้ายๆ ในรูปต้นแบบ */
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .swiper {
+            width: 100%;
+            padding-bottom: 40px !important; /* เว้นระยะด้านล่างให้จุดไข่ปลา */
+        }
+
+        .swiper-slide {
+            width: 50%; /* กำหนดความกว้างของแต่ละรูป */
+            max-width: 600px;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            opacity: 0.4; /* ทำให้รูปด้านข้างดูจางลง */
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: block;
+        }
+
+        /* เอฟเฟกต์สำหรับรูปภาพตรงกลาง */
+        .swiper-slide-active {
+            transform: scale(1.15); /* ขยายรูปตรงกลางให้ใหญ่ขึ้น */
+            opacity: 1;
+            z-index: 10;
+        }
+
+        /* ตกแต่งจุดไข่ปลา (Pagination) */
+        .swiper-pagination-bullet {
+            background-color: #ccc;
+            opacity: 1;
+            width: 10px;
+            height: 10px;
+        }
+        .swiper-pagination-bullet-active {
+            background-color: #007bff; /* สีน้ำเงิน */
+        }
+</style>
+   <div class="manga-slider-container" id="mangaSlider">
+    <div class="manga-slider-track" id="mangaTrack">
+        <div class="manga-slide"><img src="/css/images.png" alt="Manga 1" draggable="false"></div>
+        <div class="manga-slide"><img src="/css/jlpt-n3-practice-test.jpg" alt="Manga 2" draggable="false"></div>
+        <div class="manga-slide"><img src="/css/jlpt-n3-resources.png" alt="Manga 3" draggable="false"></div>
+        <div class="manga-slide"><img src="/css/maxresdefault.jpg" alt="Manga 4" draggable="false"></div>
+        <div class="manga-slide"><img src="/css/images (1).png" alt="Manga 5" draggable="false"></div>
+    </div>
+
+    <!-- ปุ่มลูกศรซ้าย-ขวา -->
+    <button class="manga-arrow prev-arrow" id="mangaPrevBtn">❮</button>
+    <button class="manga-arrow next-arrow" id="mangaNextBtn">❯</button>
+
+    <!-- จุดไข่ปลาบอกตำแหน่ง -->
+    <div class="manga-dots" id="mangaDots"></div>
+</div>
+    </nav>
+<script>
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    let currentIndex = 0;
+    let slideInterval;
+
+    // ฟังก์ชันจัดการตำแหน่งและคลาสของแต่ละรูป
+    function updateSlider() {
+        slides.forEach((slide, index) => {
+            // ลบคลาสเก่าออกก่อน
+            slide.classList.remove('active', 'prev', 'next');
+            
+            // คำนวณหาลำดับภาพก่อนหน้าและถัดไป เพื่อทำระบบลูป
+            let prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+            let nextIndex = (currentIndex + 1) % slides.length;
+
+            // กำหนดคลาสใหม่ตามตำแหน่ง
+            if (index === currentIndex) {
+                slide.classList.add('active'); // รูปตรงกลาง
+            } else if (index === prevIndex) {
+                slide.classList.add('prev');   // รูปซ้าย
+            } else if (index === nextIndex) {
+                slide.classList.add('next');   // รูปขวา
+            }
+        });
+
+        // อัปเดตจุดไข่ปลา
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    // ฟังก์ชันเลื่อนไปยังภาพถัดไป
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateSlider();
+    }
+
+    // ฟังก์ชันเมื่อคลิกเลือกรูปหรือจุดไข่ปลา
+    function goToSlide(index) {
+        currentIndex = index;
+        updateSlider();
+        resetInterval(); // รีเซ็ตเวลาเลื่อนอัตโนมัติเมื่อมีการคลิก
+    }
+
+    // ฟังก์ชันตั้งเวลาเลื่อนอัตโนมัติ
+    function resetInterval() {
+        clearInterval(slideInterval);
+        slideInterval = setInterval(nextSlide, 3500); // 3500 คือ 3.5 วินาที เปลี่ยนแปลงได้
+    }
+
+    // เริ่มต้นทำงาน
+    updateSlider();
+    resetInterval();
+    </script>
+    <script>
+window.addEventListener('load', function() {
+    const container = document.getElementById('mangaSlider');
+    const track = document.getElementById('mangaTrack');
+    const slides = Array.from(track.children);
+    const prevBtn = document.getElementById('mangaPrevBtn');
+    const nextBtn = document.getElementById('mangaNextBtn');
+    const dotsContainer = document.getElementById('mangaDots');
+
+    if (!container || !track || slides.length === 0) return;
+
+    let currentIndex = 0;
+    let startX = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+    let isDragging = false;
+    let autoPlayTimer = null;
+    const autoPlayDelay = 3500; // เวลาเลื่อนอัตโนมัติ 3.5 วินาที
+
+    // 1. สร้างปุ่มตัวเลข 1, 2, 3, 4 ตามจำนวนรูป
+    dotsContainer.innerHTML = '';
+    slides.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = `manga-dot ${i === 0 ? 'active' : ''}`;
+        dot.textContent = i + 1;
+        
+        // ผูกคำสั่งคลิกเปลี่ยนหน้า
+        dot.addEventListener('click', (e) => {
+            e.stopPropagation();
+            goToSlide(i);
+        });
+
+        dotsContainer.appendChild(dot);
+    });
+    const dots = Array.from(dotsContainer.children);
+
+    // 2. ฟังก์ชันคำนวณตำแหน่งและอัปเดตหน้า
+    function updateSlider() {
+        const slideWidth = slides[0].offsetWidth;
+        const containerWidth = container.offsetWidth;
+        const margin = slideWidth * 0.03;
+        const totalSlideWidth = slideWidth + margin;
+
+        const centerOffset = (containerWidth - slideWidth) / 2;
+        currentTranslate = centerOffset - (currentIndex * totalSlideWidth);
+        prevTranslate = currentTranslate;
+
+        track.style.transition = isDragging ? 'none' : 'transform 0.4s ease-out';
+        track.style.transform = `translateX(${currentTranslate}px)`;
+
+        slides.forEach((slide, idx) => slide.classList.toggle('active', idx === currentIndex));
+        dots.forEach((dot, idx) => dot.classList.toggle('active', idx === currentIndex));
+    }
+
+    function goToSlide(index) {
+        currentIndex = index;
+        updateSlider();
+        startAutoPlay();
+    }
+
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateSlider();
+    }
+
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+        updateSlider();
+    }
+
+    // 3. ระบบตั้งเวลาเลื่อนอัตโนมัติ
+    function startAutoPlay() {
+        stopAutoPlay();
+        autoPlayTimer = setInterval(nextSlide, autoPlayDelay);
+    }
+
+    function stopAutoPlay() {
+        if (autoPlayTimer) clearInterval(autoPlayTimer);
+    }
+
+    // 4. ปุ่มลูกศร
+    if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); startAutoPlay(); });
+    if (prevBtn) prevBtn.addEventListener('click', () => { prevSlide(); startAutoPlay(); });
+
+    // 5. ระบบจับการลากเมาส์ / สัมผัสนิ้วปัดหน้าจอ
+    function onStart(e) {
+        isDragging = true;
+        startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        stopAutoPlay();
+    }
+
+    function onMove(e) {
+        if (!isDragging) return;
+        const currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        const diff = currentX - startX;
+        track.style.transition = 'none';
+        track.style.transform = `translateX(${prevTranslate + diff}px)`;
+    }
+
+    function onEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        const endX = e.type.includes('touch') ? e.changedTouches[0].clientX : e.clientX;
+        const diff = endX - startX;
+
+        // ระยะปัดเกิน 40px ให้เปลี่ยนภาพ
+        if (diff < -40) {
+            nextSlide();
+        } else if (diff > 40) {
+            prevSlide();
+        } else {
+            updateSlider();
+        }
+        startAutoPlay();
+    }
+
+    track.addEventListener('mousedown', onStart);
+    track.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onEnd);
+
+    track.addEventListener('touchstart', onStart, { passive: true });
+    track.addEventListener('touchmove', onMove, { passive: true });
+    track.addEventListener('touchend', onEnd);
+
+    window.addEventListener('resize', updateSlider);
+
+    // เริ่มทำงานระบบ
+    updateSlider();
+    startAutoPlay();
+});
+</script>
+<section class="manga-list-section">
+    <div class="manga-list-container">
+        <div class="manga-list-header">
+            <h3>หาคันจิระดับ N5 & N3 （日本語意味）</h3>
+             <a href="#" class="see-more-btn">ดูเพิ่มเติม ❯</a>
+        </div>
+            <div class="manga-grid" id="mangaRow">
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="1" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="2" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="3" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="4" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="5" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="6" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+                
+                <!-- สามารถเพิ่มการ์ดเรื่องที่ 7, 8, 9 ไปได้เรื่อยๆ ครับ -->
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="7" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="8" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+            </div>
+<script>
+
+</script>
+<section class="manga-list-section">
+    <div class="manga-list-container">
+        <div class="manga-list-header">
+            <h3>มังงะล่าสุด (最高まんか)</h3>
+        </div>
+            <div class="manga-grid" id="mangaRow">
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="1" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="2" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="3" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="4" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="5" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="6" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+                
+                <!-- สามารถเพิ่มการ์ดเรื่องที่ 7, 8, 9 ไปได้เรื่อยๆ ครับ -->
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="7" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="8" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+            </div>
+<script>
+window.addEventListener('load', function() {
+    const row = document.getElementById('mangaRow');
+    const leftBtn = document.getElementById('rowLeftBtn');
+    const rightBtn = document.getElementById('rowRightBtn');
+        if (!row || !leftBtn || !rightBtn) return;
+// ระยะทางเลื่อนต่อการกด 1 ครั้ง (เลื่อนตามความกว้างของกรอบแสดงผล)
+    const getScrollDistance = () => row.clientWidth * 0.85;
+// ปุ่มกดไปทางขวา (ข้ามไปเรื่อง 7+)
+    rightBtn.addEventListener('click', () => {
+        const maxScrollLeft = row.scrollWidth - row.clientWidth;
+        
+        // ถ้าเลื่อนจนสุดแถวแล้ว ให้วนกลับไปเรื่องแรก
+        if (Math.ceil(row.scrollLeft) >= maxScrollLeft - 5) {
+            row.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+            row.scrollBy({ left: getScrollDistance(), behavior: 'smooth' });
+        }
+    });
+// ปุ่มกดไปทางซ้าย
+leftBtn.addEventListener('click', () => {
+        // ถ้าอยู่เรื่องแรกสุด กดซ้ายจะวนไปเรื่องสุดท้าย
+    if (row.scrollLeft <= 5) {
+        row.scrollTo({ left: row.scrollWidth, behavior: 'smooth' });
+    } else {
+        row.scrollBy({ left: -getScrollDistance(), behavior: 'smooth' });
+    }
+});
+});
+window.addEventListener('load', function() {
+    const row = document.getElementById('mangaRow');
+    const leftBtn = document.getElementById('rowLeftBtn');
+    const rightBtn = document.getElementById('rowRightBtn');
+    if (!row || !leftBtn || !rightBtn) return;
+    // คำนวณระยะเลื่อนตามขนาดหน้าจอ
+    const getScrollDistance = () => row.clientWidth * 0.85;
+    // เลื่อนไปทางขวา (ถ้าสุดแถวจะวนกลับหน้าแรก)
+    rightBtn.addEventListener('click', () => {
+        const maxScrollLeft = row.scrollWidth - row.clientWidth;
+        if (Math.ceil(row.scrollLeft) >= maxScrollLeft - 5) {
+            row.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+            row.scrollBy({ left: getScrollDistance(), behavior: 'smooth' });
+        }
+    });
+    // เลื่อนไปทางซ้าย (ถ้าอยู่หน้าแรกจะวนไปหน้าสุดท้าย)
+    leftBtn.addEventListener('click', () => {
+        if (row.scrollLeft <= 5) {
+            row.scrollTo({ left: row.scrollWidth, behavior: 'smooth' });
+        } else {
+            row.scrollBy({ left: -getScrollDistance(), behavior: 'smooth' });
+        }
+    });
+});
+</script>
+</section>
+    <script src="/css/script.js"></script>
+</body>
+</html>

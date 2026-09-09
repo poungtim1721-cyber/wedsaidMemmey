@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>みさこ Login</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="fullscreen-bg"></div>
+
+    <div class="login-card">
+        <div class="left-side">
+        </div>
+        <div class="right-side">
+            
+            <div id="loginSection">
+                <h2>Sign in</h2>
+                <div class="textbox">
+                    <input id="LoginUser" required type="text" placeholder=" " />
+                    <label>ชื่อผู้ใช้ / Email / หมายเลขโทรศัพท์</label>
+                </div>
+                <div class="textbox">
+                    <input id="LoginPass" required type="password" maxlength="14" placeholder=" " />
+                    <label>รหัสผ่าน</label>
+                </div>
+                <div class="forgot-container">
+                    <a href="passwordNew.html" class="forgot-link" onclick="handleForgot()">ลืมรหัสผ่าน</a>
+                </div>
+                <button class="action-btn" onclick="handleSignIn()">Sign in</button>
+                <div class="divider">
+                <span>หรือ</span>
+                </div>
+               <div class="social-btn">
+                    <button class="social-btn-google" onclick="socialAuth('Google')">
+                        <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" width="18"> Google
+                    </button>
+                    <button class="social-btn-facebook" onclick="socialAuth('Facebook')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" width="18"> Facebook
+                    </button>
+                </div>
+                <p class="switch-text">คุณพึ่งเคยเข้า みさこ ใช่หรือไม่ <span onclick="showRegister()">สมัครใหม่ที่นี่</span></p>
+            </div>
+
+            <div id="registerSection" style="display: none;">
+                
+                <h2>Register</h2>
+              <form id="regForm">
+                    <div class="textbox">
+                    <input id="RegUser" required type="email" placeholder=" " />
+                    <label>Email หมายเลขโทรศัพท์</label>
+                </div>
+                    <div class="textbox">
+                    <input id="RegUser" required type="text" placeholder=" " />
+                    <label>ชื่อผู้ใช้</label>
+                </div>
+                    <div class="textbox">
+                    <input id="RegPass" required type="password" placeholder=" " />
+                    <label>รหัสผ่าน</label>
+                </div>
+                    <div class="textbox">
+                    <input id="ConfirmPass" required type="password" placeholder=" " />
+                    <label>ยืนยันรหัส</label>
+                </div>
+                    <div class="bars" id="bars"><div></div></div>
+                    <button id="RegBtn" type="submit" class="action-btn" disabled>Sign Up</button>
+                    </form>
+                <p class="switch-text"><span onclick="showLogin()">กลับไปหน้า Sign in</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/css/main.js"></script>
+</body>
+</html>

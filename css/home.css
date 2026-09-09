@@ -1,0 +1,650 @@
+.logo-box {
+    width: 48px;            /* ขนาดความกว้างของกรอบโลโก้ */
+    height: 48px;           /* ขนาดความสูง */
+    background-color: #652ddf; /* สีม่วงหลักของ Untitled UI */
+    border-radius: 10px;    /* ความโค้งของมุม */
+    display: flex;
+    align-items: center;    /* จัดไอคอนให้อยู่กลางแนวตั้ง */
+    justify-content: center; /* จัดไอคอนให้อยู่กลางแนวนอน */
+    margin: 20px auto;      /* จัดให้อยู่ตรงกลางแถบ Sidebar */
+    cursor: pointer;
+}
+
+.logo-box i {
+    color: rgb(99, 99, 99);           /* สีของตัวไอคอนกล่อง */
+    font-size: 28px;        /* ขนาดของไอคอน */
+}
+
+/* เพิ่ม Effect เวลาเอาเมาส์ไปชี้ */
+.logo-box:hover {
+    background-color: #6941C6; /* สีม่วงจะเข้มขึ้นนิดนึง */
+    transition: 0.2s;
+}
+/* จัดการแถบเมนูหลัก */
+.navbar {
+  display: flex;
+  justify-content: space-between; /* ดีดซ้าย-ขวาออกจากกัน */
+  align-items: center;         /* จัดให้อยู่ตรงกลางแนวตั้งพอดี */
+  padding: 15px 40px;          /* เพิ่มช่องว่าง บน-ล่าง และ ซ้าย-ขวา */
+  background-color: #ffffff;   /* พื้นหลังสีขาว */
+  border-bottom: 1px solid #535353; /* เส้นขอบบางๆ ด้านล่าง */
+}
+
+/* จัดการรูปโลโก้ */
+.logo img {
+  height: 30px; /* ปรับขนาดความสูงโลโก้ตามต้องการ */
+}
+
+/* จัดการกลุ่มเมนูทางขวา */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* เว้นระยะห่างระหว่างตัวอักษรแต่ละเมนู */
+}
+
+/* ตกแต่งตัวอักษรลิงก์ */
+.nav-menu a {
+  text-decoration: none; /* เอาเส้นใต้ลิงก์ออก */
+  color: #000000;        /* สีข้อความเทาเข้มแบบมินิมอล */
+  font-size: 14px;
+}
+
+.nav-menu a:hover {
+  color: #000000;        /* เวลาเอาเมาส์ชี้ ให้สีเข้มขึ้น */
+}
+
+/* ตกแต่งไอคอน */
+.icon {
+  cursor: pointer;
+  font-size: 18px;
+  color: #555555; /* สีไอคอนเทาเข้ม */
+}
+/* สไตล์ของกล่อง Sidebar */
+.sidebar {
+  height: 100%;
+  width: 0;            /* เริ่มต้นให้กว้าง 0 เพื่อซ่อนไว้ก่อน */
+  position: fixed;
+  z-index: 1000;       /* ให้อยู่เยื้องหน้าสุดทับทุกอย่างบนเว็บ */
+  top: 0;
+  right: 0;            /* ยึดไว้ฝั่งขวาของหน้าจอ */
+  background-color: #ffffff;
+  overflow-x: hidden;  /* ซ่อนตัวอักษรที่เกินตอนความกว้างเป็น 0 */
+  transition: 0.3s;    /* ความเร็วตอนเลื่อนเปิด-ปิด (0.3 วินาที) */
+  padding-top: 60px;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.1); /* แสงเงาบางๆ ด้านซ้ายของเมนู */
+  font-family: sans-serif;
+}
+
+/* ลิงก์เมนูต่างๆ ใน Sidebar */
+.sidebar a {
+  padding: 12px 24px;
+  text-decoration: none;
+  font-size: 16px;
+  color: #505050;
+  display: block;      /* ให้ลิงก์เรียงต่อกันเป็นแถวลงมา */
+  transition: 0.2s;
+}
+
+/* เวลาเอาเมาส์ชี้เมนู */
+.sidebar a:hover {
+  background-color: #f5f5f5;
+}
+
+/* เส้นคั่น */
+.sidebar hr {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 10px 0;
+}
+
+/* ตกแต่งโซนโปรไฟล์และเหรียญด้านบน */
+.sidebar-header {
+  padding: 0 24px 15px 24px;
+}
+.user-info h3 { margin: 0; font-size: 18px; }
+.user-info p { margin: 4px 0 0 0; color: #888; font-size: 12px; }
+
+.coin-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  background: #fff8eb;
+  padding: 10px;
+  border-radius: 6px;
+}
+.buy-btn {
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.buy-btn:hover {
+  background-color: #e68900;
+}
+/* 1. ปรับขนาดความกว้างพื้นฐานของทุกรูป */
+        .swiper-slide {
+            width: 60%; /* ปรับเพิ่มจาก 50% เป็น 60% หรือ 70% เพื่อให้รูปกว้างขึ้น */
+            max-width: 800px; /* เพิ่มขีดจำกัดความกว้างสูงสุด (เช่น เปลี่ยนจาก 600px เป็น 800px) */
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            opacity: 0.4;
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: block;
+        }
+
+        /* 2. ปรับขนาดรูปตรงกลาง (รูปที่กำลังแสดงผล) */
+        .swiper-slide-active {
+            transform: scale(1.25); /* ปรับเพิ่มจาก 1.15 เป็น 1.25 หรือ 1.3 เพื่อให้รูปตรงกลางซูมใหญ่ขึ้นอีก */
+            opacity: 1;
+            z-index: 10;
+        }
+
+
+.manga-slider-container { /* กรอบครอบหลักของสไลเดอร์ */
+    position: relative;
+    width: 100%; /* ปรับความกว้างให้เต็มหน้าจอ */
+    max-width: 900px; /* ปรับความกว้างสูงสุดของสไลเดอร์ */
+    margin: 20px auto; /* จัดให้อยู่ตรงกลางหน้าจอ */
+    overflow: hidden;
+    padding: 30px 0;
+    touch-action: pan-y;
+    user-select: none;
+}
+
+.manga-slider-track {
+    display: flex;
+    align-items: center;
+    cursor: grab;
+    will-change: transform;
+}
+
+.manga-slider-track:active {
+    cursor: grabbing;
+}
+
+.manga-slide {
+    min-width: 50%;
+    margin: 0 1.5%;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    opacity: 0.35;
+    transform: scale(0.85);
+    flex-shrink: 0;
+}
+
+.manga-slide.active {/* รูปที่กำลังแสดงผล */
+    opacity: 1;
+    transform: scale(1.1);
+    z-index: 5;
+}
+
+.manga-slide img {/* ปรับขนาดรูปให้เต็มกรอบ */
+    width: 100%;
+    height: 280px;
+    object-fit: cover;/* ปรับให้รูปเต็มกรอบโดยไม่เสียสัดส่วน */
+    border-radius: 10px; /* ปรับความโค้งของมุมรูป */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: block;
+    pointer-events: none;
+}
+
+/* ปุ่มลูกศร */
+.manga-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 20;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+.prev-arrow { left: 10px; }
+.next-arrow { right: 10px; }
+.next-arrow:hover { transform: translateY(-50%) translateX(4px); background: #007bff; color: #fff; }
+.prev-arrow:hover { transform: translateY(-50%) translateX(-4px); background: #007bff; color: #fff; }
+
+/* ปุ่มกดตัวเลข 1 2 3 4 */
+.manga-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 25px;
+    position: relative;
+    z-index: 30; /* ลอยอยู่ชั้นบนสุดเพื่อกดได้ตลอดเวลา */
+}
+
+.manga-dot {
+    width: 32px;
+    height: 32px;
+    background: #e0e0e0;
+    color: #333;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.manga-dot.active {
+    background: #007bff;
+    color: #fff;
+    transform: scale(1.15);
+}
+
+/* กรอบครอบแถวรูปภาพเพื่อวางปุ่ม */
+.manga-row-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* ปุ่มลูกศรซ้าย-ขวา สำหรับแถวด้านล่าง */
+.row-arrow {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-100%); 
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 10; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: 0.2s;
+}
+.row-arrow:hover { background: #007bff; color: #fff; border-color: #007bff; }
+.row-arrow.left-arrow { left: -15px; }
+.row-arrow.right-arrow { right: -15px; }
+
+/* แถวเรียงมังงะแนวนอน */
+.manga-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 15px;
+    overflow-x: auto;
+    scroll-behavior: smooth; /* เลื่อนสมูทเมื่อกดปุ่ม */
+    padding: 10px 0;
+    width: 100%;
+    
+    /* ซ่อน Scrollbar มาตรฐาน */
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+}
+
+.manga-grid::-webkit-scrollbar { 
+    display: none; 
+}
+
+/* --- การ์ดมังงะแต่ละเรื่อง --- */
+.manga-card {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease;
+    flex: 0 0 calc(16.66% - 13px); /* คอมพิวเตอร์โชว์ 6 เรื่อง */
+    min-width: 130px;
+    user-select: none; /* ห้ามคลุมดำตอนลาก */
+}
+
+.manga-card:hover {
+    transform: translateY(-5px);
+}
+
+.manga-cover {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* ทำให้กรอบเป็นสี่เหลี่ยมจัตุรัส */
+    overflow: hidden;
+    background-color: #fff;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+}
+
+.manga-cover img {
+    width: 100%; /* ปรับให้เต็มกรอบ */
+    height: 100%; /* ปรับให้เต็มกรอบ */
+    object-fit: cover;
+    pointer-events: none; /* ป้องกันภาพติดมือตอนลาก */
+}
+
+.manga-title {
+    font-size: 14px;
+    color: #333;
+    margin: 5px 0 4px 0; 
+    line-height: 0.8;
+    font-weight: bold;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.manga-subtext {
+    font-size: 5px; 
+    color: #007bff;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* --- 1. ปรับแต่งปุ่มลูกศร (ใหญ่ขึ้น ชัดขึ้น ไม่โดนตัดขอบ) --- */
+.manga-row-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 10px; /* เพิ่มพื้นที่เผื่อไม่ให้ลูกศรชนขอบจอ */
+}
+
+.row-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;               /* ปรับความกว้างปุ่มลูกศร */
+    height: 30px;              /* ปรับความสูงปุ่มลูกศร */
+    background: #ffffff;
+    color: #333333;
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;        /* ทำเป็นปุ่มกลม */
+    font-size: 20px;           /* ปรับขนาดตัวลูกศร */
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 20;               /* ดันให้อยู่เหนือรูปภาพเสมอ */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* ตำแหน่งปุ่มซ้าย-ขวา */
+.row-arrow.left-arrow { left: 0px; }   
+.row-arrow.right-arrow { right: 0px; } 
+
+/* เอฟเฟกต์เมื่อวางเมาส์บนลูกศร */
+.row-arrow:hover {
+    background: #007bff;
+    color: #ffffff;
+    border-color: #007bff;
+    transform: translateY(-50%) scale(1.1); /* ขยายใหญ่ขึ้นเล็กน้อย */
+}
+
+
+/* --- 2. ปรับขนาดกรอบมังงะ (กำหนดความกว้างและความสูงได้ตามใจชอบ) --- */
+.manga-card {
+    /* ปรับขนาดความกว้างของการ์ดแต่ละใบตรงนี้ (เช่น 160px, 180px, 200px) */
+    flex: 160px 180px 200px; 
+    
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease;
+}
+
+.manga-cover {
+    width: 100%;
+    
+    /* ปรับความสูงของกรอบรูปตรงนี้ (แนะนำอัตราส่วน 3:4 สำหรับปกมังงะ) */
+    height: 150px; 
+    
+    border-radius: 5px;      /* ปรับความโค้งมนของขอบกรอบรูป */
+    overflow: hidden;
+    background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
+}
+
+.manga-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;       /* จัดรูปให้อยู่เต็มกรอบสวยงาม */
+}
+/* ลบเอฟเฟกต์ลอยขึ้นเมื่อเอาเมาส์ชี้ */
+.manga-card:hover {
+    transform: none; 
+}
+/* ปรับเคอร์เซอร์เมาส์เป็นรูปมือปกติ */
+.manga-grid {
+    cursor: default;
+}
+/* จัดการกรอบหัวข้อให้อยู่ซ้าย-ขวา */
+.manga-list-header {
+    display: flex;
+    justify-content: space-between; /* ดันหัวข้อไปซ้าย ดันปุ่มไปขวา */
+    align-items: center;            /* จัดให้อยู่ในแนวดิ่งระดับเดียวกัน */
+    margin-bottom: 2px;            /* ระยะห่างระหว่างหัวข้อกับรูปภาพ */
+    padding: 0 5px;
+}
+
+.manga-list-header h1 {
+    margin: -5px 0 0 0; /* เอาช่องว่างด้านบนออก */
+    font-size: 14px; /* ปรับขนาดตัวอักษรหัวข้อ */
+    font-weight: bold;
+    color: #000000;
+}
+
+/* ตกแต่งปุ่ม "ดูเพิ่มเติม" */
+.see-more-btn {
+    color: #007bff;           /* สีข้อความ (ปรับสีได้ตามใจชอบ) */
+    text-decoration: none;    /* เอาเส้นใต้ออก */
+    font-size: 14px;
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+.see-more-btn:hover {
+    color: #0056b3;
+    text-decoration: underline; /* แสดงเส้นใต้เมื่อเอาเมาส์ชี้ */
+}
+/* บีบความกว้างให้ย่อลงมาเท่ากับข้างบน และจัดตรงกลาง */
+.manga-list-container {
+    max-width: 1000px; /* ปรับตัวเลขนี้ให้เท่ากับ max-width ของสไลเดอร์ข้างบน (เช่น 900px หรือ 1000px) */
+    margin: 0 auto;   /* ดันโซนทั้งหมดให้อยู่ตรงกลางหน้าจอ */
+    padding: 0 20px;  /* กันไม่ให้ขอบติดจอเกินไป */
+}
+
+/* ปรับขนาดการ์ดมังงะให้เล็กลงสมส่วนกับกรอบใหม่ */
+.manga-card {
+    flex: 0 0 120px;  /* ความกว้างการ์ดแต่ละใบ */
+}
+
+.manga-cover {
+    height: 175px;    /* ความสูงของรูปปก */
+    border-radius: 6px;
+}
+/* กรอบครอบหลักสำหรับจัดตำแหน่งลูกศร */
+.manga-row-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+
+/* --- 1. ปรับขนาดการ์ดมังงะให้เล็กลง --- */
+.manga-cards {
+    flex: 0 0 80px;  /* ความกว้างการ์ด (ลดลงเหลือ 100px) */
+}
+
+.manga-covers {
+    height: 100px;    /* ความสูงรูปปก (ปรับให้ได้สัดส่วน 3:4 พอดี) */
+    border-radius: 4px;
+}
+
+/* --- 2. ปรับขนาดตัวอักษรให้เข้ากับขนาดการ์ดใหม่ --- */
+.manga-titles {
+    font-size: 10px;  /* ขนาดชื่อเรื่อง */
+    margin: 4px 0 2px 0;
+}
+
+.manga-subtexts {
+    font-size: 9ch;  /* ขนาดข้อความอธิบายย่อย */
+}
+
+/* --- 3. ปรับขนาดปุ่มลูกศรให้เล็กลงสมส่วน --- */
+.row-arrows {
+    width: 24px;      /* ขนาดความกว้างปุ่ม */
+    height: 24px;     /* ขนาดความสูงปุ่ม */
+    font-size: 6px;  /* ขนาดตัวลูกศร */
+}
+
+.row-arrows.left-arrows { left: -5px; } /* ปรับตำแหน่งปุ่มลูกศรซ้ายให้ชิดขอบกรอบ */
+.row-arrows.right-arrows { right: -5px; } /* ปรับตำแหน่งปุ่มลูกศรขวาให้ชิดขอบกรอบ */
+/* 1. กำหนดสีพื้นหลัง Header ให้ตัดกับแถบขาว */
+header, .navbar {
+  background-color: #579aff; /* เปลี่ยนเป็นรหัสสีที่ต้องการ */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* เพิ่มเงาช่วยแยกชั้น */
+}
+
+/* 2. ปรับสีข้อความเมนูให้เป็นสีสว่างเพื่อให้อ่านง่าย */
+header a, .navbar-nav .nav-link {
+  color: #ffffff !important;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+/* 3. สีเมนูเมื่อนำเมาส์ไปวาง (Hover State) */
+header a:hover, .navbar-nav .nav-link:hover {
+  color: #f1c40f !important;
+}
+/* จัดแถบ Header ทั้งหมด */
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0066cc; /* เปลี่ยนเป็นสีพื้นหลัง Header ของคุณ */
+  padding: 8px 20px;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 45px; /* ระยะห่างระหว่างเมนู ช่องค้นหา และไอคอนแฮมเบอร์เกอร์ */
+}
+
+.nav-links a {
+  color: #ffffff; /* สีข้อความลิงก์ */
+  text-decoration: none;
+  margin-right: 15px;
+  font-size: 15px;
+}
+
+/* --- สไตล์ช่องค้นหาตามแบบรูปภาพ --- */
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.35); /* สีโปร่งแสงแบบในภาพ */
+  border-radius: 4px; /* ขอบมนเล็กน้อย */
+  padding: 6px 12px; /* เพิ่มช่องว่างด้านใน */
+  width: 250px; /* ความกว้างช่องค้นหา */
+}
+
+/* ตัวช่องพิมพ์ข้อความ */
+.search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #000000; /* สีข้อความ */
+  font-size: 15px;
+  padding-right: 28px; /* เว้นระยะด้านขวาไม่ให้ข้อความทับไอคอน */
+}
+
+/* สีของตัวหนังสือตัวอย่าง (Placeholder) */
+.search-box input::placeholder {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ไอคอนแว่นขยายขวาซ้อนข้างใน */
+.search-box button {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.search-box button:hover {
+  opacity: 0.8;
+}
+/* กำหนดสีพื้นหลังหลักของหน้าเว็บ (เพื่อให้กรอบสี่เหลี่ยมมองเห็นเด่นขึ้นมา) */
+body {
+  background-color: #f4f6f8; /* สีพื้นหลังของแอป/เว็บ */
+  margin: 0;
+}
+
+/* --- สไตล์ของกรอบสี่เหลี่ยม (Box Container) --- */
+.manga-box {
+  max-width: 1200px; /* ความกว้างสูงสุดของกรอบ */
+  margin: 24px auto; /* จัดให้อยู่กลางหน้าจอ และเว้นระยะห่างบน-ล่างระหว่างกรอบ */
+  padding: 20px 24px; /* ระยะห่างภายในกรอบ */
+  border-radius: 12px; /* ความโค้งมนของมุมกรอบสี่เหลี่ยม */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* เงาบางๆ ให้กรอบดูมีมิติ */
+}
+
+/*  กรอบที่ 1: โทนสีฟ้า/เทาอ่อน */
+.box-style-1 {
+  background-color: #eef4ff; /* สีพื้นหลังกรอบที่ 1 */
+  border: 1px solid #dbeafe; /* เส้นขอบกรอบ */
+}
+
+/* กรอบที่ 2: โทนสีขาว (ตัดกับกรอบที่ 1 ชัดเจน) */
+.box-style-2 {
+  background-color: #ffffff; /* สีพื้นหลังกรอบที่ 2 */
+  border: 1px solid #e5e7eb; /* เส้นขอบกรอบ */
+}
+
+/* จัดส่วนหัวข้อภายในกรอบ */
+.manga-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.manga-list-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.see-more-btn {
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+}
+.logo {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #000000;
+}
+
+.jlpt-text {
+    font-size: 29px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+.red-p {
+    color: #b83030;
+}
