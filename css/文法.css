@@ -1,4 +1,12 @@
-/* Reset ค่าเริ่มต้น */
+:root {
+    --blue: #579aff;
+    --blue-light: #a0c6e9;
+    --green: #8cc63f;
+    --dark: #30343b;
+    --page: #f5f7fa;
+    --border: #d9dee5;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -7,32 +15,34 @@
 }
 
 body {
-    background-color: #ffffff;
+    background: var(--page);
+    color: #333;
+    line-height: 1.5;
 }
-/* ส่วนโครงสร้างของ Header */
+
 .jlpt-header {
-    background-color: #579aff; /* สีพื้นหลังสว่างอ่อนๆ */
-    width: 100%;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* เงาเล็กน้อยด้านล่าง */
+    background: var(--blue);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .nav-container {
-    max-width: 1000px; /* ความกว้างสูงสุดของแถบเมนู */
+    width: min(1100px, 100%);
+    min-height: 70px;
     margin: 0 auto;
+    padding: 0 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 15px;
-    height: 60px; /* ความสูงของแถบเมนู */
+    gap: 20px;
 }
 
-/* --- 1. โลโก้ JLPT 先生 --- */
 .logo {
+    color: #000;
     text-decoration: none;
     display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #000000;
+    align-items: baseline;
+    gap: 7px;
+    white-space: nowrap;
 }
 
 .jlpt-text {
@@ -41,52 +51,196 @@ body {
     letter-spacing: -1px;
 }
 
-/* ตัว P สัญลักษณ์สีแดง */
 .red-p {
     color: #b83030;
 }
 
 .kanji-text {
-    font-size: 18px; /* ขนาดตัวอักษรของคำว่า みさこ */
+    font-size: 16px;
     font-weight: 500;
-    color: #111111;
 }
 
-/* --- 2. เมนูหลัก --- */
 .nav-links {
     display: flex;
-    align-items: center;
-    height: 100%;
+    align-items: stretch;
+    align-self: stretch;
 }
 
 .nav-item {
-    text-decoration: none;
-    color: #000000;
-    font-size: 13px; /* ขนาดตัวอักษรของเมนู */
-    font-weight: 500;
-    padding: 0 20px;
-    height: 100%;
+    color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s, color 0.2s;
+    padding: 0 15px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
 }
 
-.nav-item:hover {
-    color: #000000;
-    background-color: #edf2f7;
-}
-
-/* สไตล์เมื่ออยู่ในหน้า N3 (ปุ่มไฮไลท์สีเขียวสด) */
+.nav-item:hover,
 .nav-item.active {
-    background-color: #a0c6e9; /* สีพื้นหลังของปุ่มที่ถูกเลือก */
-    font-weight: 600;
+    background: var(--blue-light);
 }
 
-.nav-item.active:hover {
-    background-color: #c3ccb8;
+.container {
+    width: min(1100px, calc(100% - 32px));
+    margin: 36px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
-.search-container input:focus {
-    border-color: #2fa5db; /* สีเขียวสดเมื่อโฟกัส */
-    box-shadow: 0 0 0 2px rgba(140, 198, 63, 0.2);
+
+.page-heading {
+    margin-bottom: 24px;
+}
+
+.page-heading h1 {
+    color: var(--dark);
+    font-size: clamp(24px, 4vw, 32px);
+    margin-bottom: 6px;
+}
+
+.page-heading p {
+    color: #68717d;
+}
+
+.lesson-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.lesson-tab {
+    border: 1px solid #c6d0dc;
+    border-radius: 7px;
+    padding: 9px 16px;
+    background: #fff;
+    color: #3f4a56;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.lesson-tab:hover,
+.lesson-tab.active {
+    border-color: var(--green);
+    background: var(--green);
+    color: #142000;
+}
+
+.table-wrap {
+    overflow-x: auto;
+    margin-bottom: 30px;
+}
+
+table {
+    width: 100%;
+    min-width: 680px;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid var(--border);
+    padding: 14px 15px;
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background: var(--green);
+    border-color: #6f9d2c;
+    color: #142000;
+}
+
+th:first-child,
+td:first-child {
+    width: 8%;
+    text-align: center;
+}
+
+tbody tr:nth-child(even) {
+    background: #fbfcfd;
+}
+
+tbody tr:hover {
+    background: #f1f8e8;
+}
+
+.grammar {
+    color: #263b70;
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.pagination-container {
+    padding: 26px 20px;
+    border-radius: 8px;
+    background: var(--dark);
+    color: #fff;
+    text-align: center;
+}
+
+.pagination-container h2 {
+    margin-bottom: 6px;
+    font-size: 22px;
+}
+
+.pagination-container p {
+    margin-bottom: 18px;
+    color: #d8dee7;
+}
+
+.pagination {
+    display: inline-flex;
+    list-style: none;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.pagination a {
+    display: block;
+    min-width: 46px;
+    padding: 10px 14px;
+    border-right: 1px solid #44a89d;
+    background: #53c5b8;
+    color: #fff;
+    text-decoration: none;
+}
+
+.pagination li:last-child a {
+    border-right: 0;
+}
+
+.pagination a:hover,
+.pagination .active a {
+    background: #1f9e8f;
+}
+
+@media (max-width: 820px) {
+    .nav-container {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-top: 14px;
+    }
+
+    .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        align-self: auto;
+    }
+
+    .nav-item {
+        min-height: 46px;
+        padding: 0 12px;
+    }
+
+    .container {
+        margin-top: 22px;
+        padding: 20px 14px;
+    }
 }

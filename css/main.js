@@ -6,6 +6,8 @@ const regPass = document.getElementById('RegPass');
 const confirmPass = document.getElementById('ConfirmPass');
 const bars = document.querySelector('#bars div');
 const regBtn = document.getElementById('RegBtn');
+const colors = ['#e8e5f2', '#ff6e9b', '#f5b642', '#8cc63f', '#36b37e'];
+const status = ['เริ่มตั้งรหัสผ่าน', 'รหัสผ่านอ่อน', 'รหัสผ่านปานกลาง', 'รหัสผ่านดี', 'รหัสผ่านแข็งแรง'];
 
 // --- ฟังก์ชันสลับหน้าจอ ---
 function showRegister() {
@@ -21,7 +23,7 @@ function showLogin() {
 }
 
 // --- ระบบเช็คความแรงรหัสผ่าน ---
-regPass.addEventListener('input', () => {
+if (regPass) regPass.addEventListener('input', () => {
     let strength = 0;
     const val = regPass.value;
 
@@ -37,12 +39,14 @@ regPass.addEventListener('input', () => {
     validateForm(); // เช็คปุ่มสมัคร
 });
 
-confirmPass.addEventListener('input', validateForm);
+if (confirmPass) confirmPass.addEventListener('input', validateForm);
 
 // ฟังก์ชันเปิด/ปิดปุ่มสมัคร
 function validateForm() {
     const isMatch = (regPass.value === confirmPass.value && regPass.value !== "");
     const isLongEnough = regPass.value.length >= 6;
+
+    if (!regBtn || !confirmPass) return;
 
     if (isMatch && isLongEnough) {
         regBtn.disabled = false;

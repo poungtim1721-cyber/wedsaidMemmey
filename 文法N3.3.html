@@ -3,8 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JLPT N3 文法</title>
-    <link rel="stylesheet" href="/css/文法.css">
+    <title>JLPT N3 Grammar List</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .jlpt-header {
+            background-color: #579aff;
+            width: 100%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            height: 70px;
+        }
+
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #000000;
+        }
+
+        .jlpt-text {
+            font-size: 29px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .red-p {
+            color: #b83030;
+        }
+
+        .kanji-text {
+            font-size: 18px;
+            font-weight: 500;
+            color: #111111;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: #000000;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 0 20px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: #9ac2ed;
+        }
+
+        .nav-item.active {
+            background-color: #a0c6e9;
+            font-weight: 600;
+        }
+
+        .nav-item.active:hover {
+            background-color: #c3ccb8;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+        }
+
+        .page-heading {
+            margin-bottom: 24px;
+        }
+
+        .page-heading h1 {
+            font-size: clamp(24px, 4vw, 32px);
+            margin-bottom: 8px;
+            color: #30343b;
+        }
+
+        .page-heading p {
+            color: #68717d;
+        }
+
+        .lesson-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .lesson-tab {
+            border: 1px solid #c6d0dc;
+            border-radius: 7px;
+            padding: 9px 16px;
+            background: #fff;
+            color: #3f4a56;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .lesson-tab:hover,
+        .lesson-tab.active {
+            border-color: #8cc63f;
+            background: #8cc63f;
+            color: #142000;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            border: 1px solid #d9dee5;
+            padding: 15px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #8cc63f;
+            color: #142000;
+            font-weight: bold;
+            border-color: #6f9d2c;
+        }
+
+        th:first-child,
+        td:first-child {
+            width: 5%;
+            text-align: center;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #fbfcfd;
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f8e8;
+            color: #1f2937;
+        }
+
+        tbody tr:hover td {
+            border-top-color: #8cc63f;
+            border-bottom-color: #8cc63f;
+        }
+
+        tbody tr:hover td:first-child {
+            border-left-color: #8cc63f;
+        }
+
+        tbody tr:hover td:last-child {
+            border-right-color: #8cc63f;
+        }
+
+        tbody td:first-child {
+            color: #68717d;
+            font-weight: 600;
+        }
+
+        tbody td:nth-child(3) {
+            color: #263b70;
+        }
+
+        tbody td:nth-child(4) {
+            color: #4b5563;
+        }
+
+        .grammar {
+            color: #263b70;
+            font-weight: 700;
+            font-size: 1.05rem;
+            transition: color 0.2s ease;
+        }
+
+        tbody tr:hover .grammar {
+            color: #4f7d16;
+        }
+
+        .pagination-container {
+            background-color: #5c5c5c;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 8px;
+        }
+
+        .pagination-container h2 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+        }
+
+        .pagination-container p {
+            margin: 0 0 20px 0;
+            font-size: 16px;
+        }
+
+        .pagination {
+            display: inline-flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .pagination li {
+            margin: 0;
+        }
+
+        .pagination a {
+            display: block;
+            padding: 12px 20px;
+            background-color: #53c5b8;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            border-right: 1px solid #44a89d;
+        }
+
+        .pagination li:first-child a {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
+
+        .pagination li:last-child a {
+            border-right: none;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        .pagination a:hover,
+        .pagination .active a {
+            background-color: #1f9e8f;
+        }
+
+        @media (max-width: 820px) {
+            .nav-container {
+                align-items: flex-start;
+                flex-direction: column;
+                padding-top: 14px;
+                height: auto;
+            }
+
+            .nav-links {
+                width: 100%;
+                overflow-x: auto;
+                align-self: auto;
+            }
+
+            .nav-item {
+                min-height: 46px;
+                padding: 0 12px;
+            }
+
+            .container {
+                margin-top: 22px;
+                padding: 20px 14px;
+            }
+        }
+    </style>
 </head>
 <body>
     <header class="jlpt-header">
@@ -18,7 +309,7 @@
                 <a href="文法.html" class="nav-item">คำศัพท์ &amp; ไวยากรณ์</a>
                 <a href="#" class="nav-item">N5</a>
                 <a href="#" class="nav-item">N4</a>
-                <a href="#" class="nav-item active" aria-current="page">N3</a>
+                <a href="文法N3.3.html" class="nav-item active" aria-current="page">N3</a>
                 <a href="#" class="nav-item">N2</a>
                 <a href="#" class="nav-item">N1</a>
             </nav>
@@ -37,25 +328,23 @@
             <button class="lesson-tab" type="button" role="tab" aria-selected="false" data-lesson="3.5">บทที่ 3.3</button>
         </div>
 
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Grammar Lesson</th>
-                        <th>文法レッスン</th>
-                        <th>Grammar Meaning</th>
-                    </tr>
-                </thead>
-                <tbody id="grammar-table"></tbody>
-            </table>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Grammar Lesson</th>
+                    <th>文法レッスン</th>
+                    <th>Grammar Meaning</th>
+                </tr>
+            </thead>
+            <tbody id="grammar-table"></tbody>
+        </table>
 
         <div class="pagination-container">
             <h2>漢字 みさこ</h2>
             <p id="page-status"></p>
             <ul class="pagination" aria-label="เปลี่ยนหน้า">
-                <li><a href="文法.html">1</a></li>
+                <li><a href="文法N3.3.html">1</a></li>
                 <li><a href="#">2</a></li>
                 <li class="active"><a href="#" aria-current="page">3</a></li>
                 <li><a href="#">4</a></li>
@@ -63,7 +352,6 @@
         </div>
     </main>
 
-    <script src="/css/文法.js"></script>
     <script>
         const grammarData = {
             "3.3": [
@@ -131,4 +419,3 @@
     </script>
 </body>
 </html>
-

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,15 +7,28 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <div class="fullscreen-bg"></div>
+    <div class="fullscreen-bg" aria-hidden="true"></div>
 
     <div class="login-card">
         <div class="left-side">
+            <div class="brand-mark">みさこ</div>
+            <div class="anime-panel">
+                <span class="speed-line speed-line-one"></span>
+                <span class="speed-line speed-line-two"></span>
+                <span class="spark spark-one">✦</span>
+                <span class="spark spark-two">✧</span>
+                <div class="character-orb">漢</div>
+            </div>
+            <p class="panel-kicker">JLPT N3 STUDY CLUB</p>
+            <h1>เรียนญี่ปุ่น<br><span>ให้สนุกเหมือนอ่านมังงะ</span></h1>
+            <p class="panel-caption">ฝึกภาษา ฝึกคันจิ และเปิดโลกภาษาญี่ปุ่นไปพร้อมกัน</p>
         </div>
         <div class="right-side">
             
             <div id="loginSection">
-                <h2>Sign in</h2>
+                <p class="eyebrow">ยินดีต้อนรับกลับมา</p>
+                <h2>เข้าสู่ระบบ</h2>
+                <p class="form-intro">เข้ามาเรียนต่อในโลกของ みさこ</p>
                 <div class="textbox">
                     <input id="LoginUser" required type="text" placeholder=" " />
                     <label>ชื่อผู้ใช้ / Email / หมายเลขโทรศัพท์</label>
@@ -44,10 +57,12 @@
 
             <div id="registerSection" style="display: none;">
                 
-                <h2>Register</h2>
+                <p class="eyebrow">เริ่มต้นการผจญภัย</p>
+                <h2>สมัครสมาชิก</h2>
+                <p class="form-intro">สร้างบัญชีเพื่อบันทึกการเรียนของคุณ</p>
               <form id="regForm">
                     <div class="textbox">
-                    <input id="RegUser" required type="email" placeholder=" " />
+                    <input id="RegEmail" required type="email" placeholder=" " />
                     <label>Email หมายเลขโทรศัพท์</label>
                 </div>
                     <div class="textbox">
