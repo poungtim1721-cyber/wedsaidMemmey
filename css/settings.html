@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>みさこ | การตั้งค่า</title>
-    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="../home.css">
     <style>
         body { margin: 0; font-family: "Segoe UI", "Sarabun", Tahoma, sans-serif; background: #f5f7fa; color: #1e293b; }
         .page-wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 60px; }
@@ -87,7 +87,7 @@
     </div>
         <div class="nav-menu">
             <a href="home.html" class="nav-link">หน้าเเรก</a>
-            <a href="/漢字.html" class="nav-link">คันจิ (漢字)</a>
+            <a href="../../漢字.html" class="nav-link">คันจิ (漢字)</a>
             <a href="文法.html" class="nav-link">ศัพท์เเละไวยากรณ์ (文法)</a>
             <a href="index.html" class="nav-link">เข้าสู่ระบบ</a>
             <span class="icon" onclick="openNav()" style="cursor: pointer; font-size: 20px; margin-left: 15px;">☰</span>
@@ -163,7 +163,13 @@
             </div>
             <div style="margin: 4px 0 16px;">
                 <div class="settings-label" style="margin-bottom:8px;">สีอวาตาร์</div>
-                <div id="colorSwatches" style="display:flex; gap:10px;"></div>
+                <div id="colorSwatches" style="display:flex; gap:10px;">
+                    <span class="color-swatch selected" data-grad="linear-gradient(135deg, #9ac2ed, #5090d8)" style="background: linear-gradient(135deg, #9ac2ed, #5090d8);" onclick="pickColor(this)"></span>
+                    <span class="color-swatch" data-grad="linear-gradient(135deg, #f9c9dd, #e6597a)" style="background: linear-gradient(135deg, #f9c9dd, #e6597a);" onclick="pickColor(this)"></span>
+                    <span class="color-swatch" data-grad="linear-gradient(135deg, #c9f2d8, #3bb273)" style="background: linear-gradient(135deg, #c9f2d8, #3bb273);" onclick="pickColor(this)"></span>
+                    <span class="color-swatch" data-grad="linear-gradient(135deg, #ffe3a3, #e6a13d)" style="background: linear-gradient(135deg, #ffe3a3, #e6a13d);" onclick="pickColor(this)"></span>
+                    <span class="color-swatch" data-grad="linear-gradient(135deg, #d9c9f9, #8a5fd6)" style="background: linear-gradient(135deg, #d9c9f9, #8a5fd6);" onclick="pickColor(this)"></span>
+                </div>
             </div>
             <button class="btn-primary" id="saveProfileBtn">บันทึกโปรไฟล์</button>
         </div>
@@ -211,26 +217,15 @@
         }
     </script>
     <script>
-        const COLORS = [
-            ["#9ac2ed", "#5090d8"],
-            ["#f9c9dd", "#e6597a"],
-            ["#c9f2d8", "#3bb273"],
-            ["#ffe3a3", "#e6a13d"],
-            ["#d9c9f9", "#8a5fd6"]
-        ];
-
         function currentAvatarGradient() {
-            return localStorage.getItem("userAvatarColor") || 'linear-gradient(135deg, ' + COLORS[0][0] + ', ' + COLORS[0][1] + ')';
+            return localStorage.getItem("userAvatarColor") || 'linear-gradient(135deg, #9ac2ed, #5090d8)';
         }
 
         function renderSwatches() {
-            const wrap = document.getElementById("colorSwatches");
             const current = currentAvatarGradient();
-            wrap.innerHTML = COLORS.map(function(c) {
-                const grad = 'linear-gradient(135deg, ' + c[0] + ', ' + c[1] + ')';
-                const sel = grad === current ? ' selected' : '';
-                return '<span class="color-swatch' + sel + '" style="background:' + grad + '" data-grad="' + grad + '" onclick="pickColor(this)"></span>';
-            }).join("");
+            document.querySelectorAll('#colorSwatches .color-swatch').forEach(function(el) {
+                el.classList.toggle('selected', el.dataset.grad === current);
+            });
         }
 
         function pickColor(el) {
