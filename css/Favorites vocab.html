@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>みさこ | เก็บคำศัพท์ที่ชอบ</title>
+    <link rel="stylesheet" href="../home.css">
+    <style>
+        body { margin: 0; font-family: "Segoe UI", "Sarabun", Tahoma, sans-serif; background: #f5f7fa; color: #1e293b; }
+        .page-wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 60px; }
+        .page-title { font-size: 26px; font-weight: 800; margin: 0 0 6px; color: #244057; }
+        .page-desc { color: #718092; margin: 0 0 26px; font-size: 14px; }
+        .panel { background: #fff; border-radius: 16px; padding: 22px 24px; box-shadow: 0 6px 18px rgba(52,125,169,.08); margin-bottom: 22px; }
+        .panel h2 { font-size: 16px; margin: 0 0 16px; color: #347da9; }
+        .form-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+        .form-row input, .form-row select, .form-row textarea {
+            flex: 1 1 160px; padding: 11px 13px; border: 1px solid #dce9ef; border-radius: 10px;
+            font-size: 14px; outline: none; font-family: inherit;
+        }
+        .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: #5db7df; box-shadow: 0 0 0 3px rgba(93,183,223,.15); }
+        .btn-primary {
+            padding: 11px 22px; border: 0; border-radius: 10px; color: #fff; font-weight: 700; font-size: 14px;
+            background: linear-gradient(100deg, #347da9, #5db7df); cursor: pointer; transition: transform .15s, box-shadow .15s;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(52,125,169,.3); }
+        .btn-ghost {
+            padding: 10px 18px; border: 1px solid #dce9ef; border-radius: 10px; background: #fff; color: #718092;
+            font-weight: 600; font-size: 13px; cursor: pointer;
+        }
+        .btn-ghost:hover { border-color: #f28ba8; color: #d1477b; }
+        .btn-danger {
+            padding: 11px 22px; border: 0; border-radius: 10px; color: #fff; font-weight: 700; font-size: 14px;
+            background: #e6597a; cursor: pointer;
+        }
+        .card-list { display: flex; flex-direction: column; gap: 10px; }
+        .item-card {
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            padding: 14px 16px; border: 1px solid #eef2f6; border-radius: 12px; background: #fbfcfe;
+        }
+        .item-main { display: flex; flex-direction: column; gap: 3px; }
+        .item-title { font-weight: 700; font-size: 15px; color: #244057; }
+        .item-sub { font-size: 12px; color: #8b98a8; }
+        .item-tag {
+            display: inline-block; font-size: 11px; font-weight: 700; color: #347da9;
+            background: #e5f4fb; padding: 2px 9px; border-radius: 999px; margin-right: 6px;
+        }
+        .del-btn {
+            border: none; background: none; color: #c7cfd8; font-size: 20px; cursor: pointer; line-height: 1;
+            padding: 4px 8px; border-radius: 8px;
+        }
+        .del-btn:hover { color: #e6597a; background: #fdeef1; }
+        .empty-state { text-align: center; padding: 34px 10px; color: #a7b1bd; font-size: 14px; }
+        .empty-state .big { font-size: 34px; display: block; margin-bottom: 8px; }
+        .settings-row {
+            display: flex; align-items: center; justify-content: space-between; padding: 14px 0;
+            border-bottom: 1px solid #f0f3f6;
+        }
+        .settings-row:last-child { border-bottom: 0; }
+        .settings-label { font-weight: 700; font-size: 14px; color: #244057; }
+        .settings-hint { font-size: 12px; color: #8b98a8; margin-top: 2px; }
+        .color-swatch {
+            width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; display: inline-block;
+        }
+        .color-swatch.selected { border-color: #244057; }
+        .toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: #244057; color: #fff; padding: 11px 22px; border-radius: 999px; font-size: 13px;
+            opacity: 0; pointer-events: none; transition: .25s; z-index: 5000;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+                <span class="jlpt-text">みさ<span class="red-p">こ。</span><span class="kanji-text"></span>
+        </div>
+        <div class="nav-right">
+    <div class="search-box">
+      <input type="text" placeholder="ค้นหา..." />
+      <button type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+        </svg>
+      </button>
+    </div>
+        <div class="nav-menu">
+            <a href="home.html" class="nav-link">หน้าเเรก</a>
+            <a href="../../漢字.html" class="nav-link">คันจิ (漢字)</a>
+            <a href="文法.html" class="nav-link">ศัพท์เเละไวยากรณ์ (文法)</a>
+            <a href="index.html" class="nav-link">เข้าสู่ระบบ</a>
+            <span class="icon" onclick="openNav()" style="cursor: pointer; font-size: 20px; margin-left: 15px;">☰</span>
+        </div>
+        </div>
+    </nav>
+
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+
+    <div class="sidebar-header" style="padding: 20px 20px 15px 20px;">
+    <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
+        <div class="user-avatar" id="userAvatar" style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #9ac2ed, #5090d8); color: #fff; font-size: 20px; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">日</div>
+        <div>
+            <h3 id="profileName" style="margin: 0; font-size: 20px; color: #1e293b; font-weight: 700;">日本語</h3>
+        </div>
+    </div>
+</div>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+
+        <a href="favorites-vocab.html" class="sidebar-link active-link">เก็บคำศัพท์ที่ชอบ</a>
+        <a href="favorites.html" class="sidebar-link">สิ่งที่ชอบ</a>
+        <a href="history.html" class="sidebar-link">ประวัติมังงะที่อ่าน</a>
+        <a href="settings.html" class="sidebar-link">การตั้งค่า</a>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+
+        <a href="javascript:void(0)" id="logoutBtn" class="logout" style="color: red;">ออกจากระบบ</a>
+    </div>
+    <script>
+        function loadUsername() {
+            var savedName = localStorage.getItem("registeredName");
+            var profileNameElement = document.getElementById("profileName");
+            if (!profileNameElement) return;
+            profileNameElement.innerText = savedName || "日本語";
+            var avatarEl = document.getElementById("userAvatar");
+            if (avatarEl) {
+                avatarEl.innerText = (savedName || "日")[0].toUpperCase();
+                var savedColor = localStorage.getItem("userAvatarColor");
+                if (savedColor) avatarEl.style.background = savedColor;
+            }
+        }
+        document.addEventListener("DOMContentLoaded", loadUsername);
+        function openNav() {
+            document.getElementById("mySidebar").style.width = "300px";
+        }
+        function closeNav() {
+            document.getElementById("mySidebar").style.width = "0";
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            var logoutButton = document.getElementById('logoutBtn');
+            if (!logoutButton) return;
+            logoutButton.addEventListener('click', function() {
+                const confirmLogout = confirm("คุณต้องการออกจากระบบใช่หรือไม่?");
+                if (confirmLogout) {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    alert("ออกจากระบบเรียบร้อยแล้ว!");
+                    window.location.href = "index.html";
+                }
+            });
+        });
+    </script>
+
+    <div class="page-wrap">
+        <h1 class="page-title">เก็บคำศัพท์ที่ชอบ</h1>
+        <p class="page-desc">บันทึกคำศัพท์ภาษาญี่ปุ่นที่คุณอยากจำไว้ทบทวนภายหลัง</p>
+
+        <div class="panel">
+            <h2>➕ เพิ่มคำศัพท์ใหม่</h2>
+            <form id="vocabForm">
+                <div class="form-row">
+                    <input type="text" id="vWord" placeholder="คำศัพท์ " required>
+                    <input type="text" id="vReading" placeholder="คำอ่าน ">
+                    <select id="vLevel">
+                        <option value="">ระดับ</option>
+                        <option value="N5">N5</option>
+                        <option value="N4">N4</option>
+                        <option value="N3">N3</option>
+                        <option value="N2">N2</option>
+                        <option value="N1">N1</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="vMeaning" placeholder="ความหมาย (เช่น การเรียน, ขยัน)" required style="flex: 1 1 100%;">
+                </div>
+                <button type="submit" class="btn-primary">บันทึกคำศัพท์</button>
+            </form>
+        </div>
+
+        <div class="panel">
+            <h2>📚 คำศัพท์ที่บันทึกไว้ (<span id="vocabCount">0</span>)</h2>
+            <div class="card-list" id="vocabList"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script>
+        function showToast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(window.__toastTimer);
+            window.__toastTimer = setTimeout(function() { t.classList.remove('show'); }, 1800);
+        }
+    </script>
+    <script>
+        const VOCAB_KEY = "favoriteVocab";
+        function getVocab() { return JSON.parse(localStorage.getItem(VOCAB_KEY)) || []; }
+        function setVocab(list) { localStorage.setItem(VOCAB_KEY, JSON.stringify(list)); }
+
+        function renderVocab() {
+            const list = getVocab();
+            const wrap = document.getElementById("vocabList");
+            document.getElementById("vocabCount").textContent = list.length;
+            if (list.length === 0) {
+                wrap.innerHTML = '<div class="empty-state"><span class="big">📖</span>ยังไม่มีคำศัพท์ที่บันทึกไว้<br>เริ่มเพิ่มคำศัพท์แรกของคุณด้านบนได้เลย</div>';
+                return;
+            }
+            wrap.innerHTML = list.map(function(item, i) {
+                return '<div class="item-card">' +
+                    '<div class="item-main">' +
+                        '<div class="item-title">' + (item.level ? '<span class="item-tag">' + item.level + '</span>' : '') + escapeHtml(item.word) +
+                        (item.reading ? ' <span class="item-sub">(' + escapeHtml(item.reading) + ')</span>' : '') + '</div>' +
+                        '<div class="item-sub">' + escapeHtml(item.meaning) + '</div>' +
+                    '</div>' +
+                    '<button class="del-btn" onclick="removeVocab(' + i + ')" title="ลบ">&times;</button>' +
+                '</div>';
+            }).join("");
+        }
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, function(c) {
+                return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+            });
+        }
+
+        function removeVocab(i) {
+            const list = getVocab();
+            list.splice(i, 1);
+            setVocab(list);
+            renderVocab();
+            showToast("ลบคำศัพท์แล้ว");
+        }
+
+        document.getElementById("vocabForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const word = document.getElementById("vWord").value.trim();
+            const reading = document.getElementById("vReading").value.trim();
+            const meaning = document.getElementById("vMeaning").value.trim();
+            const level = document.getElementById("vLevel").value;
+            if (!word || !meaning) return;
+            const list = getVocab();
+            list.unshift({ word: word, reading: reading, meaning: meaning, level: level, date: new Date().toISOString() });
+            setVocab(list);
+            this.reset();
+            renderVocab();
+            showToast("บันทึกคำศัพท์เรียบร้อย");
+        });
+
+        renderVocab();
+    </script>
+</body>
+</html>
