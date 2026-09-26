@@ -119,11 +119,16 @@
         }
 
         /* Table Styles */
-        table {
-            width: 100%; /* เปลี่ยนเป็น 100% เพื่อให้กางเต็มพื้นที่ด้านในกรอบ Container */
-            border-collapse: collapse;
-            margin-bottom: 30px;
-        }
+        .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 30px;
+}
+table {
+    width: 100%;
+    min-width: 1200px;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
         th, td {
             border: 1px solid #ddd; /* ปรับสีเส้นขอบตารางให้อ่อนลงนิดนึงเพื่อความสวยงาม */
             padding: 15px;
@@ -196,19 +201,22 @@
 <body>
     <!-- UI Container (กรอบเนื้อหา) -->
     <main class="container">
+        <div class="table-wrap">
         <table>
             <thead>
-                <tr>
-                    <th style="width: 5%; text-align: center;">#</th>
-                    <th style="width: 25%;">Grammar Lesson</th>
-                    <th style="width: 35%;">文法レッスン</th>
-                    <th style="width: 35%;">Grammar Meaning</th>
-                </tr>
-            </thead>
-            <tbody><tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr></tbody>
+    <tr>
+        <th style="width: 5%; text-align: center;">#</th>
+        <th style="width: 18%;">ไวยากรณ์</th>
+        <th style="width: 12%;">คำอ่าน</th>
+        <th style="width: 12%;">ความหมาย</th>
+        <th style="width: 20%;">คำอธิบาย</th>
+        <th style="width: 18%;">ตัวอย่างภาษาญี่ปุ่น</th>
+        <th style="width: 15%;">คำแปล</th>
+    </tr>
+</thead>
+            <tbody><tr><td colspan="7">กำลังโหลดข้อมูล...</td></tr></tbody>
         </table>
-
-        <div class="pagination-container">
+        </div>
             <h2>漢字 みさこ</h2>
             <p>ขณะนี้กำลังดูหน้า 1 จากทั้งหมด 5 หน้า</p>
             <ul class="pagination">
@@ -221,8 +229,93 @@
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/data/supabase-client.js"></script>
-    <script src="/css/文法.js"></script>
-</body>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../data/supabase-client.js"></script>
+    <script src="../../data/supabase-data.js"></script>
+    <script>
+        (async function () {
+            const level = "N5";
+            const tableBody = document.querySelector("tbody");
+            const paginationContainer = document.querySelector(".pagination-container");
+
+            try {
+                if (!tableBody || !paginationContainer) {
+                    throw new Error("ไม่พบตารางหรือส่วนแบ่งหน้าไวยากรณ์ในหน้านี้");
+                }
+
+                const client = window.getSupabaseClient();
+                const { data, error } = await client
+                    .from("jlpt_grammar")
+                    .select("id,level,pattern,reading,meaning,explanation,example_jp,example_th,sort_order")
+                    .eq("level", level)
+                    .order("sort_order")
+                    .order("id");
+                if (error) {
+                    throw new Error(`Could not load jlpt_grammar: ${error.message}`);
+                }
+
+                const pageSize = 20;
+                const params = new URLSearchParams(window.location.search);
+                const pageCount = Math.max(1, Math.ceil(data.length / pageSize));
+                const currentPage = Math.min(pageCount, Math.max(1, Number(params.get("page")) || 1));
+                const items = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+                tableBody.replaceChildren();
+
+                if (items.length === 0) {
+                    const row = document.createElement("tr");
+                    const cell = document.createElement("td");
+                    cell.colSpan = 4;
+                    cell.textContent = "ยังไม่มีข้อมูลไวยากรณ์ระดับนี้ในฐานข้อมูล";
+                    row.appendChild(cell);
+                    tableBody.appendChild(row);
+                } else {
+                    items.forEach((item, index) => {
+                        const row = document.createElement("tr");
+                        for (const value of [
+    String((currentPage - 1) * pageSize + index + 1),
+    item.pattern,
+    item.reading,
+    item.meaning,
+    item.explanation,
+    item.example_jp,
+    item.example_th,
+]) {
+    const cell = document.createElement("td");
+    cell.textContent = value || "";
+    row.appendChild(cell);
+}
+                        tableBody.appendChild(row);
+                    });
+                }
+
+                const status = paginationContainer.querySelector("p");
+                if (status) {
+                    status.textContent = `ขณะนี้กำลังดูหน้า ${currentPage} จากทั้งหมด ${pageCount} หน้า`;
+                }
+
+                const list = paginationContainer.querySelector(".pagination");
+                if (list) {
+                    list.replaceChildren();
+                    for (let pageNumber = 1; pageNumber <= pageCount; pageNumber += 1) {
+                        const item = document.createElement("li");
+                        if (pageNumber === currentPage) item.className = "active";
+                        const link = document.createElement("a");
+                        link.href = `?page=${pageNumber}`;
+                        link.textContent = String(pageNumber);
+                        if (pageNumber === currentPage) {
+                            link.setAttribute("aria-current", "page");
+                        }
+                        item.appendChild(link);
+                        list.appendChild(item);
+                    }
+                }
+            } catch (error) {
+                if (tableBody) {
+                    window.showSupabaseError(tableBody, error);
+                } else {
+                    throw error;
+                }
+            }
+        })();
+    </script></body>
 </html>
