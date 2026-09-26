@@ -119,16 +119,11 @@
         }
 
         /* Table Styles */
-        .table-wrap {
-    overflow-x: auto;
-    margin-bottom: 30px;
-}
-table {
-    width: 100%;
-    min-width: 1200px;
-    border-collapse: collapse;
-    margin-bottom: 0;
-}
+        table {
+            width: 100%; /* เปลี่ยนเป็น 100% เพื่อให้กางเต็มพื้นที่ด้านในกรอบ Container */
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
         th, td {
             border: 1px solid #ddd; /* ปรับสีเส้นขอบตารางให้อ่อนลงนิดนึงเพื่อความสวยงาม */
             padding: 15px;
@@ -201,22 +196,19 @@ table {
 <body>
     <!-- UI Container (กรอบเนื้อหา) -->
     <main class="container">
-        <div class="table-wrap">
         <table>
             <thead>
-    <tr>
-        <th style="width: 5%; text-align: center;">#</th>
-        <th style="width: 18%;">ไวยากรณ์</th>
-        <th style="width: 12%;">คำอ่าน</th>
-        <th style="width: 12%;">ความหมาย</th>
-        <th style="width: 20%;">คำอธิบาย</th>
-        <th style="width: 18%;">ตัวอย่างภาษาญี่ปุ่น</th>
-        <th style="width: 15%;">คำแปล</th>
-    </tr>
-</thead>
-            <tbody><tr><td colspan="7">กำลังโหลดข้อมูล...</td></tr></tbody>
+                <tr>
+                    <th style="width: 5%; text-align: center;">#</th>
+                    <th style="width: 25%;">Grammar Lesson</th>
+                    <th style="width: 35%;">文法レッスン</th>
+                    <th style="width: 35%;">Grammar Meaning</th>
+                </tr>
+            </thead>
+            <tbody><tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr></tbody>
         </table>
-        </div>
+
+        <div class="pagination-container">
             <h2>漢字 みさこ</h2>
             <p>ขณะนี้กำลังดูหน้า 1 จากทั้งหมด 5 หน้า</p>
             <ul class="pagination">
@@ -271,18 +263,30 @@ table {
                     items.forEach((item, index) => {
                         const row = document.createElement("tr");
                         for (const value of [
-    String((currentPage - 1) * pageSize + index + 1),
-    item.pattern,
-    item.reading,
-    item.meaning,
-    item.explanation,
-    item.example_jp,
-    item.example_th,
-]) {
-    const cell = document.createElement("td");
-    cell.textContent = value || "";
-    row.appendChild(cell);
-}
+                            String((currentPage - 1) * pageSize + index + 1),
+                            item.pattern,
+                            item.reading,
+                        ]) {
+                            const cell = document.createElement("td");
+                            cell.textContent = value || "";
+                            row.appendChild(cell);
+                        }
+
+                        const detailsCell = document.createElement("td");
+                        for (const [label, value] of [
+                            ["ความหมาย", item.meaning],
+                            ["คำอธิบาย", item.explanation],
+                            ["ตัวอย่าง", item.example_jp],
+                            ["แปล", item.example_th],
+                        ]) {
+                            if (!value) continue;
+                            const detail = document.createElement("p");
+                            const labelElement = document.createElement("strong");
+                            labelElement.textContent = `${label}: `;
+                            detail.append(labelElement, document.createTextNode(value));
+                            detailsCell.appendChild(detail);
+                        }
+                        row.appendChild(detailsCell);
                         tableBody.appendChild(row);
                     });
                 }

@@ -78,10 +78,10 @@
     <h2>2. ขั้นตอนตั้งค่าและนำเข้า</h2>
     <ol class="steps">
       <li>เปิด <code>https://supabase.com/dashboard/project/hrhhbahxwbolhvhrbhjn/sql</code> แล้วเลือก SQL Editor</li>
-      <li>หากยังไม่มีตาราง JLPT ให้รัน <code>supabase/schema.sql</code>; หากสร้างตารางคำศัพท์/คันจิไว้แล้ว ให้รันเฉพาะ <code>supabase/manga-schema.sql</code></li>
+      <li>หากยังไม่มีตาราง JLPT ให้รัน <code>supabase/schema.sql</code> และรัน <code>supabase/manga-schema.sql</code> ทุกกรณีเพื่อกำหนดสิทธิ์และข้อมูลมังงะ; หากมีตาราง JLPT อยู่แล้ว ให้รันเฉพาะ <code>supabase/manga-schema.sql</code></li>
       <li>ที่โฟลเดอร์โปรเจกต์ รัน <code>.\supabase\export-content-csv.ps1</code> ใน PowerShell เพื่อสร้าง CSV ใน <code>supabase\import</code></li>
       <li>ใน Table Editor นำเข้า <code>jlpt_vocabulary.csv</code> → <code>jlpt_vocabulary</code> และ <code>jlpt_kanji.csv</code> → <code>jlpt_kanji</code></li>
-      <li>รัน <code>supabase/manga-schema.sql</code> เพื่อสร้างตารางคำแปล พร้อมเพิ่มคำแปล 2 รายการที่มีอยู่แล้วในชุด <code>manga-kana</code></li>
+      <li>รัน <code>supabase/manga-schema.sql</code> เพื่อสร้างตารางคำแปล พร้อมเพิ่มคำแปล 2 รายการที่มีอยู่แล้วในชุด <code>manga-kana</code>; หากมีตาราง <code>manga_vocabularies</code> อยู่แล้ว ไฟล์นี้จะเปิดสิทธิ์อ่านสาธารณะและเพิ่มได้เฉพาะผู้ล็อกอินสำหรับ <code>manga_id = 1</code> และ <code>category = manga-jp</code></li>
       <li>เพิ่มคำแปลอื่นใน <code>manga_translations</code> โดยระบุชุดมังงะ บท หน้า และลำดับบรรทัดให้ตรงกัน</li>
       <li>เพิ่มรายการไวยากรณ์ที่ตรวจสอบแล้วลง <code>jlpt_grammar</code> เมื่อมีข้อมูลพร้อม</li>
       <li>ตั้งค่า publishable key ใน <code>data/supabase-client.js</code> แล้วทดสอบเว็บไซต์ผ่านเว็บเซิร์ฟเวอร์</li>
@@ -196,8 +196,9 @@ do update set
   romaji = excluded.romaji,
   japanese = excluded.japanese,
   meaning = excluded.meaning;</pre>
-    <p class="small">RLS เปิดใช้งานทั้งสี่ตาราง และอนุญาตให้อ่านเท่านั้น ไม่เปิดสิทธิ์เพิ่ม แก้ไข หรือลบจากหน้าเว็บ คำแปลเดิมสองรายการใช้ series manga-kana</p>
+    <p class="small">RLS จำกัดการเขียนข้อมูลจากหน้าเว็บไว้เฉพาะผู้ล็อกอิน โดยหน้า <code>漫画読み.html</code> เพิ่มได้เฉพาะ <code>manga_id = 1</code> และ <code>category = manga-jp</code>; ไม่มีสิทธิ์แก้ไขหรือลบ ผู้ใช้ต้องถูกสร้างหรือเชิญใน Supabase ก่อน</p>
     <p class="small">ตารางคำแปลมีคอลัมน์ series, chapter_number, page_number, line_number, romaji, japanese และ meaning</p>
+    <p class="small">ตาราง <code>manga_vocabularies</code> ต้องมีคอลัมน์ vocab_id, manga_id, page_no, seq_no, kana, kanji และ meaning</p>
   </section>
 
   <section class="page">
@@ -218,6 +219,7 @@ do update set
         <tr><td><code>jlpt_vocabulary</code></td><td><code>level, word, reading, meaning</code></td></tr>
         <tr><td><code>jlpt_kanji</code></td><td><code>level, character, readings_on, readings_kun, meaning</code></td></tr>
         <tr><td><code>jlpt_grammar</code></td><td><code>level, pattern, reading, meaning, explanation, example_jp, example_th, sort_order</code></td></tr>
+        <tr><td><code>manga_vocabularies</code></td><td><code>vocab_id, manga_id, page_no, seq_no, kana, kanji, meaning</code></td></tr>
       </tbody>
     </table>
     <h2>7. ตรวจสอบเมื่อทำเสร็จ</h2>

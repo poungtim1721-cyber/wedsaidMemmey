@@ -1,6 +1,8 @@
 (async function () {
   const script = document.currentScript;
   const series = script && script.dataset.series;
+  const vocabularyMangaId = Number(script && script.dataset.vocabularyMangaId);
+  const usesVocabulary = Number.isInteger(vocabularyMangaId) && vocabularyMangaId > 0;
   const imagesByChapter = window.mangaImages && window.mangaImages[series];
   const track = document.getElementById("pageTrack");
   const dots = document.getElementById("pageDots");
@@ -16,6 +18,131 @@
   let currentPage = 0;
   let activeTranslationPage = 0;
   let dragStartX = null;
+  let currentUser = null;
+
+  function setVocabularyStatus(message, isError = false) {
+    const status = document.getElementById("vocabularyStatus");
+    if (!status) return;
+    status.textContent = message;
+    status.setAttribute("role", isError ? "alert" : "status");
+  }
+
+  function updateVocabularyAuthUI() {
+    const editor = document.getElementById("vocabularyEditor");
+    const loginPanel = document.getElementById("vocabularyLoginPanel");
+    const addPanel = document.getElementById("vocabularyAddPanel");
+    if (!editor || !loginPanel || !addPanel) return;
+    editor.hidden = false;
+    loginPanel.hidden = Boolean(currentUser);
+    addPanel.hidden = !currentUser;
+    document.getElementById("vocabularyUserEmail").textContent = currentUser ? currentUser.email : "";
+  }
+
+  async function initializeVocabularyAuth(client) {
+    try {
+      const { data, error } = await client.auth.getSession();
+      if (error) throw new Error(`ตรวจสอบสถานะเข้าสู่ระบบไม่สำเร็จ: ${error.message}`);
+      currentUser = data.session && data.session.user;
+      updateVocabularyAuthUI();
+      client.auth.onAuthStateChange((_event, session) => {
+        currentUser = session && session.user;
+        updateVocabularyAuthUI();
+      });
+    } catch (error) {
+      currentUser = null;
+      updateVocabularyAuthUI();
+      setVocabularyStatus(error.message, true);
+      console.error(error);
+    }
+  }
+
+  function attachVocabularyEvents() {
+    const loginForm = document.getElementById("vocabularyLoginForm");
+    const addForm = document.getElementById("vocabularyAddForm");
+    const saveButton = document.getElementById("vocabularySaveButton");
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(loginForm);
+      setVocabularyStatus("กำลังเข้าสู่ระบบ...");
+      try {
+        const { error } = await window.getSupabaseClient().auth.signInWithPassword({
+          email: String(formData.get("email")),
+          password: String(formData.get("password"))
+        });
+        if (error) throw new Error(`เข้าสู่ระบบไม่สำเร็จ: ${error.message}`);
+        loginForm.reset();
+        setVocabularyStatus("เข้าสู่ระบบแล้ว");
+      } catch (error) {
+        setVocabularyStatus(error.message, true);
+        console.error(error);
+      }
+    });
+
+    document.getElementById("vocabularySignOut").addEventListener("click", async () => {
+      setVocabularyStatus("กำลังออกจากระบบ...");
+      try {
+        const { error } = await window.getSupabaseClient().auth.signOut();
+        if (error) throw new Error(`ออกจากระบบไม่สำเร็จ: ${error.message}`);
+        setVocabularyStatus("ออกจากระบบแล้ว");
+      } catch (error) {
+        setVocabularyStatus(error.message, true);
+        console.error(error);
+      }
+    });
+
+    addForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!currentUser) {
+        setVocabularyStatus("กรุณาเข้าสู่ระบบก่อนเพิ่มคำศัพท์", true);
+        return;
+      }
+      const page = chapters[currentChapter].pages[activeTranslationPage];
+      if (!Array.isArray(page.vocabularies)) {
+        setVocabularyStatus("ยังโหลดคำศัพท์จาก Supabase ไม่สำเร็จ จึงบันทึกไม่ได้", true);
+        return;
+      }
+
+      const formData = new FormData(addForm);
+      const seqNo = page.vocabularies.reduce(
+        (highest, entry) => Math.max(highest, Number(entry.seq_no) || 0),
+        0
+      ) + 1;
+      saveButton.disabled = true;
+      setVocabularyStatus("กำลังบันทึกคำศัพท์...");
+      try {
+        const { data, error } = await window.getSupabaseClient()
+          .from("manga_vocabularies")
+          .insert({
+            category: series,
+            manga_id: vocabularyMangaId,
+            page_no: activeTranslationPage + 1,
+            seq_no: seqNo,
+            kana: String(formData.get("kana")).trim(),
+            kanji: String(formData.get("kanji")).trim(),
+            meaning: String(formData.get("meaning")).trim()
+          })
+          .select("vocab_id,page_no,seq_no,kana,kanji,meaning")
+          .single();
+        if (error) throw new Error(`บันทึกคำศัพท์ไม่สำเร็จ: ${error.message}`);
+        if (!data) throw new Error("บันทึกคำศัพท์ไม่สำเร็จ: ไม่ได้รับข้อมูลที่บันทึกกลับมา");
+
+        page.vocabularies.push(data);
+        page.vocabularies.sort((left, right) =>
+          left.seq_no - right.seq_no || left.vocab_id - right.vocab_id
+        );
+        addForm.reset();
+        buildPageTabs();
+        showTranslationPage(activeTranslationPage);
+        setVocabularyStatus("บันทึกคำศัพท์ลง Supabase แล้ว");
+      } catch (error) {
+        setVocabularyStatus(error.message, true);
+        console.error(error);
+      } finally {
+        saveButton.disabled = false;
+      }
+    });
+  }
 
   function showMessage(container, message) {
     container.replaceChildren();
@@ -60,23 +187,31 @@
 
   function renderTable(index) {
     tableBody.replaceChildren();
-    const translations = chapters[currentChapter].pages[index].translations;
-    if (translations === null) {
-      showMessage(tableBody, "โหลดคำแปลจาก Supabase ไม่สำเร็จ");
+    const entries = usesVocabulary
+      ? chapters[currentChapter].pages[index].vocabularies
+      : chapters[currentChapter].pages[index].translations;
+    if (entries === null) {
+      showMessage(tableBody, usesVocabulary
+        ? "โหลดคำศัพท์จาก Supabase ไม่สำเร็จ"
+        : "โหลดคำแปลจาก Supabase ไม่สำเร็จ");
       return;
     }
-    if (translations.length === 0) {
-      showMessage(tableBody, "ไม่มีข้อมูลคำแปลในหน้านี้");
+    if (entries.length === 0) {
+      showMessage(tableBody, usesVocabulary
+        ? "ไม่มีคำศัพท์ในหน้านี้"
+        : "ไม่มีข้อมูลคำแปลในหน้านี้");
       return;
     }
 
-    translations.forEach((translation, translationIndex) => {
+    entries.forEach((entry, entryIndex) => {
       const row = document.createElement("tr");
       for (const value of [
-        String(translation.line_number || translationIndex + 1),
-        translation.romaji || "-",
-        translation.japanese || "-",
-        translation.meaning || "-"
+        String(usesVocabulary
+          ? entry.seq_no || entryIndex + 1
+          : entry.line_number || entryIndex + 1),
+        usesVocabulary ? entry.kana || "-" : entry.romaji || "-",
+        usesVocabulary ? entry.kanji || "-" : entry.japanese || "-",
+        entry.meaning || "-"
       ]) {
         const cell = document.createElement("td");
         cell.textContent = value;
@@ -91,7 +226,8 @@
     chapters[currentChapter].pages.forEach((page, index) => {
       const tab = document.createElement("button");
       tab.type = "button";
-      tab.className = `page-tab${page.translations && page.translations.length > 0 ? " has-translation" : ""}`;
+      const entries = usesVocabulary ? page.vocabularies : page.translations;
+      tab.className = `page-tab${entries && entries.length > 0 ? " has-translation" : ""}`;
       tab.textContent = String(index + 1);
       tab.addEventListener("click", () => showTranslationPage(index));
       pageTabs.appendChild(tab);
@@ -238,6 +374,7 @@
     document.getElementById("detailNext").addEventListener("click", () => {
       showTranslationPage(activeTranslationPage + 1);
     });
+    if (usesVocabulary) attachVocabularyEvents();
   }
 
   if (!series || !Array.isArray(imagesByChapter) || imagesByChapter.length === 0) {
@@ -249,7 +386,8 @@
   imagesByChapter.forEach((imageFiles, chapterIndex) => {
     const pages = imageFiles.filter(Boolean).map((imagePath) => ({
       image_path: imagePath,
-      translations: []
+      translations: [],
+      vocabularies: []
     }));
     if (pages.length > 0) {
       chapters.push({
@@ -272,22 +410,36 @@
 
   try {
     const client = window.getSupabaseClient();
-    const { data, error } = await client
-      .from("manga_translations")
-      .select("chapter_number,page_number,line_number,romaji,japanese,meaning")
-      .eq("series", series)
-      .order("chapter_number")
-      .order("page_number")
-      .order("line_number")
-      .order("id");
+    if (usesVocabulary) await initializeVocabularyAuth(client);
+    const { data, error } = usesVocabulary
+      ? await client
+        .from("manga_vocabularies")
+        .select("vocab_id,page_no,seq_no,kana,kanji,meaning")
+        .eq("manga_id", vocabularyMangaId)
+        .order("page_no")
+        .order("seq_no")
+        .order("vocab_id")
+      : await client
+        .from("manga_translations")
+        .select("chapter_number,page_number,line_number,romaji,japanese,meaning")
+        .eq("series", series)
+        .order("chapter_number")
+        .order("page_number")
+        .order("line_number")
+        .order("id");
     if (error) {
-      throw new Error(`โหลดคำแปลจาก Supabase ไม่สำเร็จ: ${error.message}`);
+      throw new Error(`โหลด${usesVocabulary ? "คำศัพท์" : "คำแปล"}จาก Supabase ไม่สำเร็จ: ${error.message}`);
     }
 
-    data.forEach((translation) => {
-      const chapter = chapters.find((item) => item.number === translation.chapter_number);
-      const page = chapter && chapter.pages[translation.page_number - 1];
-      if (page) page.translations.push(translation);
+    data.forEach((entry) => {
+      const chapterNumber = usesVocabulary ? 1 : entry.chapter_number;
+      const pageNumber = usesVocabulary ? entry.page_no : entry.page_number;
+      const chapter = chapters.find((item) => item.number === chapterNumber);
+      const page = chapter && chapter.pages[pageNumber - 1];
+      if (page) {
+        if (usesVocabulary) page.vocabularies.push(entry);
+        else page.translations.push(entry);
+      }
     });
 
     if (modalBackdrop.classList.contains("open")) {
@@ -296,7 +448,8 @@
     }
   } catch (error) {
     chapters.forEach((chapter) => chapter.pages.forEach((page) => {
-      page.translations = null;
+      if (usesVocabulary) page.vocabularies = null;
+      else page.translations = null;
     }));
     if (modalBackdrop.classList.contains("open")) {
       showTranslationPage(activeTranslationPage);

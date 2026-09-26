@@ -79,6 +79,17 @@ button { cursor: pointer; }
 .translation-table td { padding: 10px 12px; border: 1px solid #e2e8f0; vertical-align: top; line-height: 1.5; word-break: break-word; overflow-wrap: anywhere; }
 .translation-table tr:nth-child(even) { background-color: #fafafa; }
 
+.vocabulary-editor { flex: 0 0 auto; margin-top: 12px; padding: 12px; border: 1px solid #ddd; border-radius: 5px; background: #f8f8fa; }
+.vocabulary-editor h3 { margin: 0 0 8px; font-size: 14px; }
+.vocabulary-editor p { margin: 0 0 8px; color: #555; font-size: 12px; }
+.vocabulary-editor form { display: grid; gap: 8px; }
+.vocabulary-editor label { display: grid; gap: 4px; color: #444; font-size: 12px; }
+.vocabulary-editor input { width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 4px; font: inherit; }
+.vocabulary-editor button { justify-self: start; padding: 7px 12px; border: 0; border-radius: 4px; color: #fff; background: #7455e8; font: inherit; }
+.vocabulary-editor button:disabled { opacity: .6; cursor: wait; }
+.vocabulary-editor [role="status"], .vocabulary-editor [role="alert"] { margin: 8px 0 0; }
+.vocabulary-editor [hidden] { display: none; }
+
 .col-no { text-align: center; width: 48px; }
 .col-romaji { width: 28%; font-size: 13px; color: #444; }
 .col-japanese { width: 34%; font-weight: 500; font-size: 14px; }
@@ -106,7 +117,7 @@ button { cursor: pointer; }
         </h1>
         <h1>(มุมมองที่ฉันมีต่อเพื่อนสมัยเด็กเปลี่ยนไปแล้ว)</h1>
       </div>
-      <button class="icon-button" id="openTranslation" type="button" aria-label="เปิดคำแปลทุกหน้า">文</button>
+      <button class="icon-button" id="openTranslation" type="button" aria-label="เปิดคำศัพท์ทุกหน้า">文</button>
     </header>
 
     <section class="reader-stage">
@@ -139,10 +150,10 @@ button { cursor: pointer; }
   </div>
 
   <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
-    <div class="translation-modal" id="translationModal" aria-label="คำแปลภาษาไทย" role="dialog">
+    <div class="translation-modal" id="translationModal" aria-label="คำศัพท์จากมังงะ" role="dialog">
       <header class="reader-header">
         <button class="icon-button" id="closeTranslation" type="button" aria-label="ปิด">‹</button>
-        <div class="title-group"><h1>คำแปลภาษาไทย</h1></div>
+        <div class="title-group"><h1>คำศัพท์จากมังงะ</h1></div>
         <span class="icon-button" aria-hidden="true" style="visibility:hidden">文</span>
       </header>
 
@@ -152,8 +163,8 @@ button { cursor: pointer; }
         <div class="translation-body-head">
           <h2 id="detailTitle">หน้า 1</h2>
           <div class="step-arrows">
-            <button class="step-arrow" id="detailPrev" type="button" aria-label="หน้าคำแปลก่อนหน้า">‹</button>
-            <button class="step-arrow" id="detailNext" type="button" aria-label="หน้าคำแปลถัดไป">›</button>
+            <button class="step-arrow" id="detailPrev" type="button" aria-label="หน้าก่อนหน้า">‹</button>
+            <button class="step-arrow" id="detailNext" type="button" aria-label="หน้าถัดไป">›</button>
           </div>
         </div>
 
@@ -162,14 +173,31 @@ button { cursor: pointer; }
             <thead>
               <tr>
                 <th class="col-no">ลำดับ</th>
-                <th class="col-romaji">โรมันจิ</th>
-                <th class="col-japanese">ภาษาญี่ปุ่น</th>
+                <th class="col-romaji">Kana</th>
+                <th class="col-japanese">Kanji</th>
                 <th class="col-meaning">ความหมาย</th>
               </tr>
             </thead>
             <tbody id="translationTableBody"></tbody>
           </table>
         </div>
+
+        <section class="vocabulary-editor" id="vocabularyEditor" aria-label="เพิ่มคำศัพท์" hidden>
+          <h3>เพิ่มคำศัพท์หน้านี้</h3>
+          <form id="vocabularyAddForm">
+            <label>Kana
+              <input name="kana" type="text" maxlength="500" required>
+            </label>
+            <label>Kanji
+              <input name="kanji" type="text" maxlength="500" required>
+            </label>
+            <label>ความหมาย
+              <input name="meaning" type="text" maxlength="2000" required>
+            </label>
+            <button id="vocabularySaveButton" type="submit">เพิ่มคำศัพท์</button>
+          </form>
+          <p id="vocabularyStatus" role="status" aria-live="polite"></p>
+        </section>
 
       </div>
     </div>
@@ -178,6 +206,6 @@ button { cursor: pointer; }
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="data/supabase-client.js"></script>
   <script src="data/manga-images.js"></script>
-  <script src="data/manga-reader-supabase.js" data-series="manga-jp"></script>
+  <script src="data/manga-reader-supabase.js" data-series="manga-jp" data-vocabulary-manga-id="1"></script>
 </body>
 </html>

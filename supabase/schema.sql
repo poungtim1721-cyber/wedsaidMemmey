@@ -85,6 +85,20 @@ grant select on public.jlpt_kanji to anon, authenticated;
 grant select on public.jlpt_grammar to anon, authenticated;
 grant select on public.manga_translations to anon, authenticated;
 
+do $$
+begin
+  if to_regclass('public.manga_vocabularies') is not null then
+    execute 'alter table public.manga_vocabularies enable row level security';
+    execute 'drop policy if exists "Public can read manga vocabularies" on public.manga_vocabularies';
+    execute 'create policy "Public can read manga vocabularies" on public.manga_vocabularies for select to anon, authenticated using (true)';
+    execute 'drop policy if exists "Authenticated can add manga-jp vocabulary" on public.manga_vocabularies';
+    execute 'create policy "Authenticated can add manga-jp vocabulary" on public.manga_vocabularies for insert to authenticated with check (auth.uid() is not null and manga_id = 1 and category = ''manga-jp'')';
+    execute 'grant select on public.manga_vocabularies to anon, authenticated';
+    execute 'grant insert on public.manga_vocabularies to authenticated';
+  end if;
+end
+$$;
+
 insert into public.manga_translations
   (series, chapter_number, page_number, line_number, romaji, japanese, meaning)
 values

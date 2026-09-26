@@ -3,29 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>みさこ</title>
+    <title>みさこ - คำศัพท์ N5</title>
     <link rel="stylesheet" href="/css/文法.css">
-</head>
-<body>
-
-    <header class="jlpt-header">
-        <div class="nav-container">
-            <a href="#" class="logo">
-                <span class="jlpt-text">文法<span class="red-p">みさこ</span><span class="kanji-text"></span>
-                <span class="kanji-text">ศัพท์เเละไวยากรณ์</span>
-            </a>
-            <nav class="nav-links">
-                <a href="home.html" class="nav-item">หน้าหลัก</a>
-                <a href="文法.html" class="nav-item">คำศัพท์ & ไวยากรณ์</a>
-                <a href="文法N5.html" class="nav-item">N5</a>
-                <a href="文法N4.html" class="nav-item active">N4</a>
-                <a href="文法N3.html" class="nav-item">N3</a>
-                <a href="文法N2.html" class="nav-item">N2</a>
-                <a href="文法N1.html" class="nav-item">N1</a>
-            </nav>
-        </div>
-    </header>
-    <title>JLPT N3 Grammar List</title>
     <style>
         * {
             box-sizing: border-box;
@@ -35,12 +14,10 @@
         }
 
         body {
-            /* เปลี่ยนสีพื้นหลังหน้าเว็บให้เป็นสีอ่อน เพื่อให้กรอบ UI สีขาวเด่นขึ้นมา */
-            background-color: #f5f7fa;  /* สีพื้นหลังอ่อน ๆ */
-            color: #333; /* สีตัวอักษรหลักเป็นสีเข้มเพื่อให้อ่านง่าย */
+            background-color: #f5f7fa;
+            color: #333;
         }
 
-        /* ส่วนโครงสร้างของ Header */
         .jlpt-header {
             background-color: #579aff; 
             width: 100%;
@@ -48,7 +25,7 @@
         }
 
         .nav-container {
-            max-width: 1100px; /* ความกว้างสูงสุดให้สัมพันธ์กับ container ด้านล่าง */
+            max-width: 1100px;
             margin: 0 auto;
             display: flex;
             align-items: center;
@@ -56,6 +33,7 @@
             padding: 0 20px;
             height: 70px;
         }
+
         .logo {
             text-decoration: none;
             display: flex;
@@ -63,27 +41,23 @@
             gap: 6px;
             color: #000000;
         }
+
         .jlpt-text {
             font-size: 29px;
             font-weight: 800;
             letter-spacing: -1px;
         }
-        /* ตัว P สัญลักษณ์สีแดง */
+
         .red-p {
             color: #b83030;
         }
-        .kanji-text {
-            font-size: 18px;
-            font-weight: 500;
-            color: #111111;
-        }
 
-        /* --- 2. เมนูหลัก --- */
         .nav-links {
             display: flex;
             align-items: center;
             height: 100%;
         }
+
         .nav-item {
             text-decoration: none;
             color: #000000;
@@ -96,79 +70,79 @@
             justify-content: center;
             transition: background-color 0.2s, color 0.2s;
         }
+
         .nav-item:hover {
             background-color: #9ac2ed; 
         }
+
         .nav-item.active {
             background-color: #a0c6e9; 
             font-weight: 600;
         }
-        .nav-item.active:hover {
-            background-color: #c3ccb8;
-        }
 
-        /* --- 3. กรอบ UI (Container) สำหรับเนื้อหา --- */
         .container {
             width: 90%;
             max-width: 1100px;
-            margin: 40px auto; /* margin: auto ช่วยให้อยู่กึ่งกลาง และเว้นระยะบน-ล่าง 40px */
-            background-color: #ffffff; /* สีพื้นหลังของกรอบ */
-            border-radius: 10px; /* ขอบมุมโค้งมนนิดๆ */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* เพิ่มเงาให้ดูเป็นกรอบลอยขึ้นมา */
-            padding: 30px; /* เว้นระยะเนื้อหาด้านในขอบซ้าย-ขวา-บน-ล่าง */
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 30px;
         }
 
-        /* Table Styles */
         .table-wrap {
-    overflow-x: auto;
-    margin-bottom: 30px;
-}
-table {
-    width: 100%;
-    min-width: 1200px;
-    border-collapse: collapse;
-    margin-bottom: 0;
-}
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
         th, td {
-            border: 1px solid #ddd; /* ปรับสีเส้นขอบตารางให้อ่อนลงนิดนึงเพื่อความสวยงาม */
+            border: 1px solid #ddd;
             padding: 15px;
             text-align: left;
+            vertical-align: top;
         }
+
         th {
             background-color: #8cc63f;
-            color: rgb(0, 0, 0);
+            color: #000;
             font-weight: bold;
             border-color: #5c5c5c;
         }
+
         tr:nth-child(even) {
             background-color: #fffdfd;
         }
 
-        /* Pagination Styles */
         .pagination-container {
             background-color: #5c5c5c;
             color: white;
             text-align: center;
             padding: 30px 20px;
-            border-radius: 8px; /* เพิ่มความโค้งมนให้กรอบ Pagination เข้ากับ UI */
+            border-radius: 8px;
         }
+
         .pagination-container h2 {
             margin: 0 0 10px 0;
             font-size: 24px;
         }
+
         .pagination-container p {
             margin: 0 0 20px 0;
             font-size: 16px;
         }
+
         .pagination {
             display: inline-flex;
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        .pagination li {
-            margin: 0;
-        }
+
         .pagination a {
             display: block;
             padding: 12px 20px;
@@ -178,111 +152,156 @@ table {
             font-size: 18px;
             border-right: 1px solid #44a89d;
         }
+
         .pagination li:first-child a {
             border-top-left-radius: 5px;
             border-bottom-left-radius: 5px;
         }
+
         .pagination li:last-child a {
             border-right: none;
             border-top-right-radius: 5px;
             border-bottom-right-radius: 5px;
         }
+
         .pagination a:hover {
             background-color: #44a89d;
         }
+
         .pagination .active a {
             background-color: #1f9e8f;
-        }
-        .pagination a.arrow {
-            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <!-- UI Container (กรอบเนื้อหา) -->
+
+    <header class="jlpt-header">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="jlpt-text">文法<span class="red-p">みさこ</span></span>
+                <span class="kanji-text">ศัพท์เเละไวยากรณ์</span>
+            </a>
+            <nav class="nav-links">
+                <a href="home.html" class="nav-item">หน้าหลัก</a>
+                <a href="文法.html" class="nav-item">คำศัพท์ & ไวยากรณ์</a>
+                <a href="文法N5.html" class="nav-item active">N5</a>
+                <a href="文法N4.html" class="nav-item">N4</a>
+                <a href="文法N3.html" class="nav-item">N3</a>
+                <a href="文法N2.html" class="nav-item">N2</a>
+                <a href="文法N1.html" class="nav-item">N1</a>
+            </nav>
+        </div>
+    </header>
+
     <main class="container">
         <div class="table-wrap">
-        <table>
-            <thead>
-    <tr>
-        <th style="width: 5%; text-align: center;">#</th>
-        <th style="width: 18%;">ไวยากรณ์</th>
-        <th style="width: 12%;">คำอ่าน</th>
-        <th style="width: 12%;">ความหมาย</th>
-        <th style="width: 20%;">คำอธิบาย</th>
-        <th style="width: 18%;">ตัวอย่างภาษาญี่ปุ่น</th>
-        <th style="width: 15%;">คำแปล</th>
-    </tr>
-</thead>
-            <tbody><tr><td colspan="7">กำลังโหลดข้อมูล...</td></tr></tbody>
-        </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 5%; text-align: center;">#</th>
+                        <th style="width: 20%;">คำศัพท์</th>
+                        <th style="width: 20%;">คำอ่าน</th>
+                        <th style="width: 55%;">รายละเอียด / ความหมาย</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="4">กำลังโหลดข้อมูล...</td></tr>
+                </tbody>
+            </table>
         </div>
-            <h2>漢字 みさこ</h2>
-            <p>ขณะนี้กำลังดูหน้า 1 จากทั้งหมด 5 หน้า</p>
-            <ul class="pagination">
-                <li class="active"><a href="">1</a></li>
-                <li ><a href="">2</a></li>
-                <li><a href="">3</a></li>
-                <li><a href="">4</a></li>
-                <li><a href="">5</a></li>
-            </ul>
+
+        <div class="pagination-container">
+            <h2>漢字 みさこ (N5)</h2>
+            <p>กำลังโหลดข้อมูลหน้า...</p>
+            <ul class="pagination"></ul>
         </div>
     </main>
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../data/supabase-client.js"></script>
     <script src="../../data/supabase-data.js"></script>
+    
     <script>
         (async function () {
+            // 1. เปลี่ยนระดับเป็น N5
             const level = "N4";
+            
+            // หมายเหตุ: หากใน Supabase คุณใช้ตารางชื่ออื่น เช่น "jlpt_vocabulary" ให้แก้ไขตรงนี้
+            const tableName = "jlpt_grammar"; 
+
             const tableBody = document.querySelector("tbody");
             const paginationContainer = document.querySelector(".pagination-container");
 
             try {
                 if (!tableBody || !paginationContainer) {
-                    throw new Error("ไม่พบตารางหรือส่วนแบ่งหน้าไวยากรณ์ในหน้านี้");
+                    throw new Error("ไม่พบตารางหรือส่วนแบ่งหน้าในหน้านี้");
                 }
 
                 const client = window.getSupabaseClient();
                 const { data, error } = await client
-                    .from("jlpt_grammar")
+                    .from(tableName)
                     .select("id,level,pattern,reading,meaning,explanation,example_jp,example_th,sort_order")
                     .eq("level", level)
                     .order("sort_order")
                     .order("id");
+
                 if (error) {
-                    throw new Error(`Could not load jlpt_grammar: ${error.message}`);
+                    throw new Error(`Could not load data: ${error.message}`);
                 }
 
                 const pageSize = 20;
                 const params = new URLSearchParams(window.location.search);
-                const pageCount = Math.max(1, Math.ceil(data.length / pageSize));
+                const pageCount = Math.max(1, Math.ceil((data?.length || 0) / pageSize));
                 const currentPage = Math.min(pageCount, Math.max(1, Number(params.get("page")) || 1));
                 const items = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
                 tableBody.replaceChildren();
 
                 if (items.length === 0) {
                     const row = document.createElement("tr");
                     const cell = document.createElement("td");
                     cell.colSpan = 4;
-                    cell.textContent = "ยังไม่มีข้อมูลไวยากรณ์ระดับนี้ในฐานข้อมูล";
+                    cell.style.textAlign = "center";
+                    cell.textContent = "ยังไม่มีข้อมูลคำศัพท์ระดับ N5 ในฐานข้อมูล";
                     row.appendChild(cell);
                     tableBody.appendChild(row);
                 } else {
                     items.forEach((item, index) => {
                         const row = document.createElement("tr");
-                        for (const value of [
-    String((currentPage - 1) * pageSize + index + 1),
-    item.pattern,
-    item.reading,
-    item.meaning,
-    item.explanation,
-    item.example_jp,
-    item.example_th,
-]) {
-    const cell = document.createElement("td");
-    cell.textContent = value || "";
-    row.appendChild(cell);
-}
+
+                        // 1. ลำดับ
+                        const cellIndex = document.createElement("td");
+                        cellIndex.style.textAlign = "center";
+                        cellIndex.textContent = String((currentPage - 1) * pageSize + index + 1);
+                        row.appendChild(cellIndex);
+
+                        // 2. คำศัพท์ (ใช้ pattern หรือ word)
+                        const cellWord = document.createElement("td");
+                        cellWord.textContent = item.pattern || "";
+                        row.appendChild(cellWord);
+
+                        // 3. คำอ่าน
+                        const cellReading = document.createElement("td");
+                        cellReading.textContent = item.reading || "";
+                        row.appendChild(cellReading);
+
+                        // 4. ความหมายและคำอธิบาย
+                        const detailsCell = document.createElement("td");
+                        for (const [label, value] of [
+                            ["ความหมาย", item.meaning],
+                            ["คำอธิบาย", item.explanation],
+                            ["ตัวอย่าง", item.example_jp],
+                            ["แปล", item.example_th],
+                        ]) {
+                            if (!value) continue;
+                            const detail = document.createElement("p");
+                            const labelElement = document.createElement("strong");
+                            labelElement.textContent = `${label}: `;
+                            detail.append(labelElement, document.createTextNode(value));
+                            detailsCell.appendChild(detail);
+                        }
+                        row.appendChild(detailsCell);
+
                         tableBody.appendChild(row);
                     });
                 }
@@ -298,23 +317,34 @@ table {
                     for (let pageNumber = 1; pageNumber <= pageCount; pageNumber += 1) {
                         const item = document.createElement("li");
                         if (pageNumber === currentPage) item.className = "active";
+
                         const link = document.createElement("a");
                         link.href = `?page=${pageNumber}`;
                         link.textContent = String(pageNumber);
+
                         if (pageNumber === currentPage) {
                             link.setAttribute("aria-current", "page");
                         }
+
                         item.appendChild(link);
                         list.appendChild(item);
                     }
                 }
             } catch (error) {
+                console.error(error);
                 if (tableBody) {
-                    window.showSupabaseError(tableBody, error);
-                } else {
-                    throw error;
+                    tableBody.replaceChildren();
+                    const row = document.createElement("tr");
+                    const cell = document.createElement("td");
+                    cell.colSpan = 4;
+                    cell.style.color = "red";
+                    cell.style.textAlign = "center";
+                    cell.textContent = `เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}`;
+                    row.appendChild(cell);
+                    tableBody.appendChild(row);
                 }
             }
         })();
-    </script></body>
+    </script>
+</body>
 </html>
