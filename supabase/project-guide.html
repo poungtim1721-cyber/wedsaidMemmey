@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>คู่มือเชื่อมต่อ Supabase — JLPT みさこ</title>
+<style>
+  @page { size: A4; margin: 16mm 16mm 17mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; color: #172b3a; font: 11pt/1.55 "Leelawadee UI", "Tahoma", sans-serif; }
+  h1, h2, h3, p { margin-top: 0; }
+  h1 { margin-bottom: 6mm; font-size: 28pt; line-height: 1.2; }
+  h2 { margin: 0 0 4mm; color: #135e83; font-size: 19pt; }
+  h3 { margin: 5mm 0 2mm; font-size: 12pt; }
+  p { margin-bottom: 3mm; }
+  code { font-family: Consolas, "Courier New", monospace; }
+  .cover { min-height: 255mm; display: flex; flex-direction: column; justify-content: center; }
+  .eyebrow { color: #2082a9; font-weight: 700; letter-spacing: .08em; }
+  .lead { max-width: 155mm; color: #526777; font-size: 14pt; }
+  .badge { display: inline-block; margin: 2mm 2mm 0 0; padding: 2mm 4mm; border-radius: 20px; background: #e8f5fa; color: #135e83; font-size: 10pt; font-weight: 700; }
+  .callout { margin: 4mm 0; padding: 4mm 5mm; border-left: 4px solid #2082a9; background: #edf7fa; }
+  .warning { border-left-color: #cf7d19; background: #fff6e9; }
+  .page { page-break-before: always; }
+  table { width: 100%; margin: 4mm 0; border-collapse: collapse; }
+  th, td { padding: 2.5mm 3mm; border: 1px solid #cfdae1; text-align: left; }
+  th { background: #e8f2f6; }
+  .number { text-align: right; font-variant-numeric: tabular-nums; }
+  .steps li { margin: 2mm 0; padding-left: 1mm; }
+  .sql-title { margin: 0 0 3mm; }
+  pre { margin: 0; padding: 4mm; border-radius: 3mm; background: #f3f6f8; color: #172b3a; white-space: pre-wrap; overflow-wrap: anywhere; font: 9pt/1.45 Consolas, "Courier New", monospace; }
+  .sql-page { page-break-before: always; }
+  .small { color: #526777; font-size: 9pt; }
+  .footer { margin-top: 10mm; color: #718392; font-size: 9pt; }
+</style>
+</head>
+<body>
+  <section class="cover">
+    <p class="eyebrow">PROJECT GUIDE · SUPABASE + JLPT</p>
+    <h1>คู่มือสร้างฐานข้อมูล<br>และเชื่อมเว็บไซต์</h1>
+    <p class="lead">สรุป SQL และชุดข้อมูลที่มีในโปรเจกต์ VS Code พร้อมขั้นตอนนำเข้าข้อมูลคำศัพท์ คันจิ และการตั้งค่าอ่านข้อมูลผ่าน Supabase</p>
+    <div>
+      <span class="badge">โปรเจกต์ hrhhbahxwbolhvhrbhjn</span>
+      <span class="badge">JLPT N5–N1 + Manga reader</span>
+      <span class="badge">อัปเดต 26 กันยายน 2026</span>
+    </div>
+    <div class="callout">
+      <strong>ไฟล์ SQL สำหรับรัน:</strong> <code>supabase/schema.sql</code><br>
+      <strong>Project URL:</strong> <code>https://hrhhbahxwbolhvhrbhjn.supabase.co</code>
+    </div>
+    <p class="footer">เอกสารนี้สร้างจากไฟล์และข้อมูลในโปรเจกต์ที่ให้ตรวจสอบ ไม่ได้เชื่อมต่อหรือเปลี่ยนแปลงฐานข้อมูล Supabase ให้โดยอัตโนมัติ</p>
+  </section>
+
+  <section class="page">
+    <h2>1. ข้อมูลในโปรเจกต์ปัจจุบัน</h2>
+    <p>สคริปต์ <code>supabase/export-content-csv.ps1</code> เตรียมข้อมูลจากไฟล์เดิมในโฟลเดอร์ <code>data</code> เป็น CSV เพื่อนำเข้าใน Supabase</p>
+    <table>
+      <thead><tr><th>ระดับ</th><th class="number">คำศัพท์</th><th class="number">คันจิ</th><th>แหล่งข้อมูล</th></tr></thead>
+      <tbody>
+        <tr><td>N5</td><td class="number">718</td><td class="number">79</td><td>ไฟล์ข้อมูลเดิม</td></tr>
+        <tr><td>N4</td><td class="number">668</td><td class="number">166</td><td>ไฟล์ข้อมูลเดิม</td></tr>
+        <tr><td>N3</td><td class="number">2,140</td><td class="number">367</td><td>ไฟล์ข้อมูลเดิม</td></tr>
+        <tr><td>N2</td><td class="number">1,905</td><td class="number">367</td><td>ไฟล์ข้อมูลเดิม</td></tr>
+        <tr><td>N1</td><td class="number">2,699</td><td class="number">1,232</td><td>ไฟล์ข้อมูลเดิม</td></tr>
+        <tr><th>รวม</th><th class="number">8,130</th><th class="number">2,211</th><th>ชุดข้อมูลในไฟล์ VS Code หลังลบคำศัพท์ซ้ำ</th></tr>
+      </tbody>
+    </table>
+    <p>ตรวจ Supabase API ล่าสุดพบข้อมูลในฐานจริง: คำศัพท์ 6 แถว, คันจิ 10 แถว และไวยากรณ์ 8 แถว ยังน้อยกว่าชุดข้อมูลในไฟล์ VS Code ที่ export ได้</p>
+    <p>หน้ามังงะ 3 หน้าอ่านเฉพาะข้อความคำแปลจากตาราง <code>manga_translations</code>; รูปยังโหลดจากไฟล์เดิมในเว็บไซต์ ไม่ต้องเก็บรูปใน Supabase</p>
+    <div class="callout warning">
+      <strong>สถานะไวยากรณ์:</strong> มีข้อมูลใน <code>jlpt_grammar</code> แล้ว 8 แถวจากการตรวจ API แต่ควรตรวจความครบถ้วนแต่ละระดับก่อนเพิ่มข้อมูลที่ขาด
+    </div>
+    <div class="callout warning">
+      <strong>สถานะคำแปลมังงะ:</strong> โปรเจกต์เดิมมีคำแปล 2 บรรทัดในชุด <code>manga-kana</code> ซึ่งแสดงในหน้า <code>まんか読み</code> ต้องรัน SQL แล้วคำแปลจึงจะโหลดจาก Supabase
+    </div>
+    <p><strong>ภาษาในช่องความหมาย:</strong> คำศัพท์และคันจิจากชุดเดิมส่วนใหญ่เป็นภาษาอังกฤษ ตรวจและแปลความหมายใน CSV ก่อนนำเข้า หากต้องการให้หน้าเว็บแสดงภาษาไทย</p>
+    <p class="small">จำนวนคันจิจำแนกตามฟิลด์ JLPT ใหม่ในไฟล์คันจิเดิม จำนวนนี้ไม่ใช่การรับรองรายการตามหลักสูตรหรือชุดข้อสอบอย่างเป็นทางการ</p>
+
+    <h2>2. ขั้นตอนตั้งค่าและนำเข้า</h2>
+    <ol class="steps">
+      <li>เปิด <code>https://supabase.com/dashboard/project/hrhhbahxwbolhvhrbhjn/sql</code> แล้วเลือก SQL Editor</li>
+      <li>หากยังไม่มีตาราง JLPT ให้รัน <code>supabase/schema.sql</code>; หากสร้างตารางคำศัพท์/คันจิไว้แล้ว ให้รันเฉพาะ <code>supabase/manga-schema.sql</code></li>
+      <li>ที่โฟลเดอร์โปรเจกต์ รัน <code>.\supabase\export-content-csv.ps1</code> ใน PowerShell เพื่อสร้าง CSV ใน <code>supabase\import</code></li>
+      <li>ใน Table Editor นำเข้า <code>jlpt_vocabulary.csv</code> → <code>jlpt_vocabulary</code> และ <code>jlpt_kanji.csv</code> → <code>jlpt_kanji</code></li>
+      <li>รัน <code>supabase/manga-schema.sql</code> เพื่อสร้างตารางคำแปล พร้อมเพิ่มคำแปล 2 รายการที่มีอยู่แล้วในชุด <code>manga-kana</code></li>
+      <li>เพิ่มคำแปลอื่นใน <code>manga_translations</code> โดยระบุชุดมังงะ บท หน้า และลำดับบรรทัดให้ตรงกัน</li>
+      <li>เพิ่มรายการไวยากรณ์ที่ตรวจสอบแล้วลง <code>jlpt_grammar</code> เมื่อมีข้อมูลพร้อม</li>
+      <li>ตั้งค่า publishable key ใน <code>data/supabase-client.js</code> แล้วทดสอบเว็บไซต์ผ่านเว็บเซิร์ฟเวอร์</li>
+    </ol>
+    <p class="small">อย่านำเข้า <code>id</code> หรือ <code>created_at</code> จาก CSV ฐานข้อมูลจะสร้างค่าให้เอง ส่วนระดับให้ใช้ N5, N4, N3, N2 หรือ N1 เท่านั้น</p>
+  </section>
+
+  <section class="sql-page">
+    <h2 class="sql-title">3. SQL สำหรับรันใน Supabase (ส่วนที่ 1/2)</h2>
+<pre>create table if not exists public.jlpt_vocabulary (
+  id bigint generated by default as identity primary key,
+  level text not null check (level in ('N5', 'N4', 'N3', 'N2', 'N1')),
+  word text not null,
+  reading text not null default '',
+  meaning text not null default '',
+  created_at timestamptz not null default now(),
+  unique (level, word, reading)
+);
+
+create table if not exists public.jlpt_kanji (
+  id bigint generated by default as identity primary key,
+  level text not null check (level in ('N5', 'N4', 'N3', 'N2', 'N1')),
+  character text not null,
+  readings_on text[] not null default '{}',
+  readings_kun text[] not null default '{}',
+  meaning text not null default '',
+  created_at timestamptz not null default now(),
+  unique (level, character)
+);
+
+create table if not exists public.jlpt_grammar (
+  id bigint generated by default as identity primary key,
+  level text not null check (level in ('N5', 'N4', 'N3', 'N2', 'N1')),
+  pattern text not null,
+  reading text not null default '',
+  meaning text not null default '',
+  explanation text not null default '',
+  example_jp text not null default '',
+  example_th text not null default '',
+  sort_order integer not null default 0,
+  created_at timestamptz not null default now(),
+  unique (level, pattern)
+);
+
+create table if not exists public.manga_translations (
+  id bigint generated by default as identity primary key,
+  series text not null check (series in ('manga-jp', 'manga-kana', 'manga-th')),
+  chapter_number integer not null check (chapter_number &gt; 0),
+  page_number integer not null check (page_number &gt; 0),
+  line_number integer not null check (line_number &gt; 0),
+  romaji text not null default '',
+  japanese text not null default '',
+  meaning text not null default '',
+  created_at timestamptz not null default now(),
+  unique (series, chapter_number, page_number, line_number)
+);</pre>
+  </section>
+
+  <section class="sql-page">
+    <h2 class="sql-title">4. SQL สำหรับรันใน Supabase (ส่วนที่ 2/2)</h2>
+<pre>create index if not exists jlpt_vocabulary_level_idx
+  on public.jlpt_vocabulary (level, word);
+create index if not exists jlpt_kanji_level_idx
+  on public.jlpt_kanji (level, character);
+create index if not exists jlpt_grammar_level_order_idx
+  on public.jlpt_grammar (level, sort_order, id);
+create index if not exists manga_translations_series_chapter_page_idx
+  on public.manga_translations (series, chapter_number, page_number, line_number);
+
+alter table public.jlpt_vocabulary enable row level security;
+alter table public.jlpt_kanji enable row level security;
+alter table public.jlpt_grammar enable row level security;
+alter table public.manga_translations enable row level security;
+
+drop policy if exists "Public can read JLPT vocabulary" on public.jlpt_vocabulary;
+create policy "Public can read JLPT vocabulary"
+  on public.jlpt_vocabulary for select to anon, authenticated
+  using (true);
+
+drop policy if exists "Public can read JLPT kanji" on public.jlpt_kanji;
+create policy "Public can read JLPT kanji"
+  on public.jlpt_kanji for select to anon, authenticated
+  using (true);
+
+drop policy if exists "Public can read JLPT grammar" on public.jlpt_grammar;
+create policy "Public can read JLPT grammar"
+  on public.jlpt_grammar for select to anon, authenticated
+  using (true);
+
+drop policy if exists "Public can read manga translations" on public.manga_translations;
+create policy "Public can read manga translations"
+  on public.manga_translations for select to anon, authenticated
+  using (true);
+
+grant select on public.jlpt_vocabulary to anon, authenticated;
+grant select on public.jlpt_kanji to anon, authenticated;
+grant select on public.jlpt_grammar to anon, authenticated;
+grant select on public.manga_translations to anon, authenticated;
+
+insert into public.manga_translations
+  (series, chapter_number, page_number, line_number, romaji, japanese, meaning)
+values
+  ('manga-kana', 1, 1, 1,
+   'osananajimiomirumegakawatteshimatta',
+   '幼なじみを見る目が変わってしまった',
+   'มุมมองที่ฉันมีต่อเพื่อนสมัยเด็กเปลี่ยนไปแล้ว'),
+  ('manga-kana', 1, 2, 1,
+   'iyada', 'イヤだ (いやだ)',
+   'ไม่ได้ / ไม่อะ ใช้ในการปฏิเสธ')
+on conflict (series, chapter_number, page_number, line_number)
+do update set
+  romaji = excluded.romaji,
+  japanese = excluded.japanese,
+  meaning = excluded.meaning;</pre>
+    <p class="small">RLS เปิดใช้งานทั้งสี่ตาราง และอนุญาตให้อ่านเท่านั้น ไม่เปิดสิทธิ์เพิ่ม แก้ไข หรือลบจากหน้าเว็บ คำแปลเดิมสองรายการใช้ series manga-kana</p>
+    <p class="small">ตารางคำแปลมีคอลัมน์ series, chapter_number, page_number, line_number, romaji, japanese และ meaning</p>
+  </section>
+
+  <section class="page">
+    <h2>5. เชื่อม API key อย่างปลอดภัย</h2>
+    <ol class="steps">
+      <li>ใน Supabase เปิด <strong>Project Settings → API</strong> แล้วคัดลอก <strong>publishable key</strong> หรือ <strong>anon key</strong> แบบเดิม</li>
+      <li>เปิด <code>data/supabase-client.js</code> ใน VS Code และตรวจว่าใส่ publishable/anon key ของโปรเจกต์ถูกต้องแล้ว ห้ามใส่ secret key</li>
+      <li>บันทึกไฟล์ และทดสอบเว็บจาก local web server หรือโฮสต์เว็บไซต์ของคุณ ไม่ใช่เปิด HTML ด้วย <code>file://</code></li>
+    </ol>
+    <div class="callout warning">
+      <strong>ห้ามใส่ service_role key</strong> ใน HTML, JavaScript หรือ PDF ที่เผยแพร่ต่อ เพราะ key นี้ข้าม RLS และให้สิทธิ์ระดับผู้ดูแล Publishable/anon key ใช้ใน browser ได้เมื่อเปิด RLS และกำหนด policy อย่างเหมาะสม
+    </div>
+
+    <h2>6. โครงสร้างคอลัมน์</h2>
+    <table>
+      <thead><tr><th>ตาราง</th><th>ข้อมูลสำคัญ</th></tr></thead>
+      <tbody>
+        <tr><td><code>jlpt_vocabulary</code></td><td><code>level, word, reading, meaning</code></td></tr>
+        <tr><td><code>jlpt_kanji</code></td><td><code>level, character, readings_on, readings_kun, meaning</code></td></tr>
+        <tr><td><code>jlpt_grammar</code></td><td><code>level, pattern, reading, meaning, explanation, example_jp, example_th, sort_order</code></td></tr>
+      </tbody>
+    </table>
+    <h2>7. ตรวจสอบเมื่อทำเสร็จ</h2>
+    <ul>
+      <li>SQL Editor รันสำเร็จ และเห็นตารางทั้งสามใน Table Editor</li>
+      <li>มีข้อมูลคำศัพท์และคันจิหลัง import CSV</li>
+      <li>มี publishable/anon key ที่ถูกต้องในไฟล์ตั้งค่า</li>
+      <li>เปิดหน้าเว็บแล้วไม่มีข้อความแจ้งข้อผิดพลาดการโหลดจาก Supabase</li>
+      <li>ไวยากรณ์แสดงรายการเมื่อเพิ่มข้อมูลลงตารางแล้วเท่านั้น</li>
+    </ul>
+    <p class="footer">ไฟล์อ้างอิงในโปรเจกต์: <code>supabase/schema.sql</code>, <code>supabase/README.md</code>, <code>supabase/export-content-csv.ps1</code></p>
+  </section>
+</body>
+</html>

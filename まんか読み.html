@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ตัวอ่านมังงะภาษาญี่ปุ่นพร้อมตารางคำแปลภาษาไทยประจำแต่ละหน้า">
+  <title>อ่านมังงะ | みさこ</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap');
+
+:root { color-scheme: dark; font-family: "Noto Sans Thai", "Noto Sans JP", sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #181818; color: #fff; }
+button, select { font: inherit; }
+button { cursor: pointer; }
+.reader { position: relative; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; background: #202020; }
+.reader-header { height: 35px; min-height: 35px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; background: #222; z-index: 5; }
+.title-group { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.title-group h1 { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 500; }
+.title-group ruby { ruby-position: over; }
+.title-group rt { color: #c5b9ff; font-size: 7px; line-height: 1; }
+
+.chapter-select { background: #333; color: #eee; border: 1px solid #555; border-radius: 4px; padding: 2px 6px; font-size: 11px; outline: none; cursor: pointer; transition: border-color .2s; }
+.chapter-select:hover, .chapter-select:focus { border-color: #7455e8; }
+
+.icon-button { border: 0; color: #eee; background: transparent; font-size: 25px; line-height: 1; padding: 2px 8px; }
+.icon-button:last-child { font-size: 14px; border: 1px solid #aaa; border-radius: 3px; }
+.reader-stage { position: relative; flex: 1; min-height: 0; background: #fff; color: #333; }
+.page-viewport { width: 100%; height: 100%; overflow: hidden; touch-action: pan-y; user-select: none; }
+.page-track { height: 100%; display: flex; align-items: center; transition: transform .35s ease; will-change: transform; }
+.manga-page { flex: 0 0 100%; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 5px 56px; }
+.manga-page img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+.page-counter { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 2; padding: 3px 10px; border-radius: 12px; color: #666; background: rgba(255,255,255,.8); font-size: 11px; }
+.stage-arrow { position: absolute; top: 50%; z-index: 2; width: 42px; height: 72px; border: 0; border-radius: 5px; color: #444; background: rgba(255,255,255,.7); font-size: 42px; line-height: 1; opacity: .3; transition: opacity .2s, background .2s; }
+.stage-arrow:hover, .stage-arrow:focus-visible { opacity: 1; background: #fff; }
+.stage-arrow-left { left: 8px; }
+.stage-arrow-right { right: 8px; }
+
+.page-dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 2; display: flex; gap: 4px; }
+.page-dots button { width: 6px; height: 6px; padding: 0; border: 0; border-radius: 50%; background: rgba(0, 0, 0, 0.4); cursor: pointer; }
+.page-dots button.active { width: 18px; border-radius: 5px; background: #7455e8; }
+
+.reader-footer { position: relative; height: 57px; min-height: 57px; display: flex; align-items: center; justify-content: center; gap: clamp(18px, 6vw, 72px); border-top: 1px solid #555; background: #222; }
+.footer-button { min-width: 42px; display: flex; flex-direction: column; align-items: center; gap: 2px; border: 0; color: #aaa; background: transparent; font-size: 19px; }
+.footer-button:hover, .footer-button:focus-visible { color: #fff; }
+.footer-button small { font-size: 10px; white-space: nowrap; }
+
+.modal-backdrop { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(0,0,0,0); pointer-events: none; transition: background .25s ease; }
+.modal-backdrop.open { background: rgba(0,0,0,.55); pointer-events: auto; }
+
+/* ขยายขนาด Modal ให้กว้างขึ้นเพื่อรองรับข้อความยาวๆ */
+.chapter-modal { width: min(520px, 100%); background: #fff; color: #222; border-radius: 6px; overflow: hidden; box-shadow: 0 20px 55px rgba(0,0,0,.45); opacity: 0; transform: translateY(18px); transition: opacity .22s ease, transform .22s ease; display: flex; flex-direction: column; height: auto; max-height: min(480px, 80vh); }
+.translation-modal { width: min(760px, 95vw); height: min(620px, 88vh); background: #fff; color: #222; border-radius: 6px; overflow: hidden; box-shadow: 0 20px 55px rgba(0,0,0,.45); opacity: 0; transform: translateY(18px); transition: opacity .22s ease, transform .22s ease; display: flex; flex-direction: column; }
+
+.modal-backdrop.open .translation-modal, .modal-backdrop.open .chapter-modal { opacity: 1; transform: translateY(0); }
+.translation-modal .reader-header, .chapter-modal .reader-header { background: #222; color: #fff; flex: 0 0 auto; }
+
+.chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; padding: 16px; overflow-y: auto; }
+.chapter-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 8px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; color: #333; font-size: 13px; font-weight: 500; transition: all .15s ease; }
+.chapter-card:hover { background: #eee; }
+.chapter-card.active { background: #7455e8; color: #fff; border-color: #7455e8; }
+
+.page-tabs { flex: 0 0 auto; display: flex; gap: 6px; padding: 8px 10px; overflow-x: auto; background: #f3f2f7; border-bottom: 1px solid #e6e4ee; }
+.page-tab { flex: 0 0 auto; min-width: 30px; padding: 5px 9px; border: 1px solid #ddd; border-radius: 5px; background: #fff; color: #555; font-size: 12px; }
+.page-tab.active { background: #7455e8; border-color: #7455e8; color: #fff; }
+.page-tab.has-translation:not(.active) { border-color: #8cc63f; color: #5a8a18; font-weight: 600; }
+
+.translation-body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 12px; overflow-y: auto; }
+.translation-body-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex: 0 0 auto; }
+.translation-body-head h2 { margin: 0; font-size: 15px; color: #333; }
+.step-arrows { display: flex; gap: 6px; }
+.step-arrow { border: 1px solid #ddd; border-radius: 5px; background: #fff; color: #555; font-size: 14px; padding: 3px 9px; }
+.step-arrow:disabled { opacity: .35; cursor: default; }
+
+/* ปรับปรุงตารางให้อ่านง่ายเมื่อข้อความยาว */
+.translation-table-container { flex: 1; overflow-y: auto; border: 1px solid #7cb932; border-radius: 4px; }
+.translation-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; color: #333; table-layout: fixed; }
+.translation-table th { background-color: #8cc63f; color: #fff; font-weight: 600; padding: 10px 8px; border: 1px solid #7cb932; text-align: center; }
+.translation-table td { padding: 10px 12px; border: 1px solid #e2e8f0; vertical-align: top; line-height: 1.5; word-break: break-word; overflow-wrap: anywhere; }
+.translation-table tr:nth-child(even) { background-color: #fafafa; }
+
+.col-no { text-align: center; width: 48px; }
+.col-romaji { width: 28%; font-size: 13px; color: #444; }
+.col-japanese { width: 34%; font-weight: 500; font-size: 14px; }
+.col-meaning { width: 38%; }
+.no-data { text-align: center; color: #888; padding: 24px !important; }
+
+@media (max-width: 600px) {
+  .reader-header { padding: 0 8px; }
+  .title-group h1 { font-size: 11px; }
+  .manga-page { padding: 5px 35px; }
+  .modal-backdrop { padding: 10px; }
+  .translation-table { font-size: 11px; }
+  .translation-table th, .translation-table td { padding: 8px 5px; }
+}
+</style>
+</head>
+<body>
+  <main class="reader" aria-label="ตัวอ่านมังงะ">
+    <header class="reader-header">
+      <button class="icon-button" id="closeReader" type="button" aria-label="กลับหน้าหลัก">×</button>
+      <div class="title-group">
+        <select class="chapter-select" id="chapterSelect" aria-label="เลือกตอน"></select>
+        <h1 aria-label="おさななじみをみるめがかわってしまった">
+          <ruby>幼<rt>おさな</rt></ruby>なじみを<ruby>見<rt>み</rt></ruby>る<ruby>目<rt>め</rt></ruby>が<ruby>変<rt>か</rt></ruby>わってしまった
+        </h1>
+        <h1>(มุมมองที่ฉันมีต่อเพื่อนสมัยเด็กเปลี่ยนไปแล้ว)</h1>
+      </div>
+      <button class="icon-button" id="openTranslation" type="button" aria-label="เปิดคำแปลทุกหน้า">文</button>
+    </header>
+
+    <section class="reader-stage">
+      <div class="page-counter" id="pageCounter" aria-live="polite">หน้า 1 / 18</div>
+      <button class="stage-arrow stage-arrow-left" id="previousPage" type="button" aria-label="หน้าก่อนหน้า">‹</button>
+      <div class="page-viewport" id="pageViewport">
+        <div class="page-track" id="pageTrack"></div>
+      </div>
+      <button class="stage-arrow stage-arrow-right" id="nextPage" type="button" aria-label="หน้าถัดไป">›</button>
+      <div class="page-dots" id="pageDots" aria-label="เลือกหน้า"></div>
+    </section>
+
+    <footer class="reader-footer">
+      <button class="footer-button" id="commentButton" type="button"><span aria-hidden="true">◌</span><small>คอมเมนต์</small></button>
+      <button class="footer-button" id="openChapterModal" type="button"><span aria-hidden="true">▤</span><small>เปลี่ยนตอน</small></button>
+      <button class="footer-button" id="nextFooter" type="button"><span aria-hidden="true">▮</span><small>ถัดไป</small></button>
+      <button class="footer-button" id="lastFooter" type="button"><span aria-hidden="true">▮</span><small>หน้าสุดท้าย</small></button>
+    </footer>
+  </main>
+
+  <div class="modal-backdrop" id="chapterModalBackdrop" aria-hidden="true">
+    <div class="chapter-modal" aria-label="เลือกตอนมังงะ" role="dialog">
+      <header class="reader-header">
+        <button class="icon-button" id="closeChapterModal" type="button" aria-label="ปิด">×</button>
+        <div class="title-group"><h1>เลือกตอนที่ต้องการอ่าน</h1></div>
+        <span class="icon-button" aria-hidden="true" style="visibility:hidden">×</span>
+      </header>
+      <div class="chapter-grid" id="chapterGrid"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="translation-modal" id="translationModal" aria-label="คำแปลภาษาไทย" role="dialog">
+      <header class="reader-header">
+        <button class="icon-button" id="closeTranslation" type="button" aria-label="ปิด">‹</button>
+        <div class="title-group"><h1>คำแปลภาษาไทย</h1></div>
+        <span class="icon-button" aria-hidden="true" style="visibility:hidden">文</span>
+      </header>
+
+      <div class="page-tabs" id="pageTabs"></div>
+
+      <div class="translation-body">
+        <div class="translation-body-head">
+          <h2 id="detailTitle">หน้า 1</h2>
+          <div class="step-arrows">
+            <button class="step-arrow" id="detailPrev" type="button" aria-label="หน้าคำแปลก่อนหน้า">‹</button>
+            <button class="step-arrow" id="detailNext" type="button" aria-label="หน้าคำแปลถัดไป">›</button>
+          </div>
+        </div>
+
+        <div class="translation-table-container">
+          <table class="translation-table">
+            <thead>
+              <tr>
+                <th class="col-no">ลำดับ</th>
+                <th class="col-romaji">โรมันจิ</th>
+                <th class="col-japanese">ภาษาญี่ปุ่น</th>
+                <th class="col-meaning">ความหมาย</th>
+              </tr>
+            </thead>
+            <tbody id="translationTableBody"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="data/supabase-client.js"></script>
+  <script src="data/manga-images.js"></script>
+  <script src="data/manga-reader-supabase.js" data-series="manga-kana"></script>
+</body>
+</html>

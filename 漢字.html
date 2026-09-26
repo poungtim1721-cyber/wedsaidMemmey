@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>คันจิ (漢字)</title>
+  <style>
+    :root {
+      --page: #f5f7fa;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --blue: #579aff;
+      --dark: #30343b;
+      --green: #8ac63e;
+      --teal: #4fc3bb;
+      --shadow: 0 8px 22px rgba(31, 41, 55, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: var(--page);
+      color: var(--text);
+    }
+
+    .site-header {
+      min-height: 65px;
+      background: var(--blue);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    }
+
+    .nav-container {
+      width: min(1100px, calc(100% - 32px));
+      min-height: 65px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .site-logo {
+      color: #111;
+      font-size: 28px;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .site-logo span { color: #c92539; }
+
+    .nav-links {
+      display: flex;
+      align-self: stretch;
+      align-items: stretch;
+    }
+
+    .nav-links a {
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      color: #111;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    .page {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 64px;
+    }
+
+    .top-card {
+      background: var(--card);
+      border: 0;
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 32px 28px;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      color: #1f2937;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 1.08rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: var(--dark);
+      color: white;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      box-shadow: 0 8px 16px rgba(239, 68, 68, 0.2);
+    }
+
+    .level-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .level-links a {
+      padding: 9px 16px;
+      border-radius: 8px;
+      background: #579aff;
+      color: #111;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .level-links a:hover { background: #4286eb; }
+
+    .landing-page {
+      text-align: center;
+    }
+
+    .landing-page h1 {
+      margin-bottom: 20px;
+    }
+
+    .all-kanji {
+      display: inline-block;
+      padding: 11px 20px;
+      border-radius: 5px;
+      background: #df3045;
+      color: #fff;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 700;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .all-kanji:hover {
+      background: #c92539;
+      transform: translateY(-2px);
+    }
+
+    .landing-heading {
+      margin: 44px 0 30px;
+      padding: 14px 20px;
+      background: #30343b;
+      color: #fff;
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 800;
+    }
+
+    .landing-heading span {
+      display: inline-block;
+      margin-left: 10px;
+      padding: 2px 8px;
+      background: #df3045;
+      font-size: 18px;
+      vertical-align: middle;
+    }
+
+    .level-menu {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 52px 40px;
+      text-align: center;
+    }
+
+    .level-menu-card {
+      color: var(--text);
+      text-decoration: none;
+      transition: transform 0.2s ease;
+    }
+
+    .level-menu-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .level-banner {
+      min-height: 145px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      overflow: hidden;
+      color: #07111c;
+      background: #3b82d0;
+      position: relative;
+    }
+
+    .level-banner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.14;
+      background: repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 18px,
+        #fff 18px,
+        #fff 30px
+      );
+    }
+
+    .level-banner > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .level-banner strong {
+      font-size: 20px;
+    }
+
+    .level-banner b {
+      color: #fff;
+      font-size: 76px;
+      line-height: 0.9;
+    }
+
+    .level-banner em {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .level-menu-card:nth-child(2) .level-banner { background: #43b5ad; }
+    .level-menu-card:nth-child(3) .level-banner { background: #80ca16; }
+    .level-menu-card:nth-child(4) .level-banner { background: #ff991a; }
+    .level-menu-card:nth-child(5) .level-banner { background: #ed1682; }
+
+    .level-menu-card p {
+      margin: 10px 0 0;
+      color: #0879df;
+      font-weight: 700;
+    }
+
+    .level-menu-card small {
+      display: block;
+      margin-top: 5px;
+      color: #6b7280;
+      font-weight: 400;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 20px;
+    }
+
+    #kanjiGrid { display: contents; }
+
+    .level-card {
+      grid-column: 1 / -1;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid #e1e5e9;
+      border-radius: 8px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .level-card h2 {
+      margin: 0 0 24px;
+      padding-bottom: 14px;
+      border-bottom: 3px solid var(--green);
+      font-size: 2rem;
+      color: var(--dark);
+    }
+
+    .kanji-list {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .kanji-item {
+      width: auto;
+      min-height: 160px;
+      padding: 18px 10px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid #d8dde2;
+      text-align: center;
+      box-shadow: 0 3px 8px rgba(31, 41, 55, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .kanji-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 18px rgba(31, 41, 55, 0.14);
+    }
+
+    .kanji {
+      display: block;
+      font-size: clamp(2.6rem, 4vw, 3.5rem);
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .reading {
+      display: block;
+      margin-top: 12px;
+      font-size: 1rem;
+      color: var(--muted);
+    }
+
+    .reading-type {
+      display: inline;
+      margin-top: 8px;
+      font-size: .9rem;
+      color: #374151;
+    }
+
+    .meaning {
+      display: block;
+      margin-top: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .info-box {
+      background: #fff;
+      border: 0;
+      border-radius: 8px;
+      padding: 22px 24px;
+      margin-top: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .info-box h3 {
+      margin: 0 0 12px;
+      color: #a31f1f;
+      font-size: 1.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      border: 1px solid #f3d29b;
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--green);
+      color: #111;
+    }
+
+    td {
+      background: #fffdf8;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 26px;
+    }
+
+    .pagination a {
+      min-width: 42px;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--teal);
+      text-align: center;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .pagination a.active,
+    .pagination a:hover {
+      color: #fff;
+      background: #159d96;
+    }
+
+    @media (max-width: 640px) {
+      .nav-container { align-items: flex-start; padding: 12px 0; flex-direction: column; }
+      .nav-links { width: 100%; overflow-x: auto; min-height: 42px; }
+      .nav-links a { padding: 0 12px; }
+      .page { padding: 16px; }
+      .top-card { padding: 22px 18px; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .level-card { padding: 18px 12px; }
+      .kanji-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .kanji-item { min-height: 140px; }
+      .level-menu { grid-template-columns: 1fr; gap: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-container">
+      <a class="site-logo" href="漢字.html">漢字<span>みさこ</span></a>
+      <nav class="nav-links" aria-label="เมนูหลัก">
+        <a href="/css/สร้าง wed/home.html">หน้าหลัก</a>
+        <a href="漢字.html" class="active">คันจิ (漢字)</a>
+        <a href="/คำศัพท์.html">คำศัพท์</a>
+        <a href="N5.html">N5</a>
+        <a href="N4.html">N4</a>
+        <a href="N3.html">N3</a>
+        <a href="N2.html">N2</a>
+        <a href="N1.html">N1</a>
+      </nav>
+    </div>
+  </header>
+  <div class="page">
+    <div class="top-card landing-page">
+      <h1>JLPT 漢字 Exam</h1>
+      <p class="subtitle">
+        ฝึกจำ漢字ตามระดับภาษาญี่ปุ่น N5–N1
+      </p>
+    </div>
+
+    <section class="landing-section" id="levels" aria-label="เลือกระดับ漢字">
+      <h2 class="landing-heading">Learn JLPT Kanji <span>漢字</span></h2>
+      <p class="question">กำลังเตรียมตัวสอบ漢字ระดับไหนอยู่?</p>
+      <div class="level-menu">
+        <a class="level-menu-card" href="#N5">
+          <div class="level-banner"><strong>JLPT Kanji</strong><b>N5</b><em>KANJI LIST</em></div>
+          <p>ดู漢字 JLPT N5</p><small>กำลังโหลด...</small>
+        </a>
+        <a class="level-menu-card" href="#N4">
+          <div class="level-banner"><strong>JLPT Kanji</strong><b>N4</b><em>KANJI LIST</em></div>
+          <p>ดู漢字 JLPT N4</p><small>กำลังโหลด...</small>
+        </a>
+        <a class="level-menu-card" href="#N3">
+          <div class="level-banner"><strong>JLPT Kanji</strong><b>N3</b><em>KANJI LIST</em></div>
+          <p>ดู漢字 JLPT N3</p><small>กำลังโหลด...</small>
+        </a>
+        <a class="level-menu-card" href="#N2">
+          <div class="level-banner"><strong>JLPT Kanji</strong><b>N2</b><em>KANJI LIST</em></div>
+          <p>ดู漢字 JLPT N2</p><small>กำลังโหลด...</small>
+        </a>
+        <a class="level-menu-card" href="#N1">
+          <div class="level-banner"><strong>JLPT Kanji</strong><b>N1</b><em>KANJI LIST</em></div>
+          <p>ดู漢字 JLPT N1</p><small>กำลังโหลด...</small>
+        </a>
+      </div>
+    </section>
+
+    <div class="grid">
+      <div id="kanjiGrid"></div>
+    </div>
+
+    <div class="info-box">
+      <h3 id="infoTitle">漢字 มาจากระดับไหน?</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>漢字</th>
+            <th>音読み</th>
+            <th>訓読み</th>
+            <th>ความหมาย</th>
+            <th>ระดับ</th>
+          </tr>
+        </thead>
+        <tbody id="infoRows"></tbody>
+      </table>
+      <nav class="pagination" id="pagination" aria-label="เลือกหน้าคันจิ"></nav>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="data/supabase-client.js"></script>
+  <script src="data/supabase-data.js"></script>
+  <script src="data/kanji-page.js"></script>
+</body>
+</html>

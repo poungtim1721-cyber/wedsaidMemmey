@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>みさこ Login</title>
+<style>
+:root {
+    --ink: #27364a;
+    --muted: #718092;
+    --purple: #5db7df;
+    --purple-dark: #347da9;
+    --pink: #86b0ff;
+    --cream: #fffdf7;
+    --line: #dce9ef;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 24px;
+    overflow: auto;
+    color: var(--ink);
+    background: #bfe7f3;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.fullscreen-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background-image: linear-gradient(135deg, rgba(255, 251, 229, .78), rgba(154, 220, 239, .62)), url("wallpapersden.com_jujutsu-kaisen-shibuya-incident-arc-art_2029x1080.jpg");
+    background-size: cover;
+    background-position: center;
+    filter: saturate(.72) brightness(1.12);
+}
+
+.fullscreen-bg::after {  
+    position: absolute; 
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, .18) 1px, transparent 1px);
+    background-size: 16px 16px;
+    content: "";
+    opacity: .25;
+}
+
+.login-card {
+    display: flex;
+    width: min(920px, 100%);
+    min-height: 570px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .45);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, .88);
+    box-shadow: 0 24px 65px rgba(54, 112, 139, .3);
+    backdrop-filter: blur(16px);
+}
+
+.left-side {
+    position: relative;
+    display: flex;
+    flex: 1 1 48%;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 570px;
+    padding: 42px;
+    overflow: hidden;
+    color: #244057;
+    background: linear-gradient(155deg, rgba(218, 248, 255, .96), rgba(255, 238, 213, .96));
+}
+
+.left-side::before,
+.left-side::after {
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    border: 1px solid rgba(77, 153, 183, .2);
+    border-radius: 50%;
+    content: "";
+}
+
+.left-side::before {
+    top: -100px;
+    right: -80px;
+}
+
+.left-side::after {
+    bottom: -140px;
+    left: -110px;
+    width: 300px;
+    height: 300px;
+}
+
+.brand-mark,
+.anime-panel,
+.panel-kicker,
+.left-side h1,
+.panel-caption {
+    position: relative;
+    z-index: 1;
+}
+
+.brand-mark {
+    position: absolute;
+    top: 30px;
+    left: 42px;
+    color: #347da9;
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.anime-panel {
+    display: grid;
+    place-items: center;
+    width: 190px;
+    height: 190px;
+    margin: 0 auto auto;
+    border: 1px solid rgba(93, 183, 223, .5);
+    border-radius: 42% 58% 54% 46%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, .75), rgba(242, 139, 168, .3));
+    transform: rotate(-7deg);
+}
+
+.character-orb {
+    display: grid;
+    place-items: center;
+    width: 108px;
+    height: 108px;
+    border: 5px solid #fff;
+    border-radius: 50%;
+    color: var(--purple-dark);
+    background: #fff0b8;
+    box-shadow: 8px 10px 0 rgba(52, 125, 169, .2);
+    font-size: 53px;
+    font-weight: 900;
+    transform: rotate(7deg);
+}
+
+.speed-line {
+    position: absolute;
+    width: 80px;
+    height: 3px;
+    border-radius: 4px;
+    background: #f28ba8;
+    transform: rotate(-22deg);
+}
+
+.speed-line-one { top: 35px; left: 18px; }
+.speed-line-two { right: 12px; bottom: 42px; width: 54px; }
+
+.spark {
+    position: absolute;
+    color: #ffe66d;
+    font-size: 28px;
+    transform: rotate(7deg);
+}
+
+.spark-one { top: 24px; right: 30px; }
+.spark-two { bottom: 22px; left: 28px; font-size: 20px; }
+
+.panel-kicker {
+    margin: 22px 0 8px;
+    color: #347da9;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.left-side h1 {
+    margin: 0;
+    font-size: clamp(28px, 4vw, 43px);
+    line-height: 1.12;
+}
+
+.left-side h1 span {
+    color: #ffd3e2;
+}
+
+.panel-caption {
+    max-width: 330px;
+    margin: 14px 0 0;
+    color: #58748a;
+    line-height: 1.7;
+}
+
+.right-side {
+    flex: 1 1 52%;
+    padding: 58px clamp(28px, 6vw, 68px);
+    background: var(--cream);
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+    color: var(--pink);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+h2 {
+    margin: 0;
+    color: var(--ink);
+    font-size: 32px;
+}
+
+.form-intro {
+    margin: 8px 0 28px;
+    color: var(--muted);
+}
+
+.textbox {
+    position: relative;
+    margin-bottom: 19px;
+}
+
+.textbox input {
+    width: 100%;
+    padding: 16px 15px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    outline: none;
+    color: var(--ink);
+    background: #fff;
+    font-size: 15px;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.textbox input:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 4px rgba(93, 183, 223, .18);
+}
+
+.textbox label {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    padding: 0 4px;
+    color: #9a99a9;
+    background: #fff;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: .2s ease;
+}
+
+.textbox input:focus + label,
+.textbox input:not(:placeholder-shown) + label {
+    top: 0;
+    color: var(--purple);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.forgot-container {
+    margin: -4px 0 20px;
+    text-align: right;
+}
+
+.forgot-link {
+    color: var(--purple-dark);
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.forgot-link:hover {
+    color: var(--pink);
+    text-decoration: underline;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 15px;
+    border: 0;
+    border-radius: 13px;
+    color: #fff;
+    background: linear-gradient(100deg, var(--purple-dark), var(--pink));
+    box-shadow: 0 8px 18px rgba(52, 125, 169, .25);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 800;
+    transition: transform .2s, box-shadow .2s;
+}
+
+.action-btn:hover:not(:disabled) {
+    box-shadow: 0 12px 24px rgba(52, 125, 169, .3);
+    transform: translateY(-2px);
+}
+
+.action-btn:disabled {
+    cursor: not-allowed;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 0;
+    color: #aaa8b6;
+    font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    content: "";
+}
+
+.social-btn {
+    display: flex;
+    gap: 10px;
+}
+
+.social-btn button {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--ink);
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .2s, transform .2s;
+}
+
+.social-btn button:hover {
+    border-color: var(--purple);
+    transform: translateY(-1px);
+}
+
+.switch-text {
+    margin: 26px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+.switch-text span {
+    color: var(--purple-dark);
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.switch-text span:hover {
+    color: var(--pink);
+    text-decoration: underline;
+}
+
+.bars {
+    height: 5px;
+    margin: -7px 0 18px;
+    overflow: hidden;
+    border-radius: 5px;
+    background: #eeeaf7;
+}
+
+.bars div {
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    transition: .4s;
+}
+
+.shake {
+    animation: shake .35s ease-in-out;
+}
+
+@keyframes shake {
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+}
+
+@media (max-width: 720px) {
+    body {
+        padding: 14px;
+    }
+
+    .login-card {
+        flex-direction: column;
+    }
+
+    .left-side {
+        min-height: 300px;
+        padding: 30px;
+    }
+
+    .anime-panel {
+        width: 125px;
+        height: 125px;
+        margin-top: 32px;
+        margin-bottom: 0;
+    }
+
+    .character-orb {
+        width: 72px;
+        height: 72px;
+        font-size: 34px;
+    }
+
+    .left-side h1 {
+        font-size: 28px;
+    }
+
+    .brand-mark {
+        top: 22px;
+        left: 30px;
+    }
+
+    .right-side {
+        padding: 34px 26px 38px;
+    }
+}
+
+</style>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>みさこ Login</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="fullscreen-bg" aria-hidden="true"></div>
+
+    <div class="login-card">
+        <div class="left-side">
+            <h1></h1><div class="brand-mark">みさこ</div></h2>
+            <div class="anime-panel">
+                <span class="speed-line speed-line-one"></span>
+                <span class="speed-line speed-line-two"></span>
+                <span class="spark spark-one">✦</span>
+                <span class="spark spark-two">✧</span>
+                <div class="character-orb">漢</div>
+            </div>
+        </div>
+        <div class="right-side">
+            
+            <div id="loginSection">
+                <p class="eyebrow">みさこภาษาญี่ปุ่นยินดีต้อนรับ</p>
+                <h2>เข้าสู่ระบบ</h2>
+                <p class="form-intro">เข้ามาเรียนต่อในโลกของ みさこ</p>
+                <div class="textbox">
+                    <input id="LoginUser" required type="text" placeholder=" " />
+                    <label>ชื่อผู้ใช้ / Email / หมายเลขโทรศัพท์</label>
+                </div>
+                <div class="textbox">
+                    <input id="LoginPass" required type="password" maxlength="14" placeholder=" " />
+                    <label>รหัสผ่าน</label>
+                </div>
+                <button class="action-btn" onclick="handleSignIn()">Sign in</button>
+                <div class="divider">
+                <span>หรือ</span>
+                </div>
+               <div class="social-btn">
+                    <button class="social-btn-google" onclick="socialAuth('Google')">
+                        <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" width="18"> Google
+                    </button>
+                    <button class="social-btn-facebook" onclick="socialAuth('Facebook')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" width="18"> Facebook
+                    </button>
+                </div>
+                <p class="switch-text">คุณพึ่งเคยเข้า みさこ ใช่หรือไม่ <span onclick="showRegister()">สมัครใหม่ที่นี่</span></p>
+            </div>
+
+            <div id="registerSection" style="display: none;">
+                
+                <p class="eyebrow">เริ่มต้นการผจญภัย</p>
+                <h2>สมัครสมาชิก</h2>
+                <p class="form-intro">สร้างบัญชีเพื่อบันทึกการเรียนของคุณ</p>
+              <form id="regForm">
+                    <div class="textbox">
+                    <input id="RegEmail" required type="email" placeholder=" " />
+                    <label>Email หมายเลขโทรศัพท์</label>
+                </div>
+                    <div class="textbox">
+                    <input id="RegUser" required type="text" placeholder=" " />
+                    <label>ชื่อผู้ใช้</label>
+                </div>
+                    <div class="textbox">
+                    <input id="RegPass" required type="password" placeholder=" " />
+                    <label>รหัสผ่าน</label>
+                </div>
+                    <div class="textbox">
+                    <input id="ConfirmPass" required type="password" placeholder=" " />
+                    <label>ยืนยันรหัส</label>
+                </div>
+                    <div class="bars" id="bars"><div></div></div>
+                    <button id="RegBtn" type="submit" class="action-btn" disabled>Sign Up</button>
+                    </form>
+                <p class="switch-text"><span onclick="showLogin()">กลับไปหน้า Sign in</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/css/main.js"></script>
+</body>
+</html>
+
+<script>
+function showRegister() {
+    document.getElementById("loginSection").style.display = "none";
+    document.getElementById("registerSection").style.display = "block";
+    var m = document.getElementById("msgBubble");
+    if (m) m.innerText = " ようこそ"; 
+}
+function showLogin() {
+    document.getElementById("loginSection").style.display = "block";
+    document.getElementById("registerSection").style.display = "none";
+    var m = document.getElementById("msgBubble");
+    if (m) m.innerText = " こんにちは"; 
+}
+function handleSignIn() {
+    var u = document.getElementById("LoginUser").value.trim();
+    var p = document.getElementById("LoginPass").value;
+    if (!u || !p) { alert("กรุณากรอกชื่อผู้ใช้และรหัสผ่าน"); return; }
+    var users = JSON.parse(localStorage.getItem("users")) || [];
+    var ok = false;
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].username === u && users[i].password === p) { ok = true; break; }
+    }
+    if (ok) {
+        localStorage.setItem("registeredName", u);
+        alert("ยินดีต้อนรับเข้าสู่ระบบ!");
+        window.location.href = "home.html"; 
+    } else {
+        alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
+    }
+}
+function socialAuth(platform) { alert("กำลังเชื่อมต่อกับ " + platform + "... (ระบบจำลอง)"); }
+
+document.addEventListener("DOMContentLoaded", function () {
+    var regPass = document.getElementById("RegPass");
+    var confirmPass = document.getElementById("ConfirmPass");
+    var regBtn = document.getElementById("RegBtn");
+
+    function enable() {
+        if (!regBtn || !regPass || !confirmPass) return;
+        var match = regPass.value === confirmPass.value && regPass.value !== "";
+        var long = regPass.value.length >= 6;
+        regBtn.disabled = !(match && long);
+        regBtn.style.opacity = (match && long) ? "1" : "0.5";
+    }
+
+    if (regPass) regPass.addEventListener("input", enable);
+    if (confirmPass) confirmPass.addEventListener("input", enable);
+
+    var regForm = document.getElementById("regForm");
+    if (regForm) regForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var user = document.getElementById("RegUser").value.trim();
+        var email = document.getElementById("RegEmail").value.trim();
+        var pass = regPass.value;
+        if (!user) { alert("กรุณากรอกชื่อผู้ใช้"); return; }
+        if (!email || email.indexOf("@") === -1) { alert("กรุณากรอก Email ให้ถูกต้อง"); return; }
+        if (pass.length < 6) { alert("รหัสผ่านต้องอย่างน้อย 6 ตัว"); return; }
+        var users = JSON.parse(localStorage.getItem("users")) || [];
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].username === user) { alert("ชื่อผู้ใช้นี้ถูกใช้ไปแล้ว"); return; }
+        }
+        users.push({ username: user, email: email, password: pass });
+        localStorage.setItem("users", JSON.stringify(users));
+        localStorage.setItem("registeredName", user);
+        alert("ลงทะเบียนสำเร็จ! ยินดีต้อนรับ " + user);
+        showLogin();
+        document.getElementById("LoginUser").value = user;
+        document.getElementById("LoginPass").value = "";
+    });
+});
+</script>
+</body>
+</html>

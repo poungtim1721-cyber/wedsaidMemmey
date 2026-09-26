@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คำศัพท์ JLPT | みさこ</title>
+  <style>
+    :root {
+      --page: #f5f7fa;
+      --blue: #579aff;
+      --dark: #30343b;
+      --green: #8ac63e;
+      --teal: #4fc3bb;
+      --text: #1f2937;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--page); color: var(--text); font-family: "Segoe UI", Tahoma, sans-serif; }
+    .site-header { min-height: 65px; background: var(--blue); box-shadow: 0 1px 4px #0002; }
+    .nav-container { width: min(1100px, calc(100% - 32px)); min-height: 65px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .site-logo { color: #111; font-size: 28px; font-weight: 800; text-decoration: none; white-space: nowrap; }
+    .site-logo span { color: #c92539; }
+    .nav-links { display: flex; align-self: stretch; align-items: stretch; }
+    .nav-links a { display: flex; align-items: center; padding: 0 16px; color: #111; text-decoration: none; font-size: 14px; font-weight: 600; }
+    .nav-links a:hover, .nav-links a.active { background: #ffffff59; }
+    .page { width: min(1100px, calc(100% - 32px)); margin: auto; padding: 40px 0 64px; }
+    .hero, .panel { background: #fff; border-radius: 8px; box-shadow: 0 8px 22px #1f293714; }
+    .hero { padding: 28px; text-align: center; }
+    h1 { margin: 0 0 8px; color: var(--dark); }
+    .hero p { margin: 0; color: #6b7280; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 28px 0 18px; }
+    .toolbar select, .toolbar input { min-height: 42px; padding: 8px 12px; border: 1px solid #d8dde2; border-radius: 6px; background: #fff; font-size: 16px; }
+    .toolbar input { flex: 1 1 240px; }
+    .count { margin-left: auto; color: #6b7280; }
+    .panel { overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 14px 16px; border: 1px solid #d8dde2; text-align: left; }
+    th { background: var(--green); color: #111; }
+    td:first-child { width: 24%; font-size: 1.25rem; font-weight: 700; }
+    td:nth-child(2) { width: 22%; color: #4b5563; }
+    td:nth-child(3) { width: 40%; }
+    .pagination { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px; padding: 22px; }
+    .pagination button { min-width: 42px; padding: 10px 14px; border: 0; border-radius: 6px; background: var(--teal); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+    .pagination button.active, .pagination button:hover:not(:disabled) { background: #159d96; }
+    .pagination button:disabled { cursor: not-allowed; opacity: .45; }
+    .pagination .ellipsis { padding: 0 4px; color: #6b7280; font-weight: 700; }
+    .note { margin-top: 18px; color: #6b7280; font-size: .9rem; }
+    @media (max-width: 640px) {
+      .nav-container { align-items: flex-start; padding: 12px 0; flex-direction: column; }
+      .nav-links { width: 100%; overflow-x: auto; min-height: 42px; }
+      .nav-links a { padding: 0 12px; }
+      .page { padding-top: 20px; }
+      th, td { padding: 10px 8px; font-size: .9rem; }
+      td:first-child { font-size: 1.1rem; }
+      .count { width: 100%; margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-container">
+      <a class="site-logo" href="漢字.html">漢字<span>みさこ</span></a>
+      <nav class="nav-links" aria-label="เมนูหลัก">
+        <a href="/css/สร้าง wed/home.html">หน้าหลัก</a>
+        <a href="漢字.html">คันจิ (漢字)</a>
+        <a href="/คำศัพท์.html" class="active">คำศัพท์</a>
+        <a href="N5.html">N5</a><a href="N4.html">N4</a><a href="N3.html">N3</a><a href="N2.html">N2</a><a href="N1.html">N1</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page">
+    <section class="hero">
+      <h1>คำศัพท์จริง JLPT N5–N1</h1>
+      <p>ค้นหาคำศัพท์ตามระดับ พร้อมคำอ่านและความหมายจากชุดข้อมูลชุมชน</p>
+    </section>
+    <div class="toolbar">
+      <select id="level" aria-label="เลือกระดับ"><option value="ALL">ทุกระดับ</option><option>N5</option><option>N4</option><option>N3</option><option>N2</option><option>N1</option></select>
+      <input id="search" type="search" placeholder="ค้นหาคำศัพท์ คำอ่าน หรือความหมาย..." aria-label="ค้นหาคำศัพท์">
+      <span class="count" id="count"></span>
+    </div>
+    <section class="panel">
+      <table>
+        <thead><tr><th>คำศัพท์ / 漢字</th><th>คำอ่าน</th><th>ความหมาย</th><th>ระดับ</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <nav class="pagination" id="pagination" aria-label="เลือกหน้าคำศัพท์"></nav>
+    </section>
+    <p class="note">แสดงข้อมูลคำศัพท์จากฐานข้อมูล Supabase</p>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="data/supabase-client.js"></script>
+  <script src="data/supabase-data.js"></script>
+  <script src="data/vocabulary-page.js"></script>
+</body>
+</html>

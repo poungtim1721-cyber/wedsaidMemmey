@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>みさこ</title>
+    <style>
+.logo-box {
+    width: 48px;            /* ขนาดความกว้างของกรอบโลโก้ */
+    height: 48px;           /* ขนาดความสูง */
+    background-color: #652ddf; /* สีม่วงหลักของ Untitled UI */
+    border-radius: 10px;    /* ความโค้งของมุม */
+    display: flex;
+    align-items: center;    /* จัดไอคอนให้อยู่กลางแนวตั้ง */
+    justify-content: center; /* จัดไอคอนให้อยู่กลางแนวนอน */
+    margin: 20px auto;      /* จัดให้อยู่ตรงกลางแถบ Sidebar */
+    cursor: pointer;
+}
+
+.logo-box i {
+    color: rgb(99, 99, 99);           /* สีของตัวไอคอนกล่อง */
+    font-size: 28px;        /* ขนาดของไอคอน */
+}
+
+/* เพิ่ม Effect เวลาเอาเมาส์ไปชี้ */
+.logo-box:hover {
+    background-color: #6941C6; /* สีม่วงจะเข้มขึ้นนิดนึง */
+    transition: 0.2s;
+}
+
+/* จัดการแถบเมนูหลัก */
+.navbar {
+  display: flex;
+  justify-content: space-between; /* ดีดซ้าย-ขวาออกจากกัน */
+  align-items: center;         /* จัดให้อยู่ตรงกลางแนวตั้งพอดี */
+  padding: 15px 40px;          /* เพิ่มช่องว่าง บน-ล่าง และ ซ้าย-ขวา */
+  background-color: #ffffff;   /* พื้นหลังสีขาว */
+  border-bottom: 1px solid #535353; /* เส้นขอบบางๆ ด้านล่าง */
+}
+
+/* จัดการรูปโลโก้ */
+.logo img {
+  height: 30px; /* ปรับขนาดความสูงโลโก้ตามต้องการ */
+}
+
+/* จัดการกลุ่มเมนูทางขวา */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* เว้นระยะห่างระหว่างตัวอักษรแต่ละเมนู */
+}
+
+/* ตกแต่งตัวอักษรลิงก์ */
+.nav-menu a {
+  text-decoration: none; /* เอาเส้นใต้ลิงก์ออก */
+  color: #000000;        /* สีข้อความเทาเข้มแบบมินิมอล */
+  font-size: 14px;
+}
+
+.nav-menu a:hover {
+  color: #000000;        /* เวลาเอาเมาส์ชี้ ให้สีเข้มขึ้น */
+}
+
+/* ตกแต่งไอคอน */
+.icon {
+  cursor: pointer;
+  font-size: 18px;
+  color: #555555; /* สีไอคอนเทาเข้ม */
+}
+/* สไตล์ของกล่อง Sidebar */
+.sidebar {
+  height: 100%;
+  width: 0;            /* เริ่มต้นให้กว้าง 0 เพื่อซ่อนไว้ก่อน */
+  position: fixed;
+  z-index: 1000;       /* ให้อยู่เยื้องหน้าสุดทับทุกอย่างบนเว็บ */
+  top: 0;
+  right: 0;            /* ยึดไว้ฝั่งขวาของหน้าจอ */
+  background-color: #ffffff;
+  overflow-x: hidden;  /* ซ่อนตัวอักษรที่เกินตอนความกว้างเป็น 0 */
+  transition: 0.3s;    /* ความเร็วตอนเลื่อนเปิด-ปิด (0.3 วินาที) */
+  padding-top: 60px;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.1); /* แสงเงาบางๆ ด้านซ้ายของเมนู */
+  font-family: sans-serif;
+}
+
+/* ลิงก์เมนูต่างๆ ใน Sidebar */
+.sidebar a {
+  padding: 12px 24px;
+  text-decoration: none;
+  font-size: 16px;
+  color: #505050;
+  display: block;      /* ให้ลิงก์เรียงต่อกันเป็นแถวลงมา */
+  transition: 0.2s;
+}
+
+/* เวลาเอาเมาส์ชี้เมนู */
+.sidebar a:hover {
+  background-color: #f5f5f5;
+}
+
+/* เส้นคั่น */
+.sidebar hr {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 10px 0;
+}
+
+/* ตกแต่งโซนโปรไฟล์และเหรียญด้านบน */
+.sidebar-header {
+  padding: 0 24px 15px 24px;
+}
+.user-info h3 { margin: 0; font-size: 18px; }
+.user-info p { margin: 4px 0 0 0; color: #888; font-size: 12px; }
+
+.coin-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  background: #fff8eb;
+  padding: 10px;
+  border-radius: 6px;
+}
+.buy-btn {
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.buy-btn:hover {
+  background-color: #e68900;
+}
+/* 1. ปรับขนาดความกว้างพื้นฐานของทุกรูป */
+        .swiper-slide {
+            width: 90%; /* ปรับเพิ่มจาก 50% เป็น 60% หรือ 70% เพื่อให้รูปกว้างขึ้น */
+            max-width: 800px; /* เพิ่มขีดจำกัดความกว้างสูงสุด (เช่น เปลี่ยนจาก 600px เป็น 800px) */
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            opacity: 0.4;
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: block;
+        }
+
+        /* 2. ปรับขนาดรูปตรงกลาง (รูปที่กำลังแสดงผล) */
+        .swiper-slide-active {
+            transform: scale(1.25); /* ปรับเพิ่มจาก 1.15 เป็น 1.25 หรือ 1.3 เพื่อให้รูปตรงกลางซูมใหญ่ขึ้นอีก */
+            opacity: 1;
+            z-index: 10;
+        }
+
+
+.manga-slider-container {
+    position: relative;
+    width: 100%;
+    max-width: 980px;
+    margin: 20px auto;
+    overflow: hidden;
+    padding: 28px 0 18px;
+    touch-action: pan-y;
+    user-select: none;
+}
+
+.manga-slider-track {
+    display: flex;
+    align-items: center;
+    cursor: grab;
+    will-change: transform;
+}
+
+.manga-slider-track:active {
+    cursor: grabbing;
+}
+
+.manga-slide {
+    min-width: 50%;
+    margin: 0 1.5%;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    opacity: 0.35;
+    transform: scale(0.85);
+    flex-shrink: 0;
+}
+
+.manga-slide.active {
+    opacity: 1;
+    transform: scale(1.08);
+    z-index: 5;
+}
+
+.manga-slide img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: block;
+    pointer-events: none;
+}
+
+.manga-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #dfe7f7;
+    border-radius: 50%;
+    font-size: 22px;
+    color: #1b1b1b;
+    cursor: pointer;
+    z-index: 20;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+    transition: 0.2s ease;
+}
+.prev-arrow { left: 12px; }
+.next-arrow { right: 12px; }
+.prev-arrow:hover,
+.next-arrow:hover {
+    background: #007bff;
+    color: #fff;
+    border-color: #007bff;
+    transform: translateY(-50%) scale(1.05);
+}
+
+.manga-dots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 18px;
+    position: relative;
+    z-index: 30;
+}
+
+.manga-dot {
+    width: 32px;
+    height: 32px;
+    background: #e6e6e6;
+    color: #333;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.manga-dot.active {
+    background: #007bff;
+    color: #fff;
+    transform: scale(1.12);
+}
+
+.manga-list-section {
+    margin: 26px auto 0;
+    padding: 18px 16px 20px;
+}
+
+.manga-list-container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 4px;
+}
+
+.manga-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 0 4px;
+}
+
+.manga-list-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #12315c;
+    letter-spacing: 0.01em;
+}
+
+.see-more-btn {
+    color: #075dcc;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 7px 12px;
+    border: 1px solid rgba(7, 93, 204, 0.22);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 12px rgba(7, 93, 204, 0.08);
+    transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.see-more-btn:hover {
+    color: #ffffff;
+    background: linear-gradient(135deg, #579aff, #1769d3);
+    border-color: #1769d3;
+    box-shadow: 0 8px 20px rgba(23, 105, 211, 0.32);
+    transform: translateY(-2px);
+}
+
+.manga-row-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 22px;
+}
+
+.manga-grid {
+    display: flex;
+    gap: 18px; 
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    width: 100%;
+    padding: 14px 6px 16px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.manga-grid::-webkit-scrollbar {
+    display: none;
+}
+/*ส่วนดูเเล มังงะล่าสุด 最高漫画 */
+.manga-card,
+.manga-cards {
+    flex: 0 0 180px; /* เปลี่ยนขนาดเป็นเลขเดียวกันทุกอัน (เช่น 160px) */
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.35s ease;
+}
+
+.manga-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    filter: drop-shadow(0 12px 18px rgba(0, 123, 255, 0.24));
+}
+
+.manga-cards {
+    flex: 0 0 150px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.35s ease;
+}
+.manga-cards:hover {
+    transform: translateY(-6px) scale(1.02);
+    filter: drop-shadow(0 12px 18px rgba(0, 123, 255, 0.24));
+}
+
+.manga-cover {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    height: auto;
+    overflow: hidden;
+    background: linear-gradient(145deg, #eef5ff, #dceaff);
+    border: 1px solid #c8daf4;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(43, 91, 163, 0.1);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.manga-card:hover .manga-cover {
+    border-color: #7bb7ff;
+    box-shadow: 0 10px 24px rgba(0, 123, 255, 0.2), 0 0 0 4px rgba(87, 154, 255, 0.1);
+    transform: scale(1.015);
+}
+
+.manga-cards:hover .manga-cover {
+    border-color: #7bb7ff;
+    box-shadow: 0 10px 24px rgba(0, 123, 255, 0.2), 0 0 0 4px rgba(87, 154, 255, 0.1);
+    transform: scale(1.015);
+}
+
+.manga-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    pointer-events: none;
+    image-rendering: auto;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.45s ease;
+}
+
+.manga-card:hover .manga-cover img {
+    transform: scale(1.08) translateZ(0);
+    filter: saturate(1.08) contrast(1.04);
+}
+
+.manga-cards:hover .manga-cover img {
+    transform: scale(1.08) translateZ(0);
+    filter: saturate(1.08) contrast(1.04);
+}
+
+.manga-title {
+    font-size: 0.78rem;
+    color: #20324d;
+    margin: 8px 0 4px;
+    line-height: 1.3;
+    font-weight: 700;
+    
+    /* เพิ่มบรรทัดด้านล่างนี้เพื่อล็อกความสูงกล่องข้อความให้เท่ากันทุกอัน */
+    height: 2.6em; 
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    
+    transition: color 0.25s ease, text-shadow 0.25s ease, letter-spacing 0.25s ease;
+}
+.manga-card:hover .manga-title,
+.manga-cards:hover .manga-title {
+    color: #075dcc;
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 10px rgba(7, 93, 204, 0.25);
+}
+
+.manga-subtext {
+    font-size: 0.67rem;
+    color: #075dcc;         /* สีตัวหนังสือ */
+    margin: 0;
+    font-weight: 700;
+    background: transparent; /* เอาสีพื้นหลังออก */
+    border-radius: 0;        /* เอาความโค้งมนออก */
+    padding: 0;              /* ลบระยะห่างภายใน */
+}
+
+/* ลบสีพื้นหลังตอนเอาเมาส์ไปชี้ (Hover) ออกด้วย */
+.manga-card:hover .manga-subtext,
+.manga-cards:hover .manga-subtext {
+    color: #075dcc;          /* คงสีตัวหนังสือไว้ หรือเปลี่ยนเป็นสีที่ชอบ */
+    background: transparent; /* ไม่ให้เปลี่ยนเป็นสีฟ้าเข้มตอนชี้ */
+    box-shadow: none;        /* เอาเงาออก */
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .manga-card,
+    .manga-cards,
+    .manga-cover,
+    .manga-cover img,
+    .manga-title,
+    .manga-subtext,
+    .see-more-btn {
+        transition: none;
+    }
+}
+.row-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    background: #ffffff;
+    color: #333333;
+    border: 1px solid #dfe3ea;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 20;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.row-arrow.left-arrow { left: 0; }
+.row-arrow.right-arrow { right: 0; }
+.row-arrow:hover {
+    background: linear-gradient(135deg, #3a8dff 0%, #0057d9 100%);
+    color: #ffffff;
+    border-color: #0057d9;
+    transform: translateY(-50%) scale(1.12);
+    box-shadow: 0 8px 18px rgba(0, 87, 217, 0.32); 
+}
+
+header, .navbar {
+  background-color: #579aff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+header a, .navbar-nav .nav-link {
+  color: #ffffff !important;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+header a:hover, .navbar-nav .nav-link:hover {
+  color: #f1c40f !important;
+
+  
+}
+/* จัดแถบ Header ทั้งหมด */
+.navbar-container {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  background-color: #0066cc; /* เปลี่ยนเป็นสีพื้นหลัง Header ของคุณ */
+  padding: 8px 20px;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 45px; /* ระยะห่างระหว่างเมนู ช่องค้นหา และไอคอนแฮมเบอร์เกอร์ */
+}
+
+.nav-links a {
+  color: #ffffff; /* สีข้อความลิงก์ */
+  text-decoration: none;
+  margin-right: 15px;
+  font-size: 15px;
+}
+
+/* --- สไตล์ช่องค้นหาตามแบบรูปภาพ --- */
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.35); /* สีโปร่งแสงแบบในภาพ */
+  border-radius: 4px; /* ขอบมนเล็กน้อย */
+  padding: 6px 12px; /* เพิ่มช่องว่างด้านใน */
+  width: 250px; /* ความกว้างช่องค้นหา */
+}
+
+/* ตัวช่องพิมพ์ข้อความ */
+.search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #000000; /* สีข้อความ */
+  font-size: 15px;
+  padding-right: 28px; /* เว้นระยะด้านขวาไม่ให้ข้อความทับไอคอน */
+}
+
+/* สีของตัวหนังสือตัวอย่าง (Placeholder) */
+.search-box input::placeholder {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ไอคอนแว่นขยายขวาซ้อนข้างใน */
+.search-box button {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.search-box button:hover {
+  opacity: 0.8;
+}
+
+.search-status {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  margin: 0;
+  color: #ffffff;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.manga-card[hidden] {
+  display: none;
+}
+
+/* กำหนดสีพื้นหลังหลักของหน้าเว็บ (เพื่อให้กรอบสี่เหลี่ยมมองเห็นเด่นขึ้นมา) */
+body {
+  background-color: #f4f6f8; /* สีพื้นหลังของแอป/เว็บ */
+  margin: 0;
+}
+
+/* --- สไตล์ของกรอบสี่เหลี่ยม (Box Container) --- */
+.manga-box {
+  max-width: 1200px; /* ความกว้างสูงสุดของกรอบ */
+  margin: 24px auto; /* จัดให้อยู่กลางหน้าจอ และเว้นระยะห่างบน-ล่างระหว่างกรอบ */
+  padding: 20px 24px; /* ระยะห่างภายในกรอบ */
+  border-radius: 12px; /* ความโค้งมนของมุมกรอบสี่เหลี่ยม */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* เงาบางๆ ให้กรอบดูมีมิติ */
+}
+
+/*  กรอบที่ 1: โทนสีฟ้า/เทาอ่อน */
+.box-style-1 {
+  background-color: #eef4ff; /* สีพื้นหลังกรอบที่ 1 */
+  border: 1px solid #dbeafe; /* เส้นขอบกรอบ */
+}
+
+/* กรอบที่ 2: โทนสีขาว (ตัดกับกรอบที่ 1 ชัดเจน) */
+.box-style-2 {
+  background-color: #ffffff; /* สีพื้นหลังกรอบที่ 2 */
+  border: 1px solid #e5e7eb; /* เส้นขอบกรอบ */
+}
+
+/* จัดส่วนหัวข้อภายในกรอบ */
+.manga-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.manga-list-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.see-more-btn {
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+}
+.logo {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #000000;
+}
+
+.jlpt-text {
+    font-size: 29px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+.red-p {
+    color: #b83030;
+}
+/* ล้างค่าเริ่มต้น */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f6f8;
+}
+
+/* --- แถบ Navbar สีฟ้าสด --- */
+.navbar {
+    width: 100%;
+    height: 60px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.nav-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+}
+.search-icon {
+    position: absolute;
+    right: 20px; /* ปรับตำแหน่งไอคอนให้ชิดขอบขวา */
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+/* --- 3. เมนูนำทางและแท็บไฮไลท์ --- */
+.nav-menu {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 14px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:　background-color 0.2s;
+    white-space: nowrap;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* แท็บสีขาว (หน้าหลัก ในภาพที่ 2) */
+.nav-link.tab-white {
+    background-color: #f0f4f8;
+    color: #000000;
+    font-weight: 600;
+}
+
+.nav-link.tab-white:hover {
+    background-color: #f8fafc;
+}
+
+/* แท็บสีฟ้าอ่อนไฮไลท์ */
+.nav-link.tab-blue-highlight {
+    background-color: #9ac2ed;
+    color: #000000;
+    font-weight: 600;
+    height: 100%;
+}
+
+.nav-link.tab-white-highlight:hover {
+    background-color: #fafcff;
+}
+.nav-item.active {
+    background-color: #ffffff; /* สีพื้นหลังของปุ่มที่ถูกเลือก */
+    font-weight: 600;
+}
+
+/* ปุ่ม Hamburger เมนูสามขีด */
+.hamburger-btn {
+    color: #ffffff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 10px 0 15px;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+/* ===== ปุ่มทั่วไป ===== */
+.btn {
+    background-color: #ffffff; /* สีพื้นหลังปุ่ม */
+    color: #8ac1ff; /* สีตัวอักษรปุ่ม */
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+.btn:hover {
+    background-color: #eef4ff; /* สีพื้นหลังปุ่มเมื่อเอาเมาส์ชี้ */
+    transform: scale(1.03);
+}
+/* ===== Sidebar สีฟ้า ===== */
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    right: 0;
+    background-color:#76adff;;
+    overflow-x: hidden;
+    transition: 0.3s;
+    padding-top: 60px;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.15);
+}
+.sidebar.open { width: 280px; }
+.sidebar .sidebar-header {
+    padding: 0 20px 15px 20px;
+    color: #000000; /* สีตัวอักษรในโซนโปรไฟล์ */
+}
+
+.sidebar .sidebar-header h3 { color: #000000; font-size: 18px; margin: 0; }
+.sidebar .sidebar-header p { color: rgba(3, 3, 3, 0.8); font-size: 12px; margin: 4px 0 0 0; }
+.sidebar a {
+    padding: 12px 24px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #000000; /* สีตัวอักษรลิงก์ */
+    display: block;
+    transition: 0.2s;
+}
+.sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.sidebar hr {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    margin: 10px 0;
+}
+.sidebar .logout {
+    color: #ffe3e3;
+}
+.close-btn { 
+    position: absolute;
+    top: 15px;  
+    left: 15px;
+    font-size: 24px;
+    color: #ffffff; /* สีของปุ่มปิด */
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+</style>
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+                <span class="jlpt-text">みさ<span class="red-p">こ。</span><span class="kanji-text"></span>
+        </div>
+        <div class="nav-right">
+    <!-- ช่องค้นหา -->
+    <div class="search-box">    
+      <input type="text" placeholder="ค้นหา..." />
+      <button type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+        </svg>
+      </button>
+    </div>
+        <div class="nav-menu">
+            <a href="home.html" class="nav-link">หน้าเเรก</a>
+            <a href="/漢字.html" class="nav-link">คันจิ (漢字)</a>
+            <a href="文法.html" class="nav-link">ศัพท์เเละไวยากรณ์ (文法)</a>
+            <a href="index.html" class="nav-link">เข้าสู่ระบบ</a>
+            
+            <span class="icon" onclick="openNav()" style="cursor: pointer; font-size: 20px; margin-left: 15px;">☰</span>
+        </div>
+    </nav>
+
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        
+    <div class="sidebar-header" style="padding: 20px 20px 15px 20px;">
+    <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
+        <!-- วงกลม avatar แสดงอักษรตัวแรกของชื่อที่ตั้งเอง -->
+        <div class="user-avatar" id="userAvatar" style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #9ac2ed, #5090d8); color: #fff; font-size: 20px; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">日</div>
+        <div>
+            <!-- ชื่อจะเปลี่ยนตามที่ลูกค้าตั้งตอนสมัคร -->
+            <h3 id="profileName" style="margin: 0; font-size: 20px; color: #1e293b; font-weight: 700;">日本語</h3>
+        </div>
+    </div>
+</div>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+
+        <a href="/css/สร้าง wed/Favorites vocab.html" class="sidebar-link">เก็บคำศัพท์ที่ชอบ</a>
+        <a href="/css/สร้าง wed/favorites.html" class="sidebar-link">สิ่งที่ชอบ</a>
+        <a href="/css/สร้าง wed/history.html" class="sidebar-link">ประวัติมังงะที่อ่าน</a>
+        <a href="/css/สร้าง wed/settings.html" class="sidebar-link">การตั้งค่า</a>
+        
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+        
+        <a href="javascript:void(0)" id="logoutBtn" class="logout" style="color: red;">ออกจากระบบ</a>
+    </div>
+
+    <script>
+        function loadUsername() {
+            var savedName = localStorage.getItem("registeredName");
+            var profileNameElement = document.getElementById("profileName");
+        if (!profileNameElement) return;
+            profileNameElement.innerText = savedName || "日本語";
+        }
+        document.addEventListener("DOMContentLoaded", loadUsername);
+        // ฟังก์ชันสำหรับเปิด Sidebar
+        function openNav() {
+            document.getElementById("mySidebar").style.width = "300px";
+        }
+        function closeNav() {  // ฟังก์ชันสำหรับปิด Sidebar
+            document.getElementById("mySidebar").style.width = "0";
+        }
+        const logoutButton = document.getElementById('logoutBtn');// ระบบออกจากระบบ (Logout)
+        logoutButton.addEventListener('click', function() { // แสดงกล่องยืนยันการออกจากระบบ
+            const confirmLogout = confirm("คุณต้องการออกจากระบบใช่หรือไม่?");
+            
+            if (confirmLogout) {
+                // ล้างข้อมูล Log ในเว็บบราวเซอร์
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                alert("ออกจากระบบเรียบร้อยแล้ว!");
+                
+                // หลังจากกดตกลง ให้รีเฟรชหน้าเว็บ (หรือเปลี่ยนไปหน้า index.html ก็ได้)
+                window.location.href = "index.html";
+            }
+        });
+</script>
+    <!-- นำเข้า Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    
+    <!-- เพิ่มสไตล์สำหรับ Slider (สามารถย้ายไปใส่ใน home.css ได้) -->
+    <style>
+        .slider-container {
+            width: 100%;
+            padding: 40px 0;
+            background-color: #f5f7fa; /* สีพื้นหลังคล้ายๆ ในรูปต้นแบบ */
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .swiper {
+            width: 100%;
+            padding-bottom: 40px !important; /* เว้นระยะด้านล่างให้จุดไข่ปลา */
+        }
+
+        .swiper-slide {
+            width: 50%; /* กำหนดความกว้างของแต่ละรูป */
+            max-width: 600px;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            opacity: 0.4; /* ทำให้รูปด้านข้างดูจางลง */
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: block;
+        }
+
+        /* เอฟเฟกต์สำหรับรูปภาพตรงกลาง */
+        .swiper-slide-active {
+            transform: scale(1.15); /* ขยายรูปตรงกลางให้ใหญ่ขึ้น */
+            opacity: 1;
+            z-index: 10;
+        }
+
+        /* ตกแต่งจุดไข่ปลา (Pagination) */
+        .swiper-pagination-bullet {
+            background-color: #ccc;
+            opacity: 1;
+            width: 10px;
+            height: 10px;
+        }
+        .swiper-pagination-bullet-active {
+            background-color: #007bff; /* สีน้ำเงิน */
+        }
+</style>
+   <div class="manga-slider-container" id="mangaSlider">
+    <div class="manga-slider-track" id="mangaTrack">
+        <div class="manga-slide"><a href="/漫画読み.html"><img src="/images.jpg" alt="Manga 1" draggable="false" ></a></div>
+        <div class="manga-slide"><img src="/css/jlpt-n3-practice-test.jpg" alt="Manga 2" draggable="false"></div>
+        <div class="manga-slide"><img src="/css/jlpt-n3-resources.png" alt="Manga 3" draggable="false"></div>
+        <div class="manga-slide"><img src="/css/maxresdefault.jpg" alt="Manga 4" draggable="false"></div>
+        <div class="manga-slide"><img src="/css/images (1).png" alt="Manga 5" draggable="false"></div>
+    </div>
+
+    <!-- ปุ่มลูกศรซ้าย-ขวา -->
+    <button class="manga-arrow prev-arrow" id="mangaPrevBtn">❮</button>
+    <button class="manga-arrow next-arrow" id="mangaNextBtn">❯</button>
+
+    <!-- จุดไข่ปลาบอกตำแหน่ง -->
+    <div class="manga-dots" id="mangaDots"></div>
+</div>
+    </nav>
+<script>
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    let currentIndex = 0;
+    let slideInterval;
+
+    // ฟังก์ชันจัดการตำแหน่งและคลาสของแต่ละรูป
+    function updateSlider() {
+        slides.forEach((slide, index) => {
+            // ลบคลาสเก่าออกก่อน
+            slide.classList.remove('active', 'prev', 'next');
+            
+            // คำนวณหาลำดับภาพก่อนหน้าและถัดไป เพื่อทำระบบลูป
+            let prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+            let nextIndex = (currentIndex + 1) % slides.length;
+
+            // กำหนดคลาสใหม่ตามตำแหน่ง
+            if (index === currentIndex) {
+                slide.classList.add('active'); // รูปตรงกลาง
+            } else if (index === prevIndex) {
+                slide.classList.add('prev');   // รูปซ้าย
+            } else if (index === nextIndex) {
+                slide.classList.add('next');   // รูปขวา
+            }
+        });
+
+        // อัปเดตจุดไข่ปลา
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    // ฟังก์ชันเลื่อนไปยังภาพถัดไป
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateSlider();
+    }
+
+    // ฟังก์ชันเมื่อคลิกเลือกรูปหรือจุดไข่ปลา
+    function goToSlide(index) {
+        currentIndex = index;
+        updateSlider();
+        resetInterval(); // รีเซ็ตเวลาเลื่อนอัตโนมัติเมื่อมีการคลิก
+    }
+
+    // ฟังก์ชันตั้งเวลาเลื่อนอัตโนมัติ
+    function resetInterval() {
+        clearInterval(slideInterval);
+        slideInterval = setInterval(nextSlide, 3500); // 3500 คือ 3.5 วินาที เปลี่ยนแปลงได้
+    }
+
+    // เริ่มต้นทำงาน
+    updateSlider();
+    resetInterval();
+    </script>
+    <script>
+window.addEventListener('load', function() {
+    const container = document.getElementById('mangaSlider');
+    const track = document.getElementById('mangaTrack');
+    const slides = Array.from(track.children);
+    const prevBtn = document.getElementById('mangaPrevBtn');
+    const nextBtn = document.getElementById('mangaNextBtn');
+    const dotsContainer = document.getElementById('mangaDots');
+
+    if (!container || !track || slides.length === 0) return;
+
+    let currentIndex = 0;
+    let startX = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+    let isDragging = false;
+    let autoPlayTimer = null;
+    const autoPlayDelay = 3500; // เวลาเลื่อนอัตโนมัติ 3.5 วินาที
+
+    // 1. สร้างปุ่มตัวเลข 1, 2, 3, 4 ตามจำนวนรูป
+    dotsContainer.innerHTML = '';
+    slides.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = `manga-dot ${i === 0 ? 'active' : ''}`;
+        dot.textContent = i + 1;
+        
+        // ผูกคำสั่งคลิกเปลี่ยนหน้า
+        dot.addEventListener('click', (e) => {
+            e.stopPropagation();
+            goToSlide(i);
+        });
+
+        dotsContainer.appendChild(dot);
+    });
+    const dots = Array.from(dotsContainer.children);
+
+    // 2. ฟังก์ชันคำนวณตำแหน่งและอัปเดตหน้า
+    function updateSlider() {
+        const slideWidth = slides[0].offsetWidth;
+        const containerWidth = container.offsetWidth;
+        const margin = slideWidth * 0.03;
+        const totalSlideWidth = slideWidth + margin;
+
+        const centerOffset = (containerWidth - slideWidth) / 2;
+        currentTranslate = centerOffset - (currentIndex * totalSlideWidth);
+        prevTranslate = currentTranslate;
+
+        track.style.transition = isDragging ? 'none' : 'transform 0.4s ease-out';
+        track.style.transform = `translateX(${currentTranslate}px)`;
+
+        slides.forEach((slide, idx) => slide.classList.toggle('active', idx === currentIndex));
+        dots.forEach((dot, idx) => dot.classList.toggle('active', idx === currentIndex));
+    }
+
+    function goToSlide(index) {
+        currentIndex = index;
+        updateSlider();
+        startAutoPlay();
+    }
+
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateSlider();
+    }
+
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+        updateSlider();
+    }
+
+    // 3. ระบบตั้งเวลาเลื่อนอัตโนมัติ
+    function startAutoPlay() {
+        stopAutoPlay();
+        autoPlayTimer = setInterval(nextSlide, autoPlayDelay);
+    }
+
+    function stopAutoPlay() {
+        if (autoPlayTimer) clearInterval(autoPlayTimer);
+    }
+
+    // 4. ปุ่มลูกศร
+    if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); startAutoPlay(); });
+    if (prevBtn) prevBtn.addEventListener('click', () => { prevSlide(); startAutoPlay(); });
+
+    // 5. ระบบจับการลากเมาส์ / สัมผัสนิ้วปัดหน้าจอ
+    function onStart(e) {
+        isDragging = true;
+        startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        stopAutoPlay();
+    }
+
+    function onMove(e) {
+        if (!isDragging) return;
+        const currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        const diff = currentX - startX;
+        track.style.transition = 'none';
+        track.style.transform = `translateX(${prevTranslate + diff}px)`;
+    }
+
+    function onEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        const endX = e.type.includes('touch') ? e.changedTouches[0].clientX : e.clientX;
+        const diff = endX - startX;
+
+        // ระยะปัดเกิน 40px ให้เปลี่ยนภาพ
+        if (diff < -40) {
+            nextSlide();
+        } else if (diff > 40) {
+            prevSlide();
+        } else {
+            updateSlider();
+        }
+        startAutoPlay();
+    }
+
+    track.addEventListener('mousedown', onStart);
+    track.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onEnd);
+
+    track.addEventListener('touchstart', onStart, { passive: true });
+    track.addEventListener('touchmove', onMove, { passive: true });
+    track.addEventListener('touchend', onEnd);
+
+    window.addEventListener('resize', updateSlider);
+
+    // เริ่มทำงานระบบ
+    updateSlider();
+    startAutoPlay();
+});
+</script>
+<section class="manga-list-section">
+    <div class="manga-list-container">
+        <div class="manga-list-header">
+            <h3> ทดสอบคันจิ N5 & N3 （日本語意味）</h3>
+             <a href="#" class="see-more-btn">ดูเพิ่มเติม ❯</a>
+        </div>
+            <div class="manga-grid" id="mangaRow1">
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="1" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="2" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="3" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="4" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="5" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="6" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+                
+                <!-- สามารถเพิ่มการ์ดเรื่องที่ 7, 8, 9 ไปได้เรื่อยๆ ครับ -->
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="7" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+                <a href="#" class="manga-cards">
+                    <div class="manga-cover"><img src="" alt="8" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+            </div>
+<script>
+
+</script>
+<section class="manga-list-section"> 
+    <div class="manga-list-container">
+        <div class="manga-list-header">
+            <h3>มังงะล่าสุด (最高漫画)</h3>
+          </div>
+            <div class="manga-grid" id="mangaRow2">
+                <a href="/漫画読み.html" class="manga-card">
+                    <div class="manga-cover"><img src="/images.jpg" alt="1" draggable="false"></div>
+                    <h3 class="manga-title"><ruby>幼<rt>おさな</rt><ruby>なじみ<ruby>見<rt>み</rt><ruby>る<ruby>目<rt>め</rt><ruby>が<ruby>変<rt>か</rt><ruby>わってしまった</ruby></h3>
+                    <p class="manga-subtext">第1 (ตอนที่1)</p>
+                </a>
+
+                <a href="/มังงะ.html" class="manga-card">
+                    <div class="manga-cover"><img src="/HSvtRu-bAAATJdT.jpg" alt="2" draggable="false"></div>
+                    <h3 class="manga-title"><ruby>つつ゛<ruby>生輩<rt>なまやから</rt>は<ruby>元<rt>げん</rt>カノだから</ruby></h3>
+                    <p class="manga-subtext"><ruby>第1<rt>だい</rt>(ตอนที่1)</p></ruby>
+                </a>
+
+                <a href="/まんか読み.html" class="manga-card">
+                    <div class="manga-cover"><img src="/HSvtRu9bwAA1Tt5.jpg" alt="3" draggable="false"></div>
+                    <h3 class="manga-title"><ruby>宵<rt>よい</rt><ruby>宮<rt>みや</rt><ruby>凪<rt>なぎ</rt><ruby>がマネに<ruby>夜<rt>よ</rt><ruby>食<rt>しょく</rt><ruby>を<ruby>作る<rt>つくる</rt><ruby>理由<rt>りゆう</rt></ruby></h3>
+                    <p class="manga-subtext"><ruby>第1<rt>だい</rt>(ตอนที่1)</p></ruby>
+                </a>
+
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="4" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="5" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="6" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+                <!-- สามารถเพิ่มการ์ดเรื่องที่ 7, 8, 9 ไปได้เรื่อยๆ ครับ -->
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="7" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+                <a href="#" class="manga-card">
+                    <div class="manga-cover"><img src="" alt="8" draggable="false"></div>
+                    <h3 class="manga-title"></h3>
+                    <p class="manga-subtext"></p>
+                </a>
+            </div>
+<script>
+window.addEventListener('load', function() {
+    const row = document.getElementById('mangaRow');
+    const leftBtn = document.getElementById('rowLeftBtn');
+    const rightBtn = document.getElementById('rowRightBtn');
+        if (!row || !leftBtn || !rightBtn) return;
+// ระยะทางเลื่อนต่อการกด 1 ครั้ง (เลื่อนตามความกว้างของกรอบแสดงผล)
+    const getScrollDistance = () => row.clientWidth * 0.85;
+// ปุ่มกดไปทางขวา (ข้ามไปเรื่อง 7+)
+    rightBtn.addEventListener('click', () => {
+        const maxScrollLeft = row.scrollWidth - row.clientWidth;
+        
+        // ถ้าเลื่อนจนสุดแถวแล้ว ให้วนกลับไปเรื่องแรก
+        if (Math.ceil(row.scrollLeft) >= maxScrollLeft - 5) {
+            row.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+            row.scrollBy({ left: getScrollDistance(), behavior: 'smooth' });
+        }
+    });
+// ปุ่มกดไปทางซ้าย
+leftBtn.addEventListener('click', () => {
+        // ถ้าอยู่เรื่องแรกสุด กดซ้ายจะวนไปเรื่องสุดท้าย
+    if (row.scrollLeft <= 5) {
+        row.scrollTo({ left: row.scrollWidth, behavior: 'smooth' });
+    } else {
+        row.scrollBy({ left: -getScrollDistance(), behavior: 'smooth' });
+    }
+});
+});
+window.addEventListener('load', function() {
+    const row = document.getElementById('mangaRow');
+    const leftBtn = document.getElementById('rowLeftBtn');
+    const rightBtn = document.getElementById('rowRightBtn');
+    if (!row || !leftBtn || !rightBtn) return;
+    // คำนวณระยะเลื่อนตามขนาดหน้าจอ
+    const getScrollDistance = () => row.clientWidth * 0.85;
+    // เลื่อนไปทางขวา (ถ้าสุดแถวจะวนกลับหน้าแรก)
+    rightBtn.addEventListener('click', () => {
+        const maxScrollLeft = row.scrollWidth - row.clientWidth;
+        if (Math.ceil(row.scrollLeft) >= maxScrollLeft - 5) {
+            row.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+            row.scrollBy({ left: getScrollDistance(), behavior: 'smooth' });
+        }
+    });
+    // เลื่อนไปทางซ้าย (ถ้าอยู่หน้าแรกจะวนไปหน้าสุดท้าย)
+    leftBtn.addEventListener('click', () => {
+        if (row.scrollLeft <= 5) {
+            row.scrollTo({ left: row.scrollWidth, behavior: 'smooth' });
+        } else {
+            row.scrollBy({ left: -getScrollDistance(), behavior: 'smooth' });
+        }
+    });
+});
+</script>
+ <style>
+.manga-card:hover,
+.manga-cards:hover,
+.manga-slide:hover,
+.manga-slide.active:hover,
+.manga-cover:hover,
+.manga-card:hover .manga-cover,
+.manga-cards:hover .manga-cover,
+.manga-slide:hover img,
+.manga-cover img:hover {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+.manga-card,
+.manga-cards,
+.manga-slide,
+.manga-arrow,
+.manga-dot {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+/* แถวการ์ดเลื่อนได้ */
+.row-wrap { position: relative; }
+.row-wrap .manga-grid {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-overflow-scrolling: touch;
+}
+.row-wrap .manga-grid::-webkit-scrollbar { display: none; }
+.row-wrap .manga-grid.dragging { cursor: grabbing; scroll-behavior: auto; }
+.row-wrap .manga-card,
+.row-wrap .manga-cards { flex: 0 0 160px; min-width: 160px; }
+.row-arrow {
+    position: absolute; top: 45%; transform: translateY(-50%);
+    z-index: 20; width: 40px; height: 40px; border: none; border-radius: 50%;
+    background: rgba(0,0,0,0.55); color: #fff; font-size: 16px; cursor: pointer;
+    opacity: 0.85; transition: opacity 0.2s, background 0.2s;
+}
+.row-arrow:hover { opacity: 1; background: rgba(0,0,0,0.8); }
+.row-left { left: 4px; }
+.row-right { right: 4px; }
+.manga-slider-container,
+.manga-slider-track {
+    user-select: none;
+    -webkit-user-select: none;
+}
+</style>
+</section>
+    <script src="/css/script.js"></script>
+</body>
+</html>
