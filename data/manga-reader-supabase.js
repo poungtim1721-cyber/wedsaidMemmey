@@ -1,9 +1,16 @@
 (async function () {
-  const script = document.currentScript;
-  const series = script && script.dataset.series;
-  const vocabularyMangaId = Number(script && script.dataset.vocabularyMangaId);
-  const usesVocabulary = Number.isInteger(vocabularyMangaId) && vocabularyMangaId > 0;
+  // 1. ตรวจสอบ series อย่างปลอดภัย (บังคับให้เป็น manga-jp หากหาไม่เจอ)
+  const script = document.currentScript || document.querySelector('script[data-series]');
+  const series = (script && script.dataset.series) || "manga-jp"; 
+  
+  // 2. รับค่า manga_id จาก URL (?manga_id=1) เพื่อดึงคำศัพท์
+  const params = new URLSearchParams(window.location.search);
+  const vocabularyMangaId = Number(params.get("manga_id") || params.get("id") || 1);
+  const usesVocabulary = true; // บังคับให้เป็นโหมดดึงคำศัพท์ manga_vocabularies เสมอ
+
+  // 3. เตรียมข้อมูลรูปภาพ
   const imagesByChapter = window.mangaImages && window.mangaImages[series];
+  
   const track = document.getElementById("pageTrack");
   const dots = document.getElementById("pageDots");
   const chapterSelect = document.getElementById("chapterSelect");
@@ -13,6 +20,7 @@
   const pageTabs = document.getElementById("pageTabs");
   const detailTitle = document.getElementById("detailTitle");
   const tableBody = document.getElementById("translationTableBody");
+  
   const chapters = [];
   let currentChapter = 0;
   let currentPage = 0;
@@ -20,138 +28,14 @@
   let dragStartX = null;
   let currentUser = null;
 
-  function setVocabularyStatus(message, isError = false) {
-    const status = document.getElementById("vocabularyStatus");
-    if (!status) return;
-    status.textContent = message;
-    status.setAttribute("role", isError ? "alert" : "status");
-  }
-
-  function updateVocabularyAuthUI() {
-    const editor = document.getElementById("vocabularyEditor");
-    const loginPanel = document.getElementById("vocabularyLoginPanel");
-    const addPanel = document.getElementById("vocabularyAddPanel");
-    if (!editor || !loginPanel || !addPanel) return;
-    editor.hidden = false;
-    loginPanel.hidden = Boolean(currentUser);
-    addPanel.hidden = !currentUser;
-    document.getElementById("vocabularyUserEmail").textContent = currentUser ? currentUser.email : "";
-  }
-
-  async function initializeVocabularyAuth(client) {
-    try {
-      const { data, error } = await client.auth.getSession();
-      if (error) throw new Error(`ตรวจสอบสถานะเข้าสู่ระบบไม่สำเร็จ: ${error.message}`);
-      currentUser = data.session && data.session.user;
-      updateVocabularyAuthUI();
-      client.auth.onAuthStateChange((_event, session) => {
-        currentUser = session && session.user;
-        updateVocabularyAuthUI();
-      });
-    } catch (error) {
-      currentUser = null;
-      updateVocabularyAuthUI();
-      setVocabularyStatus(error.message, true);
-      console.error(error);
-    }
-  }
-
-  function attachVocabularyEvents() {
-    const loginForm = document.getElementById("vocabularyLoginForm");
-    const addForm = document.getElementById("vocabularyAddForm");
-    const saveButton = document.getElementById("vocabularySaveButton");
-
-    loginForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const formData = new FormData(loginForm);
-      setVocabularyStatus("กำลังเข้าสู่ระบบ...");
-      try {
-        const { error } = await window.getSupabaseClient().auth.signInWithPassword({
-          email: String(formData.get("email")),
-          password: String(formData.get("password"))
-        });
-        if (error) throw new Error(`เข้าสู่ระบบไม่สำเร็จ: ${error.message}`);
-        loginForm.reset();
-        setVocabularyStatus("เข้าสู่ระบบแล้ว");
-      } catch (error) {
-        setVocabularyStatus(error.message, true);
-        console.error(error);
-      }
-    });
-
-    document.getElementById("vocabularySignOut").addEventListener("click", async () => {
-      setVocabularyStatus("กำลังออกจากระบบ...");
-      try {
-        const { error } = await window.getSupabaseClient().auth.signOut();
-        if (error) throw new Error(`ออกจากระบบไม่สำเร็จ: ${error.message}`);
-        setVocabularyStatus("ออกจากระบบแล้ว");
-      } catch (error) {
-        setVocabularyStatus(error.message, true);
-        console.error(error);
-      }
-    });
-
-    addForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      if (!currentUser) {
-        setVocabularyStatus("กรุณาเข้าสู่ระบบก่อนเพิ่มคำศัพท์", true);
-        return;
-      }
-      const page = chapters[currentChapter].pages[activeTranslationPage];
-      if (!Array.isArray(page.vocabularies)) {
-        setVocabularyStatus("ยังโหลดคำศัพท์จาก Supabase ไม่สำเร็จ จึงบันทึกไม่ได้", true);
-        return;
-      }
-
-      const formData = new FormData(addForm);
-      const seqNo = page.vocabularies.reduce(
-        (highest, entry) => Math.max(highest, Number(entry.seq_no) || 0),
-        0
-      ) + 1;
-      saveButton.disabled = true;
-      setVocabularyStatus("กำลังบันทึกคำศัพท์...");
-      try {
-        const { data, error } = await window.getSupabaseClient()
-          .from("manga_vocabularies")
-          .insert({
-            category: series,
-            manga_id: vocabularyMangaId,
-            page_no: activeTranslationPage + 1,
-            seq_no: seqNo,
-            kana: String(formData.get("kana")).trim(),
-            kanji: String(formData.get("kanji")).trim(),
-            meaning: String(formData.get("meaning")).trim()
-          })
-          .select("vocab_id,page_no,seq_no,kana,kanji,meaning")
-          .single();
-        if (error) throw new Error(`บันทึกคำศัพท์ไม่สำเร็จ: ${error.message}`);
-        if (!data) throw new Error("บันทึกคำศัพท์ไม่สำเร็จ: ไม่ได้รับข้อมูลที่บันทึกกลับมา");
-
-        page.vocabularies.push(data);
-        page.vocabularies.sort((left, right) =>
-          left.seq_no - right.seq_no || left.vocab_id - right.vocab_id
-        );
-        addForm.reset();
-        buildPageTabs();
-        showTranslationPage(activeTranslationPage);
-        setVocabularyStatus("บันทึกคำศัพท์ลง Supabase แล้ว");
-      } catch (error) {
-        setVocabularyStatus(error.message, true);
-        console.error(error);
-      } finally {
-        saveButton.disabled = false;
-      }
-    });
-  }
-
   function showMessage(container, message) {
+    if (!container) return;
     container.replaceChildren();
     if (container.tagName === "TBODY") {
       const row = document.createElement("tr");
       const cell = document.createElement("td");
       cell.colSpan = 4;
       cell.className = "no-data";
-      cell.setAttribute("role", "status");
       cell.textContent = message;
       row.appendChild(cell);
       container.appendChild(row);
@@ -159,12 +43,39 @@
     }
     const text = document.createElement("p");
     text.className = "no-data";
-    text.setAttribute("role", "status");
     text.textContent = message;
     container.appendChild(text);
   }
 
+  // --- เริ่มต้นโหลดรูปมังงะ ---
+  if (!Array.isArray(imagesByChapter) || imagesByChapter.length === 0) {
+    showMessage(track, "ไม่พบข้อมูลรูปมังงะ กรุณาตรวจสอบ window.mangaImages");
+    return; // หยุดการทำงานถ้าหารูปไม่เจอ
+  }
+
+  imagesByChapter.forEach((imageFiles, chapterIndex) => {
+    const pages = imageFiles.filter(Boolean).map((imagePath) => ({
+      image_path: imagePath,
+      translations: [],
+      vocabularies: []
+    }));
+    if (pages.length > 0) {
+      chapters.push({
+        number: chapterIndex + 1,
+        title: `ตอนที่ ${chapterIndex + 1}`,
+        pages
+      });
+    }
+  });
+
+  if (chapters.length === 0) {
+    showMessage(track, "ยังไม่มีรูปหน้ามังงะในเครื่อง");
+    return;
+  }
+
+  // --- ฟังก์ชันแสดงผล ---
   function buildChapterUI() {
+    if(!chapterSelect || !chapterGrid) return;
     chapterSelect.replaceChildren();
     chapterGrid.replaceChildren();
     chapters.forEach((chapter, index) => {
@@ -186,31 +97,25 @@
   }
 
   function renderTable(index) {
+    if(!tableBody) return;
     tableBody.replaceChildren();
-    const entries = usesVocabulary
-      ? chapters[currentChapter].pages[index].vocabularies
-      : chapters[currentChapter].pages[index].translations;
-    if (entries === null) {
-      showMessage(tableBody, usesVocabulary
-        ? "โหลดคำศัพท์จาก Supabase ไม่สำเร็จ"
-        : "โหลดคำแปลจาก Supabase ไม่สำเร็จ");
+    const entries = chapters[currentChapter].pages[index].vocabularies;
+    
+    if (!entries) {
+      showMessage(tableBody, "กำลังโหลดหรือโหลดข้อมูลล้มเหลว...");
       return;
     }
     if (entries.length === 0) {
-      showMessage(tableBody, usesVocabulary
-        ? "ไม่มีคำศัพท์ในหน้านี้"
-        : "ไม่มีข้อมูลคำแปลในหน้านี้");
+      showMessage(tableBody, "ไม่มีข้อมูลคำศัพท์ในหน้านี้");
       return;
     }
 
     entries.forEach((entry, entryIndex) => {
       const row = document.createElement("tr");
       for (const value of [
-        String(usesVocabulary
-          ? entry.seq_no || entryIndex + 1
-          : entry.line_number || entryIndex + 1),
-        usesVocabulary ? entry.kana || "-" : entry.romaji || "-",
-        usesVocabulary ? entry.kanji || "-" : entry.japanese || "-",
+        String(entry.seq_no || entryIndex + 1),
+        entry.kana || "-",
+        entry.kanji || "-",
         entry.meaning || "-"
       ]) {
         const cell = document.createElement("td");
@@ -222,11 +127,12 @@
   }
 
   function buildPageTabs() {
+    if(!pageTabs) return;
     pageTabs.replaceChildren();
     chapters[currentChapter].pages.forEach((page, index) => {
       const tab = document.createElement("button");
       tab.type = "button";
-      const entries = usesVocabulary ? page.vocabularies : page.translations;
+      const entries = page.vocabularies;
       tab.className = `page-tab${entries && entries.length > 0 ? " has-translation" : ""}`;
       tab.textContent = String(index + 1);
       tab.addEventListener("click", () => showTranslationPage(index));
@@ -237,35 +143,45 @@
   function showTranslationPage(index) {
     const pages = chapters[currentChapter].pages;
     activeTranslationPage = Math.max(0, Math.min(index, pages.length - 1));
-    detailTitle.textContent = `หน้า ${activeTranslationPage + 1}`;
+    if(detailTitle) detailTitle.textContent = `หน้า ${activeTranslationPage + 1}`;
     renderTable(activeTranslationPage);
-    [...pageTabs.children].forEach((tab, tabIndex) => {
-      tab.classList.toggle("active", tabIndex === activeTranslationPage);
-    });
-    document.getElementById("detailPrev").disabled = activeTranslationPage === 0;
-    document.getElementById("detailNext").disabled = activeTranslationPage === pages.length - 1;
+    if(pageTabs) {
+      [...pageTabs.children].forEach((tab, tabIndex) => {
+        tab.classList.toggle("active", tabIndex === activeTranslationPage);
+      });
+    }
+    const prevBtn = document.getElementById("detailPrev");
+    const nextBtn = document.getElementById("detailNext");
+    if(prevBtn) prevBtn.disabled = activeTranslationPage === 0;
+    if(nextBtn) nextBtn.disabled = activeTranslationPage === pages.length - 1;
   }
 
   function goToPage(pageIndex) {
     const pages = chapters[currentChapter].pages;
     currentPage = Math.max(0, Math.min(pageIndex, pages.length - 1));
-    track.style.transform = `translateX(-${currentPage * 100}%)`;
-    document.getElementById("pageCounter").textContent = `หน้า ${currentPage + 1} / ${pages.length}`;
-    [...dots.children].forEach((dot, index) => dot.classList.toggle("active", index === currentPage));
-    document.getElementById("previousPage").disabled = currentPage === 0 && currentChapter === 0;
-    document.getElementById("nextPage").disabled =
-      currentPage === pages.length - 1 && currentChapter === chapters.length - 1;
+    if(track) track.style.transform = `translateX(-${currentPage * 100}%)`;
+    const pCounter = document.getElementById("pageCounter");
+    if(pCounter) pCounter.textContent = `หน้า ${currentPage + 1} / ${pages.length}`;
+    if(dots) {
+      [...dots.children].forEach((dot, index) => dot.classList.toggle("active", index === currentPage));
+    }
+    const prevPage = document.getElementById("previousPage");
+    const nextPage = document.getElementById("nextPage");
+    if(prevPage) prevPage.disabled = currentPage === 0 && currentChapter === 0;
+    if(nextPage) nextPage.disabled = currentPage === pages.length - 1 && currentChapter === chapters.length - 1;
   }
 
   function loadChapter(chapterIndex, startAtEnd = false) {
     currentChapter = chapterIndex;
     const chapter = chapters[currentChapter];
-    chapterSelect.value = String(currentChapter);
-    [...chapterGrid.children].forEach((card, index) => {
-      card.classList.toggle("active", index === currentChapter);
-    });
-    track.replaceChildren();
-    dots.replaceChildren();
+    if(chapterSelect) chapterSelect.value = String(currentChapter);
+    if(chapterGrid) {
+      [...chapterGrid.children].forEach((card, index) => {
+        card.classList.toggle("active", index === currentChapter);
+      });
+    }
+    if(track) track.replaceChildren();
+    if(dots) dots.replaceChildren();
 
     chapter.pages.forEach((pageData, index) => {
       const article = document.createElement("article");
@@ -276,17 +192,17 @@
       image.alt = `มังงะหน้าที่ ${index + 1}`;
       image.loading = index === 0 ? "eager" : "lazy";
       article.appendChild(image);
-      track.appendChild(article);
+      if(track) track.appendChild(article);
 
       const dot = document.createElement("button");
       dot.type = "button";
       dot.setAttribute("aria-label", `ไปหน้าที่ ${index + 1}`);
       dot.addEventListener("click", () => goToPage(index));
-      dots.appendChild(dot);
+      if(dots) dots.appendChild(dot);
     });
 
     goToPage(startAtEnd ? chapter.pages.length - 1 : 0);
-    if (modalBackdrop.classList.contains("open")) {
+    if (modalBackdrop && modalBackdrop.classList.contains("open")) {
       buildPageTabs();
       showTranslationPage(currentPage);
     }
@@ -303,157 +219,89 @@
     }
   }
 
-  function openChapterModal() {
-    chapterModalBackdrop.classList.add("open");
-    chapterModalBackdrop.setAttribute("aria-hidden", "false");
+  // --- Modal Logic ---
+  function openChapterModal() { if(chapterModalBackdrop) { chapterModalBackdrop.classList.add("open"); chapterModalBackdrop.setAttribute("aria-hidden", "false"); } }
+  function closeChapterModal() { if(chapterModalBackdrop) { chapterModalBackdrop.classList.remove("open"); chapterModalBackdrop.setAttribute("aria-hidden", "true"); } }
+  function openTranslationModal() { 
+    buildPageTabs(); showTranslationPage(currentPage); 
+    if(modalBackdrop) { modalBackdrop.classList.add("open"); modalBackdrop.setAttribute("aria-hidden", "false"); } 
   }
+  function closeTranslationModal() { if(modalBackdrop) { modalBackdrop.classList.remove("open"); modalBackdrop.setAttribute("aria-hidden", "true"); } }
 
-  function closeChapterModal() {
-    chapterModalBackdrop.classList.remove("open");
-    chapterModalBackdrop.setAttribute("aria-hidden", "true");
-  }
-
-  function openTranslationModal() {
-    buildPageTabs();
-    showTranslationPage(currentPage);
-    modalBackdrop.classList.add("open");
-    modalBackdrop.setAttribute("aria-hidden", "false");
-  }
-
-  function closeTranslationModal() {
-    modalBackdrop.classList.remove("open");
-    modalBackdrop.setAttribute("aria-hidden", "true");
-  }
-
+  // --- Attach Events ---
   function attachEvents() {
-    chapterSelect.addEventListener("change", (event) => loadChapter(Number(event.target.value)));
-    document.getElementById("previousPage").addEventListener("click", () => changePage(-1));
-    document.getElementById("nextPage").addEventListener("click", () => changePage(1));
-    document.getElementById("nextFooter").addEventListener("click", () => changePage(1));
-    document.getElementById("lastFooter").addEventListener("click", () => {
-      goToPage(chapters[currentChapter].pages.length - 1);
+    document.getElementById("chapterSelect")?.addEventListener("change", (e) => loadChapter(Number(e.target.value)));
+    document.getElementById("previousPage")?.addEventListener("click", () => changePage(-1));
+    document.getElementById("nextPage")?.addEventListener("click", () => changePage(1));
+    document.getElementById("nextFooter")?.addEventListener("click", () => changePage(1));
+    document.getElementById("lastFooter")?.addEventListener("click", () => goToPage(chapters[currentChapter].pages.length - 1));
+    document.getElementById("openChapterModal")?.addEventListener("click", openChapterModal);
+    document.getElementById("closeChapterModal")?.addEventListener("click", closeChapterModal);
+    document.getElementById("openTranslation")?.addEventListener("click", () => {
+      if (modalBackdrop && modalBackdrop.classList.contains("open")) closeTranslationModal(); else openTranslationModal();
     });
-    document.getElementById("openChapterModal").addEventListener("click", openChapterModal);
-    document.getElementById("closeChapterModal").addEventListener("click", closeChapterModal);
-    chapterModalBackdrop.addEventListener("click", (event) => {
-      if (event.target === chapterModalBackdrop) closeChapterModal();
-    });
-    document.getElementById("closeReader").addEventListener("click", () => {
-      if (history.length > 1) history.back();
-      else window.location.href = "index.html";
-    });
+    document.getElementById("closeTranslation")?.addEventListener("click", closeTranslationModal);
+    document.getElementById("detailPrev")?.addEventListener("click", () => showTranslationPage(activeTranslationPage - 1));
+    document.getElementById("detailNext")?.addEventListener("click", () => showTranslationPage(activeTranslationPage + 1));
+    document.getElementById("closeReader")?.addEventListener("click", () => { history.length > 1 ? history.back() : window.location.href = "index.html"; });
+
     document.addEventListener("keydown", (event) => {
       if (event.key === "ArrowLeft") changePage(-1);
-      if (event.key === "ArrowRight" || event.key === " ") {
-        event.preventDefault();
-        changePage(1);
-      }
+      if (event.key === "ArrowRight" || event.key === " ") { event.preventDefault(); changePage(1); }
     });
+
     const viewport = document.getElementById("pageViewport");
-    viewport.addEventListener("pointerdown", (event) => {
-      dragStartX = event.clientX;
-      viewport.setPointerCapture(event.pointerId);
-    });
-    viewport.addEventListener("pointerup", (event) => {
-      if (dragStartX === null) return;
-      const distance = event.clientX - dragStartX;
-      if (Math.abs(distance) > 45) changePage(distance < 0 ? 1 : -1);
-      dragStartX = null;
-    });
-    document.getElementById("openTranslation").addEventListener("click", () => {
-      if (modalBackdrop.classList.contains("open")) closeTranslationModal();
-      else openTranslationModal();
-    });
-    document.getElementById("closeTranslation").addEventListener("click", closeTranslationModal);
-    modalBackdrop.addEventListener("click", (event) => {
-      if (event.target === modalBackdrop) closeTranslationModal();
-    });
-    document.getElementById("detailPrev").addEventListener("click", () => {
-      showTranslationPage(activeTranslationPage - 1);
-    });
-    document.getElementById("detailNext").addEventListener("click", () => {
-      showTranslationPage(activeTranslationPage + 1);
-    });
-    if (usesVocabulary) attachVocabularyEvents();
-  }
-
-  if (!series || !Array.isArray(imagesByChapter) || imagesByChapter.length === 0) {
-    showMessage(track, "ไม่พบข้อมูลหน้ามังงะในเครื่อง");
-    showMessage(tableBody, "ไม่พบข้อมูลหน้ามังงะในเครื่อง");
-    return;
-  }
-
-  imagesByChapter.forEach((imageFiles, chapterIndex) => {
-    const pages = imageFiles.filter(Boolean).map((imagePath) => ({
-      image_path: imagePath,
-      translations: [],
-      vocabularies: []
-    }));
-    if (pages.length > 0) {
-      chapters.push({
-        number: chapterIndex + 1,
-        title: `บทที่ ${chapterIndex + 1}`,
-        pages
+    if(viewport) {
+      viewport.addEventListener("pointerdown", (e) => { dragStartX = e.clientX; viewport.setPointerCapture(e.pointerId); });
+      viewport.addEventListener("pointerup", (e) => {
+        if (dragStartX === null) return;
+        const distance = e.clientX - dragStartX;
+        if (Math.abs(distance) > 45) changePage(distance < 0 ? 1 : -1);
+        dragStartX = null;
       });
     }
-  });
-
-  if (chapters.length === 0) {
-    showMessage(track, "ยังไม่มีรูปหน้ามังงะในเครื่อง");
-    showMessage(tableBody, "ยังไม่มีรูปหน้ามังงะในเครื่อง");
-    return;
   }
 
-  attachEvents();
+  // สร้าง UI หน้าจอ
   buildChapterUI();
+  attachEvents();
   loadChapter(0);
 
+  // --- ดึงข้อมูลคำแปลจาก Supabase ---
   try {
-    const client = window.getSupabaseClient();
-    if (usesVocabulary) await initializeVocabularyAuth(client);
-    const { data, error } = usesVocabulary
-      ? await client
-        .from("manga_vocabularies")
-        .select("vocab_id,page_no,seq_no,kana,kanji,meaning")
-        .eq("manga_id", vocabularyMangaId)
-        .order("page_no")
-        .order("seq_no")
-        .order("vocab_id")
-      : await client
-        .from("manga_translations")
-        .select("chapter_number,page_number,line_number,romaji,japanese,meaning")
-        .eq("series", series)
-        .order("chapter_number")
-        .order("page_number")
-        .order("line_number")
-        .order("id");
+    // ป้องกันกรณีที่ getSupabaseClient() เรียกไม่ติด 
+    const client = window.getSupabaseClient ? window.getSupabaseClient() : (window.supabaseClient || window.supabase);
+    if (!client) throw new Error("ไม่พบ Supabase Client");
+
+    const { data, error } = await client
+      .from("manga_vocabularies")
+      .select("vocab_id,page_no,seq_no,kana,kanji,meaning")
+      .eq("manga_id", vocabularyMangaId)
+      .order("page_no")
+      .order("seq_no")
+      .order("vocab_id");
+
     if (error) {
-      throw new Error(`โหลด${usesVocabulary ? "คำศัพท์" : "คำแปล"}จาก Supabase ไม่สำเร็จ: ${error.message}`);
+      throw new Error(`โหลดคำศัพท์จาก Supabase ไม่สำเร็จ: ${error.message}`);
     }
 
-    data.forEach((entry) => {
-      const chapterNumber = usesVocabulary ? 1 : entry.chapter_number;
-      const pageNumber = usesVocabulary ? entry.page_no : entry.page_number;
+    // เอาข้อมูลยัดใส่ในเลขหน้าที่ตรงกัน
+    (data || []).forEach((entry) => {
+      const chapterNumber = 1; // สมมติว่ามี chapter เดียว 
+      const pageNumber = entry.page_no;
       const chapter = chapters.find((item) => item.number === chapterNumber);
       const page = chapter && chapter.pages[pageNumber - 1];
       if (page) {
-        if (usesVocabulary) page.vocabularies.push(entry);
-        else page.translations.push(entry);
+        page.vocabularies.push(entry);
       }
     });
 
-    if (modalBackdrop.classList.contains("open")) {
+    if (modalBackdrop && modalBackdrop.classList.contains("open")) {
       buildPageTabs();
       showTranslationPage(activeTranslationPage);
     }
   } catch (error) {
-    chapters.forEach((chapter) => chapter.pages.forEach((page) => {
-      if (usesVocabulary) page.vocabularies = null;
-      else page.translations = null;
-    }));
-    if (modalBackdrop.classList.contains("open")) {
-      showTranslationPage(activeTranslationPage);
-    }
-    console.error(error);
+    console.error("Supabase Error:", error);
+    showMessage(tableBody, "ไม่สามารถดึงข้อมูลคำแปลจากฐานข้อมูลได้");
   }
 })();

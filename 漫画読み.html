@@ -48,7 +48,6 @@ button { cursor: pointer; }
 .modal-backdrop { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(0,0,0,0); pointer-events: none; transition: background .25s ease; }
 .modal-backdrop.open { background: rgba(0,0,0,.55); pointer-events: auto; }
 
-/* ขยายขนาด Modal ให้กว้างขึ้นเพื่อรองรับข้อความยาวๆ */
 .chapter-modal { width: min(520px, 100%); background: #fff; color: #222; border-radius: 6px; overflow: hidden; box-shadow: 0 20px 55px rgba(0,0,0,.45); opacity: 0; transform: translateY(18px); transition: opacity .22s ease, transform .22s ease; display: flex; flex-direction: column; height: auto; max-height: min(480px, 80vh); }
 .translation-modal { width: min(760px, 95vw); height: min(620px, 88vh); background: #fff; color: #222; border-radius: 6px; overflow: hidden; box-shadow: 0 20px 55px rgba(0,0,0,.45); opacity: 0; transform: translateY(18px); transition: opacity .22s ease, transform .22s ease; display: flex; flex-direction: column; }
 
@@ -72,23 +71,11 @@ button { cursor: pointer; }
 .step-arrow { border: 1px solid #ddd; border-radius: 5px; background: #fff; color: #555; font-size: 14px; padding: 3px 9px; }
 .step-arrow:disabled { opacity: .35; cursor: default; }
 
-/* ปรับปรุงตารางให้อ่านง่ายเมื่อข้อความยาว */
 .translation-table-container { flex: 1; overflow-y: auto; border: 1px solid #7cb932; border-radius: 4px; }
 .translation-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; color: #333; table-layout: fixed; }
 .translation-table th { background-color: #8cc63f; color: #fff; font-weight: 600; padding: 10px 8px; border: 1px solid #7cb932; text-align: center; }
 .translation-table td { padding: 10px 12px; border: 1px solid #e2e8f0; vertical-align: top; line-height: 1.5; word-break: break-word; overflow-wrap: anywhere; }
 .translation-table tr:nth-child(even) { background-color: #fafafa; }
-
-.vocabulary-editor { flex: 0 0 auto; margin-top: 12px; padding: 12px; border: 1px solid #ddd; border-radius: 5px; background: #f8f8fa; }
-.vocabulary-editor h3 { margin: 0 0 8px; font-size: 14px; }
-.vocabulary-editor p { margin: 0 0 8px; color: #555; font-size: 12px; }
-.vocabulary-editor form { display: grid; gap: 8px; }
-.vocabulary-editor label { display: grid; gap: 4px; color: #444; font-size: 12px; }
-.vocabulary-editor input { width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 4px; font: inherit; }
-.vocabulary-editor button { justify-self: start; padding: 7px 12px; border: 0; border-radius: 4px; color: #fff; background: #7455e8; font: inherit; }
-.vocabulary-editor button:disabled { opacity: .6; cursor: wait; }
-.vocabulary-editor [role="status"], .vocabulary-editor [role="alert"] { margin: 8px 0 0; }
-.vocabulary-editor [hidden] { display: none; }
 
 .col-no { text-align: center; width: 48px; }
 .col-romaji { width: 28%; font-size: 13px; color: #444; }
@@ -112,12 +99,11 @@ button { cursor: pointer; }
       <button class="icon-button" id="closeReader" type="button" aria-label="กลับหน้าหลัก">×</button>
       <div class="title-group">
         <select class="chapter-select" id="chapterSelect" aria-label="เลือกตอน"></select>
-        <h1 aria-label="おさななじみをみるめがかわってしまった">
-          <ruby>幼<rt>おさな</rt></ruby>なじみを<ruby>見<rt>み</rt></ruby>る<ruby>目<rt>め</rt></ruby>が<ruby>変<rt>か</rt></ruby>わってしまった
-        </h1>
-        <h1>(มุมมองที่ฉันมีต่อเพื่อนสมัยเด็กเปลี่ยนไปแล้ว)</h1>
+        <!-- ข้อความจะถูกเขียนทับด้วยข้อมูลจากตาราง mangas -->
+        <h1 id="mangaTitleJP">กำลังโหลดเรื่องมังงะ...</h1>
+        <h1 id="mangaTitleTH"></h1>
       </div>
-      <button class="icon-button" id="openTranslation" type="button" aria-label="เปิดคำศัพท์ทุกหน้า">文</button>
+      <button class="icon-button" id="openTranslation" type="button" aria-label="เปิดคำแปลทุกหน้า">文</button>
     </header>
 
     <section class="reader-stage">
@@ -150,10 +136,10 @@ button { cursor: pointer; }
   </div>
 
   <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
-    <div class="translation-modal" id="translationModal" aria-label="คำศัพท์จากมังงะ" role="dialog">
+    <div class="translation-modal" id="translationModal" aria-label="คำแปลภาษาไทย" role="dialog">
       <header class="reader-header">
         <button class="icon-button" id="closeTranslation" type="button" aria-label="ปิด">‹</button>
-        <div class="title-group"><h1>คำศัพท์จากมังงะ</h1></div>
+        <div class="title-group"><h1>คำแปลภาษาไทย</h1></div>
         <span class="icon-button" aria-hidden="true" style="visibility:hidden">文</span>
       </header>
 
@@ -163,8 +149,8 @@ button { cursor: pointer; }
         <div class="translation-body-head">
           <h2 id="detailTitle">หน้า 1</h2>
           <div class="step-arrows">
-            <button class="step-arrow" id="detailPrev" type="button" aria-label="หน้าก่อนหน้า">‹</button>
-            <button class="step-arrow" id="detailNext" type="button" aria-label="หน้าถัดไป">›</button>
+            <button class="step-arrow" id="detailPrev" type="button" aria-label="หน้าคำแปลก่อนหน้า">‹</button>
+            <button class="step-arrow" id="detailNext" type="button" aria-label="หน้าคำแปลถัดไป">›</button>
           </div>
         </div>
 
@@ -173,8 +159,8 @@ button { cursor: pointer; }
             <thead>
               <tr>
                 <th class="col-no">ลำดับ</th>
-                <th class="col-romaji">Kana</th>
-                <th class="col-japanese">Kanji</th>
+                <th class="col-romaji">โรมันจิ</th>
+                <th class="col-japanese">ภาษาญี่ปุ่น</th>
                 <th class="col-meaning">ความหมาย</th>
               </tr>
             </thead>
@@ -182,30 +168,56 @@ button { cursor: pointer; }
           </table>
         </div>
 
-        <section class="vocabulary-editor" id="vocabularyEditor" aria-label="เพิ่มคำศัพท์" hidden>
-          <h3>เพิ่มคำศัพท์หน้านี้</h3>
-          <form id="vocabularyAddForm">
-            <label>Kana
-              <input name="kana" type="text" maxlength="500" required>
-            </label>
-            <label>Kanji
-              <input name="kanji" type="text" maxlength="500" required>
-            </label>
-            <label>ความหมาย
-              <input name="meaning" type="text" maxlength="2000" required>
-            </label>
-            <button id="vocabularySaveButton" type="submit">เพิ่มคำศัพท์</button>
-          </form>
-          <p id="vocabularyStatus" role="status" aria-live="polite"></p>
-        </section>
-
       </div>
     </div>
   </div>
 
+  <!-- โหลดสคริปต์ Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="data/supabase-client.js"></script>
+  <script src="data/supabase-client.js"></script>
+  
+  <!-- โหลดข้อมูลรูปภาพ (window.mangaImages) -->
   <script src="data/manga-images.js"></script>
+  
+  <!-- สคริปต์ควบคุมการอ่านมังงะและการดึงตารางคำศัพท์ (ปรับ data-series ตามที่เก็บรูป) -->
+  <!-- เพิ่ม data-vocabulary-manga-id เป็นค่า Default เผื่อบน URL ไม่มี -->
   <script src="data/manga-reader-supabase.js" data-series="manga-jp" data-vocabulary-manga-id="1"></script>
+
+  <!-- สคริปต์ดึงข้อมูลชื่อเรื่องมังงะ เพื่อแสดงบน Header หน้าเว็บ -->
+  <script>
+   (async function fetchMangaHeader() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const mangaId = params.get("manga_id") || params.get("id") || "1";
+        
+        const client = window.getSupabaseClient ? window.getSupabaseClient() : (window.supabaseClient || window.supabase);
+        if (!client) return;
+
+        // ดึง title และ description จากตาราง mangas
+        const { data: manga, error } = await client
+          .from("mangas") 
+          .select("title, description")
+          .eq("manga_id", mangaId)
+          .single();
+          
+        if (error) {
+          console.error("ดึงข้อมูลมังงะล้มเหลว:", error.message);
+          return;
+        }
+
+        if (manga) {
+          const titleJP = document.getElementById("mangaTitleJP");
+          const titleTH = document.getElementById("mangaTitleTH");
+          
+          if (titleJP) titleJP.textContent = manga.title || "อ่านมังงะ";
+          if (titleTH) titleTH.textContent = manga.description ? `(${manga.description})` : "";
+          
+          document.title = `${manga.title || 'อ่านมังงะ'} | みさこ`;
+        }
+      } catch (err) {
+        console.error("เกิดข้อผิดพลาดในการโหลดชื่อเรื่อง:", err);
+      }
+    })();
+  </script>
 </body>
 </html>
