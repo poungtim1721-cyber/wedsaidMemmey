@@ -7,7 +7,7 @@ const mangaPages = [
   "7 (2).png", "8 (2).png", "9 (2).png", "10.png", "11 (2).png", "12 (2).png",
   "13.png", "14.png", "15.png", "16.png", "17.png", "18.png"
 ];
-const TRANSLATION_ENDPOINT = "https://api.mymemory.translated.net/get";
+const TRANSLATION_ENDPOINT = "https://api.mymemory.translated.net/get?de=อีเมลของคุณ@gmail.com";
 const DICTIONARY_ENDPOINT = "https://jisho.org/api/v1/search/words?keyword=";
 let latestApiTranslation = "";
 

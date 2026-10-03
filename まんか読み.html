@@ -48,7 +48,6 @@ button { cursor: pointer; }
 .modal-backdrop { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(0,0,0,0); pointer-events: none; transition: background .25s ease; }
 .modal-backdrop.open { background: rgba(0,0,0,.55); pointer-events: auto; }
 
-/* ขยายขนาด Modal ให้กว้างขึ้นเพื่อรองรับข้อความยาวๆ */
 .chapter-modal { width: min(520px, 100%); background: #fff; color: #222; border-radius: 6px; overflow: hidden; box-shadow: 0 20px 55px rgba(0,0,0,.45); opacity: 0; transform: translateY(18px); transition: opacity .22s ease, transform .22s ease; display: flex; flex-direction: column; height: auto; max-height: min(480px, 80vh); }
 .translation-modal { width: min(760px, 95vw); height: min(620px, 88vh); background: #fff; color: #222; border-radius: 6px; overflow: hidden; box-shadow: 0 20px 55px rgba(0,0,0,.45); opacity: 0; transform: translateY(18px); transition: opacity .22s ease, transform .22s ease; display: flex; flex-direction: column; }
 
@@ -72,7 +71,6 @@ button { cursor: pointer; }
 .step-arrow { border: 1px solid #ddd; border-radius: 5px; background: #fff; color: #555; font-size: 14px; padding: 3px 9px; }
 .step-arrow:disabled { opacity: .35; cursor: default; }
 
-/* ปรับปรุงตารางให้อ่านง่ายเมื่อข้อความยาว */
 .translation-table-container { flex: 1; overflow-y: auto; border: 1px solid #7cb932; border-radius: 4px; }
 .translation-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; color: #333; table-layout: fixed; }
 .translation-table th { background-color: #8cc63f; color: #fff; font-weight: 600; padding: 10px 8px; border: 1px solid #7cb932; text-align: center; }
@@ -101,10 +99,8 @@ button { cursor: pointer; }
       <button class="icon-button" id="closeReader" type="button" aria-label="กลับหน้าหลัก">×</button>
       <div class="title-group">
         <select class="chapter-select" id="chapterSelect" aria-label="เลือกตอน"></select>
-        <h1 aria-label="おさななじみをみるめがかわってしまった">
-          <ruby>幼<rt>おさな</rt></ruby>なじみを<ruby>見<rt>み</rt></ruby>る<ruby>目<rt>め</rt></ruby>が<ruby>変<rt>か</rt></ruby>わってしまった
-        </h1>
-        <h1>(มุมมองที่ฉันมีต่อเพื่อนสมัยเด็กเปลี่ยนไปแล้ว)</h1>
+        <h1 id="mangaTitleJP">กำลังโหลดเรื่องมังงะ...</h1>
+        <h1 id="mangaTitleTH"></h1>
       </div>
       <button class="icon-button" id="openTranslation" type="button" aria-label="เปิดคำแปลทุกหน้า">文</button>
     </header>
@@ -175,9 +171,239 @@ button { cursor: pointer; }
     </div>
   </div>
 
+  <!-- โหลดสคริปต์ Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="data/supabase-client.js"></script>
+  <script src="data/supabase-client.js"></script>
+  <!-- โหลดข้อมูลรูปภาพ (window.mangaImages) -->
   <script src="data/manga-images.js"></script>
-  <script src="data/manga-reader-supabase.js" data-series="manga-kana"></script>
+  
+  <!-- สคริปต์หลักสำหรับแสดงมังงะ ดึงคำศัพท์ และชื่อเรื่อง -->
+  <script>
+    (async function initializeMangaReader() {
+      try {
+        // 1. รับค่า manga_id จาก URL (เช่น ?manga_id=15)
+        const params = new URLSearchParams(window.location.search);
+        const mangaId = Number(params.get("manga_id") || params.get("id") || 1);
+        const series = "manga-kana";
+
+        const client = window.getSupabaseClient ? window.getSupabaseClient() : (window.supabaseClient || window.supabase);
+        
+        // 2. โหลดชื่อเรื่อง (Title) จากตาราง mangas
+        if (client) {
+          const { data: mangaInfo } = await client.from("mangas").select("title, description").eq("manga_id", mangaId).single();
+          if (mangaInfo) {
+            document.getElementById("mangaTitleJP").textContent = mangaInfo.title || "อ่านมังงะ";
+            document.getElementById("mangaTitleTH").textContent = mangaInfo.description ? `(${mangaInfo.description})` : "";
+            document.title = `${mangaInfo.title || 'อ่านมังงะ'} | みさこ`;
+          }
+        }
+
+        // 3. เตรียมระบบรูปภาพมังงะ
+        const track = document.getElementById("pageTrack");
+        const dots = document.getElementById("pageDots");
+        const pageCounter = document.getElementById("pageCounter");
+        const chapterSelect = document.getElementById("chapterSelect");
+        const chapterGrid = document.getElementById("chapterGrid");
+        const imagesByChapter = window.mangaImages && window.mangaImages[series];
+
+        if (!imagesByChapter || imagesByChapter.length === 0) {
+          if (track) track.innerHTML = '<div style="padding: 20px;">ไม่พบข้อมูลรูปมังงะในไฟล์ manga-images.js</div>';
+          return;
+        }
+
+        const chapters = [];
+        let currentChapter = 0;
+        let currentPage = 0;
+        let activeTranslationPage = 0;
+
+        imagesByChapter.forEach((imageFiles, chapterIndex) => {
+          const pages = imageFiles.filter(Boolean).map(imagePath => ({
+            image_path: imagePath,
+            vocabularies: []
+          }));
+          if (pages.length > 0) {
+            chapters.push({ number: chapterIndex + 1, title: `ตอนที่ ${chapterIndex + 1}`, pages });
+          }
+        });
+
+        if (chapters.length === 0) return;
+
+        // 4. โหลดข้อมูลคำแปลจากตาราง "manga_manji" ตาม manga_id
+        if (client) {
+          const { data: vocabData, error: vocabError } = await client
+            .from("manga_manji")
+            .select("vocab_id, category, manga_id, page_no, seq_no, kana, kanji, meaning")
+            .eq("manga_id", mangaId)
+            .order("page_no", { ascending: true })
+            .order("seq_no", { ascending: true });
+
+          if (vocabError) {
+            console.error("ดึงข้อมูลจาก manga_manji ล้มเหลว:", vocabError.message);
+          } else if (vocabData) {
+            // จัดการกระจายคำศัพท์ไปใส่ตามเลขหน้า (page_no)
+            vocabData.forEach((entry) => {
+              const pageIdx = (entry.page_no || 1) - 1; // page_no ใน DB เริ่มจาก 1 แต่ Index เริ่มจาก 0
+              const targetChapter = chapters[0]; // อ้างอิง Chapter 1
+              
+              if (targetChapter && targetChapter.pages[pageIdx]) {
+                targetChapter.pages[pageIdx].vocabularies.push(entry);
+              }
+            });
+          }
+        }
+
+        // 5. ฟังก์ชันควบคุมการเปลี่ยนหน้ามังงะ
+        function goToPage(pageIndex) {
+          const pages = chapters[currentChapter].pages;
+          currentPage = Math.max(0, Math.min(pageIndex, pages.length - 1));
+          if (track) track.style.transform = `translateX(-${currentPage * 100}%)`;
+          if (pageCounter) pageCounter.textContent = `หน้า ${currentPage + 1} / ${pages.length}`;
+          
+          if (dots) [...dots.children].forEach((dot, idx) => dot.classList.toggle("active", idx === currentPage));
+          
+          document.getElementById("previousPage").disabled = (currentPage === 0 && currentChapter === 0);
+          document.getElementById("nextPage").disabled = (currentPage === pages.length - 1 && currentChapter === chapters.length - 1);
+        }
+
+        function loadChapter(chapterIndex) {
+          currentChapter = chapterIndex;
+          const chapter = chapters[currentChapter];
+          
+          if (chapterSelect) chapterSelect.value = String(currentChapter);
+          if (chapterGrid) [...chapterGrid.children].forEach((card, i) => card.classList.toggle("active", i === currentChapter));
+          
+          if (track) track.replaceChildren();
+          if (dots) dots.replaceChildren();
+
+          chapter.pages.forEach((pageData, index) => {
+            const article = document.createElement("article");
+            article.className = "manga-page";
+            const img = document.createElement("img");
+            img.src = encodeURI(pageData.image_path);
+            img.loading = index === 0 ? "eager" : "lazy";
+            article.appendChild(img);
+            if (track) track.appendChild(article);
+
+            const dot = document.createElement("button");
+            dot.addEventListener("click", () => goToPage(index));
+            if (dots) dots.appendChild(dot);
+          });
+          goToPage(0);
+        }
+
+        function changePage(step) {
+          const target = currentPage + step;
+          const pages = chapters[currentChapter].pages;
+          if (target >= pages.length && currentChapter < chapters.length - 1) {
+            loadChapter(currentChapter + 1);
+          } else if (target < 0 && currentChapter > 0) {
+            loadChapter(currentChapter - 1);
+            goToPage(chapters[currentChapter].pages.length - 1);
+          } else if (target >= 0 && target < pages.length) {
+            goToPage(target);
+          }
+        }
+
+        // 6. ฟังก์ชันแสดงผลตารางคำแปล
+        const tableBody = document.getElementById("translationTableBody");
+        const pageTabs = document.getElementById("pageTabs");
+        const detailTitle = document.getElementById("detailTitle");
+
+        function renderTable(pageIndex) {
+          if (!tableBody) return;
+          tableBody.replaceChildren();
+          const entries = chapters[currentChapter].pages[pageIndex].vocabularies;
+          
+          if (!entries || entries.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="4" class="no-data">ไม่มีข้อมูลคำแปลในหน้านี้</td></tr>';
+            return;
+          }
+
+          entries.forEach((entry, idx) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td class="col-no">${entry.seq_no || idx + 1}</td>
+              <td class="col-romaji">${entry.kana || "-"}</td>
+              <td class="col-japanese">${entry.kanji || "-"}</td>
+              <td class="col-meaning">${entry.meaning || "-"}</td>
+            `;
+            tableBody.appendChild(tr);
+          });
+        }
+
+        function showTranslationPage(index) {
+          const pages = chapters[currentChapter].pages;
+          activeTranslationPage = Math.max(0, Math.min(index, pages.length - 1));
+          if (detailTitle) detailTitle.textContent = `หน้า ${activeTranslationPage + 1}`;
+          renderTable(activeTranslationPage);
+          
+          if (pageTabs) [...pageTabs.children].forEach((tab, i) => tab.classList.toggle("active", i === activeTranslationPage));
+          
+          document.getElementById("detailPrev").disabled = activeTranslationPage === 0;
+          document.getElementById("detailNext").disabled = activeTranslationPage === pages.length - 1;
+        }
+
+        function buildPageTabs() {
+          if (!pageTabs) return;
+          pageTabs.replaceChildren();
+          chapters[currentChapter].pages.forEach((page, index) => {
+            const tab = document.createElement("button");
+            tab.className = `page-tab ${page.vocabularies.length > 0 ? "has-translation" : ""}`;
+            tab.textContent = index + 1;
+            tab.addEventListener("click", () => showTranslationPage(index));
+            pageTabs.appendChild(tab);
+          });
+        }
+
+        // 7. ผูก Event Listener
+        document.getElementById("previousPage")?.addEventListener("click", () => changePage(-1));
+        document.getElementById("nextPage")?.addEventListener("click", () => changePage(1));
+        document.getElementById("nextFooter")?.addEventListener("click", () => changePage(1));
+        document.getElementById("lastFooter")?.addEventListener("click", () => goToPage(chapters[currentChapter].pages.length - 1));
+        
+        document.getElementById("closeReader")?.addEventListener("click", () => history.length > 1 ? history.back() : window.location.href = "index.html");
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowLeft") changePage(-1);
+          if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); changePage(1); }
+        });
+
+        const modalBackdrop = document.getElementById("modalBackdrop");
+        document.getElementById("openTranslation")?.addEventListener("click", () => {
+          buildPageTabs();
+          showTranslationPage(currentPage);
+          modalBackdrop?.classList.add("open");
+        });
+        document.getElementById("closeTranslation")?.addEventListener("click", () => modalBackdrop?.classList.remove("open"));
+
+        document.getElementById("detailPrev")?.addEventListener("click", () => showTranslationPage(activeTranslationPage - 1));
+        document.getElementById("detailNext")?.addEventListener("click", () => showTranslationPage(activeTranslationPage + 1));
+
+        if (chapterSelect && chapterGrid) {
+          chapters.forEach((chap, i) => {
+            const opt = document.createElement("option"); opt.value = i; opt.textContent = chap.title;
+            chapterSelect.appendChild(opt);
+
+            const btn = document.createElement("button"); btn.className = "chapter-card"; btn.textContent = chap.title;
+            btn.addEventListener("click", () => {
+              loadChapter(i);
+              document.getElementById("chapterModalBackdrop")?.classList.remove("open");
+            });
+            chapterGrid.appendChild(btn);
+          });
+          chapterSelect.addEventListener("change", (e) => loadChapter(Number(e.target.value)));
+        }
+
+        document.getElementById("openChapterModal")?.addEventListener("click", () => document.getElementById("chapterModalBackdrop")?.classList.add("open"));
+        document.getElementById("closeChapterModal")?.addEventListener("click", () => document.getElementById("chapterModalBackdrop")?.classList.remove("open"));
+
+        // เริ่มต้นแสดงผล
+        loadChapter(0);
+
+      } catch (err) {
+        console.error("ระบบอ่านมังงะขัดข้อง:", err);
+      }
+    })();
+  </script>
 </body>
 </html>
