@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>เข้าสู่ระบบ | みさこ</title>
+<title>みさこ Login</title>
 <style>
 :root {
     --ink: #27364a;
@@ -53,8 +53,8 @@ body {
 
 .login-card {
     display: flex;
-    width: min(860px, 100%);
-    min-height: 500px;
+    width: min(920px, 100%);
+    min-height: 570px;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, .45);
     border-radius: 28px;
@@ -66,11 +66,11 @@ body {
 .left-side {
     position: relative;
     display: flex;
-    flex: 1 1 60%;
+    flex: 1 1 4%;
     flex-direction: column;
     justify-content: flex-end;
-    min-height: 500px;
-    padding: 60px;
+    min-height: 50px;
+    padding: 110px 48px 48px;
     overflow: hidden;
     color: #244057;
     background: linear-gradient(155deg, rgba(218, 248, 255, .96), rgba(255, 238, 213, .96));
@@ -192,8 +192,8 @@ body {
 }
 
 .right-side {
-    flex: 0 0 40%;
-    padding: 38px clamp(24px, 3vw, 42px);
+    flex: 1 1 52%;
+    padding: 58px clamp(28px, 6vw, 68px);
     background: var(--cream);
 }
 
@@ -300,25 +300,66 @@ h2 {
 
 .guest-btn {
     width: 100%;
-    margin-top: 12px;
-    padding: 12px;
+    padding: 14px;
     border: 1px solid var(--line);
     border-radius: 13px;
-    color: var(--purple-dark);
+    color: var(--ink);
     background: #fff;
-    cursor: pointer;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
-    transition: border-color .2s, background .2s;
+    cursor: pointer;
+    transition: border-color .2s, background-color .2s;
 }
 
 .guest-btn:hover {
     border-color: var(--purple);
-    background: #f5fbff;
+    background: #f4fbff;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 0;
+    color: #aaa8b6;
+    font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    content: "";
+}
+
+.social-btn {
+    display: flex;
+    gap: 10px;
+}
+
+.social-btn button {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--ink);
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .2s, transform .2s;
+}
+
+.social-btn button:hover {
+    border-color: var(--purple);
+    transform: translateY(-1px);
 }
 
 .switch-text {
-    margin: 20px 0 0;
+    margin: 26px 0 0;
     color: var(--muted);
     font-size: 13px;
     text-align: center;
@@ -333,6 +374,21 @@ h2 {
 .switch-text span:hover {
     color: var(--pink);
     text-decoration: underline;
+}
+
+.bars {
+    height: 5px;
+    margin: -7px 0 18px;
+    overflow: hidden;
+    border-radius: 5px;
+    background: #eeeaf7;
+}
+
+.bars div {
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    transition: .4s;
 }
 
 .shake {
@@ -354,7 +410,7 @@ h2 {
     }
 
     .left-side {
-        min-height: 260px;
+        min-height: 300px;
         padding: 30px;
     }
 
@@ -381,19 +437,27 @@ h2 {
     }
 
     .right-side {
-        flex-basis: auto;
-        padding: 30px 26px 34px;
+        padding: 34px 26px 38px;
     }
 }
 
 </style>
 </head>
 <body>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>みさこ Login</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
     <div class="fullscreen-bg" aria-hidden="true"></div>
 
     <div class="login-card">
         <div class="left-side">
-            <h1 class="brand-mark">みさこ</h1>
+            <h1></h1><div class="brand-mark">みさこ</div></h2>
             <div class="anime-panel">
                 <span class="speed-line speed-line-one"></span>
                 <span class="speed-line speed-line-two"></span>
@@ -408,18 +472,19 @@ h2 {
                 <p class="eyebrow">みさこภาษาญี่ปุ่นยินดีต้อนรับ</p>
                 <h2>เข้าสู่ระบบ</h2>
                 <p class="form-intro">เข้ามาเรียนต่อในโลกของ みさこ</p>
-                <form id="loginForm">
-                    <div class="textbox">
-                        <input id="LoginUser" required type="text" autocomplete="username" placeholder=" " />
-                        <label for="LoginUser">ชื่อผู้ใช้ / Email</label>
-                    </div>
-                    <div class="textbox">
-                        <input id="LoginPass" required type="password" autocomplete="current-password" placeholder=" " />
-                        <label for="LoginPass">รหัสผ่าน</label>
-                    </div>
-                    <button class="action-btn" type="submit">Sign in</button>
-                </form>
-                <button class="guest-btn" type="button" onclick="continueAsGuest()">ข้าม ไม่ต้องลงทะเบียน</button>
+                <div class="textbox">
+                    <input id="LoginUser" required type="text" placeholder=" " />
+                    <label>ชื่อผู้ใช้ / Email / หมายเลขโทรศัพท์</label>
+                </div>
+                <div class="textbox">
+                    <input id="LoginPass" required type="password" maxlength="14" placeholder=" " />
+                    <label>รหัสผ่าน</label>
+                </div>
+                <button class="action-btn" onclick="handleSignIn()">Sign in</button>
+                <div class="divider">
+                    <span>หรือ</span>
+                </div>
+                <button class="guest-btn" type="button" onclick="enterAsGuest()">เข้าใช้งานโดยไม่สมัครสมาชิก</button>
                 <p class="switch-text">คุณพึ่งเคยเข้า みさこ ใช่หรือไม่ <span onclick="showRegister()">สมัครใหม่ที่นี่</span></p>
             </div>
 
@@ -431,28 +496,107 @@ h2 {
               <form id="regForm">
                     <div class="textbox">
                     <input id="RegEmail" required type="email" placeholder=" " />
-                    <label for="RegEmail">Email</label>
+                    <label>Email หมายเลขโทรศัพท์</label>
                 </div>
                     <div class="textbox">
                     <input id="RegUser" required type="text" placeholder=" " />
-                    <label for="RegUser">ชื่อผู้ใช้</label>
+                    <label>ชื่อผู้ใช้</label>
                 </div>
                     <div class="textbox">
                     <input id="RegPass" required type="password" placeholder=" " />
-                    <label for="RegPass">รหัสผ่าน</label>
+                    <label>รหัสผ่าน</label>
                 </div>
                     <div class="textbox">
                     <input id="ConfirmPass" required type="password" placeholder=" " />
-                    <label for="ConfirmPass">ยืนยันรหัส</label>
+                    <label>ยืนยันรหัส</label>
                 </div>
+                    <div class="bars" id="bars"><div></div></div>
                     <button id="RegBtn" type="submit" class="action-btn" disabled>Sign Up</button>
                     </form>
-                <button class="guest-btn" type="button" onclick="continueAsGuest()">ข้าม ไม่ต้องลงทะเบียน</button>
                 <p class="switch-text"><span onclick="showLogin()">กลับไปหน้า Sign in</span></p>
             </div>
         </div>
     </div>
     
     <script src="main.js"></script>
+</body>
+</html>
+
+<script>
+function showRegister() {
+    document.getElementById("loginSection").style.display = "none";
+    document.getElementById("registerSection").style.display = "block";
+    var m = document.getElementById("msgBubble");
+    if (m) m.innerText = " ようこそ"; 
+}
+function showLogin() {
+    document.getElementById("loginSection").style.display = "block";
+    document.getElementById("registerSection").style.display = "none";
+    var m = document.getElementById("msgBubble");
+    if (m) m.innerText = " こんにちは"; 
+}
+function handleSignIn() {
+    var u = document.getElementById("LoginUser").value.trim();
+    var p = document.getElementById("LoginPass").value;
+    if (!u || !p) { alert("กรุณากรอกชื่อผู้ใช้และรหัสผ่าน"); return; }
+    var users = JSON.parse(localStorage.getItem("users")) || [];
+    var ok = false;
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].username === u && users[i].password === p) { ok = true; break; }
+    }
+    if (ok) {
+        sessionStorage.removeItem("guestMode");
+        localStorage.setItem("registeredName", u);
+        alert("ยินดีต้อนรับเข้าสู่ระบบ!");
+        window.location.href = "home.html"; 
+    } else {
+        alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
+    }
+}
+function enterAsGuest() {
+    sessionStorage.setItem("guestMode", "true");
+    window.location.href = "home.html";
+}
+function socialAuth(platform) { alert("กำลังเชื่อมต่อกับ " + platform + "... (ระบบจำลอง)"); }
+
+document.addEventListener("DOMContentLoaded", function () {
+    var regPass = document.getElementById("RegPass");
+    var confirmPass = document.getElementById("ConfirmPass");
+    var regBtn = document.getElementById("RegBtn");
+
+    function enable() {
+        if (!regBtn || !regPass || !confirmPass) return;
+        var match = regPass.value === confirmPass.value && regPass.value !== "";
+        var long = regPass.value.length >= 6;
+        regBtn.disabled = !(match && long);
+        regBtn.style.opacity = (match && long) ? "1" : "0.5";
+    }
+
+    if (regPass) regPass.addEventListener("input", enable);
+    if (confirmPass) confirmPass.addEventListener("input", enable);
+
+    var regForm = document.getElementById("regForm");
+    if (regForm) regForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var user = document.getElementById("RegUser").value.trim();
+        var email = document.getElementById("RegEmail").value.trim();
+        var pass = regPass.value;
+        if (!user) { alert("กรุณากรอกชื่อผู้ใช้"); return; }
+        if (!email || email.indexOf("@") === -1) { alert("กรุณากรอก Email ให้ถูกต้อง"); return; }
+        if (pass.length < 6) { alert("รหัสผ่านต้องอย่างน้อย 6 ตัว"); return; }
+        var users = JSON.parse(localStorage.getItem("users")) || [];
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].username === user) { alert("ชื่อผู้ใช้นี้ถูกใช้ไปแล้ว"); return; }
+        }
+        users.push({ username: user, email: email, password: pass });
+        localStorage.setItem("users", JSON.stringify(users));
+        localStorage.setItem("registeredName", user);
+        alert("ลงทะเบียนสำเร็จ! ยินดีต้อนรับ " + user);
+        showLogin();
+        document.getElementById("LoginUser").value = user;
+        document.getElementById("LoginPass").value = "";
+    });
+});
+</script>
 </body>
 </html>
