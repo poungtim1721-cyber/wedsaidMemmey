@@ -938,7 +938,7 @@ body {
             var profileNameElement = document.getElementById("profileName");
             if (!profileNameElement) return;
             var isGuest = sessionStorage.getItem("guestMode") === "true";
-            var displayName = isGuest ? "ผู้เยี่ยมชม" : savedName || "日本語";
+            var displayName = isGuest ? "誰は君" : savedName || "日本語";
             profileNameElement.innerText = displayName;
             var userAvatar = document.getElementById("userAvatar");
             if (userAvatar) userAvatar.innerText = isGuest ? "G" : displayName.charAt(0).toUpperCase();
