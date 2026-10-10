@@ -103,7 +103,7 @@
             <a href="home.html" class="nav-link">หน้าเเรก</a>
             <a href="/漢字.html" class="nav-link">คันจิ (漢字)</a>
             <a href="文法.html" class="nav-link">ศัพท์เเละไวยากรณ์ (文法)</a>
-            <a href="index.html" class="nav-link">เข้าสู่ระบบ</a>
+            <a href="/login.html" class="nav-link">เข้าสู่ระบบ</a>
             <span class="icon" onclick="openNav()" style="cursor: pointer; font-size: 20px; margin-left: 15px;">☰</span>
         </div>
         </div>
@@ -134,12 +134,14 @@
     <script>
         function loadUsername() {
             var savedName = localStorage.getItem("registeredName");
+            var isGuest = sessionStorage.getItem("guestMode") === "true";
             var profileNameElement = document.getElementById("profileName");
             if (!profileNameElement) return;
-            profileNameElement.innerText = savedName || "日本語";
+            var displayName = isGuest ? "ผู้เยี่ยมชม" : savedName || "日本語";
+            profileNameElement.innerText = displayName;
             var avatarEl = document.getElementById("userAvatar");
             if (avatarEl) {
-                avatarEl.innerText = (savedName || "日")[0].toUpperCase();
+                avatarEl.innerText = isGuest ? "G" : displayName[0].toUpperCase();
                 var savedColor = localStorage.getItem("userAvatarColor");
                 if (savedColor) avatarEl.style.background = savedColor;
             }
@@ -161,9 +163,9 @@
                     localStorage.removeItem("registeredEmail");
                     localStorage.removeItem("db_username");
                     localStorage.removeItem("db_password");
-                    sessionStorage.clear();
+                    sessionStorage.removeItem("guestMode");
                     alert("ออกจากระบบเรียบร้อยแล้ว!");
-                    window.location.href = "index.html";
+                    window.location.href = "login.html?register=1";
                 }
             });
         });

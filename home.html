@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -880,7 +880,7 @@ body {
 
     <nav class="navbar">
         <div class="logo">
-                <span class="jlpt-text">みさ<span class="red-p">こ。</span><span class="kanji-text"></span>
+                <span class="jlpt-text">みさ<span class="red-p">こ。</span><span class="kanji-text"></span></span>
         </div>
         <div class="nav-right">
     <!-- ช่องค้นหา -->
@@ -901,9 +901,9 @@ body {
             <a href="home.html" class="nav-link">หน้าเเรก</a>
             <a href="/漢字.html" class="nav-link">คันจิ (漢字)</a>
             <a href="文法.html" class="nav-link">ศัพท์เเละไวยากรณ์ (文法)</a>
-            <a href="index.html" class="nav-link">เข้าสู่ระบบ</a>
+            <a href="/login.html" class="nav-link">เข้าสู่ระบบ</a>
             
-            <span class="icon" onclick="openNav()" style="cursor: pointer; font-size: 20px; margin-left: 15px;">☰</span>
+            <button class="icon" type="button" onclick="openNav()" aria-label="เปิดเมนูผู้ใช้" aria-controls="mySidebar" aria-expanded="false" style="font-size: 20px; margin-left: 15px; padding: 0; border: 0; background: transparent;">☰</button>
         </div>
     </nav>
 
@@ -936,30 +936,38 @@ body {
         function loadUsername() {
             var savedName = localStorage.getItem("registeredName");
             var profileNameElement = document.getElementById("profileName");
-        if (!profileNameElement) return;
-            profileNameElement.innerText = savedName || "日本語";
+            if (!profileNameElement) return;
+            var isGuest = sessionStorage.getItem("guestMode") === "true";
+            var displayName = isGuest ? "ผู้เยี่ยมชม" : savedName || "日本語";
+            profileNameElement.innerText = displayName;
+            var userAvatar = document.getElementById("userAvatar");
+            if (userAvatar) userAvatar.innerText = isGuest ? "G" : displayName.charAt(0).toUpperCase();
         }
         document.addEventListener("DOMContentLoaded", loadUsername);
         // ฟังก์ชันสำหรับเปิด Sidebar
         function openNav() {
             document.getElementById("mySidebar").style.width = "300px";
+            document.querySelector(".nav-menu .icon").setAttribute("aria-expanded", "true");
         }
         function closeNav() {  // ฟังก์ชันสำหรับปิด Sidebar
             document.getElementById("mySidebar").style.width = "0";
+            document.querySelector(".nav-menu .icon").setAttribute("aria-expanded", "false");
         }
         const logoutButton = document.getElementById('logoutBtn');// ระบบออกจากระบบ (Logout)
-        logoutButton.addEventListener('click', function() { // แสดงกล่องยืนยันการออกจากระบบ
+        logoutButton?.addEventListener('click', function() { // แสดงกล่องยืนยันการออกจากระบบ
             const confirmLogout = confirm("คุณต้องการออกจากระบบใช่หรือไม่?");
             
             if (confirmLogout) {
-                // ล้างข้อมูล Log ในเว็บบราวเซอร์
-                localStorage.clear();
-                sessionStorage.clear();
+                localStorage.removeItem("registeredName");
+                localStorage.removeItem("registeredEmail");
+                localStorage.removeItem("db_username");
+                localStorage.removeItem("db_password");
+                sessionStorage.removeItem("guestMode");
                 
                 alert("ออกจากระบบเรียบร้อยแล้ว!");
                 
                 // หลังจากกดตกลง ให้รีเฟรชหน้าเว็บ (หรือเปลี่ยนไปหน้า index.html ก็ได้)
-                window.location.href = "index.html";
+                window.location.href = "login.html?register=1";
             }
         });
 </script>
@@ -1014,11 +1022,11 @@ body {
 </style>
    <div class="manga-slider-container" id="mangaSlider">
     <div class="manga-slider-track" id="mangaTrack">
-        <div class="manga-slide"><a href="/มังงะ.html"><img src="/HSvtRu-bAAATJdT.jpg" alt="Manga 1" draggable="false" ></a></div>
-        <div class="manga-slide"><img src="/jlpt-n3-practice-test.jpg" alt="Manga 2" draggable="false"></div>
-        <div class="manga-slide"><img src="/jlpt-n3-resources.png" alt="Manga 3" draggable="false"></div>
-        <div class="manga-slide"><img src="/maxresdefault.jpg" alt="Manga 4" draggable="false"></div>
-        <div class="manga-slide"><img src="/images%20%281%29.png" alt="Manga 5" draggable="false"></div>
+        <div class="manga-slide"><a href="/มังงะ.html" aria-label="ไปหน้ามังงะ"><img src="/HSvtRu-bAAATJdT.jpg" alt="มังงะ" draggable="false"></a></div>
+        <div class="manga-slide"><a href="/N3.html" aria-label="ไปหน้าคันจิ JLPT N3"><img src="/jlpt-n3-practice-test.jpg" alt="แบบฝึก JLPT N3" draggable="false"></a></div>
+        <div class="manga-slide"><a href="/คำศัพท์.html?level=N3" aria-label="ไปหน้าคำศัพท์ JLPT N3"><img src="/jlpt-n3-resources.png" alt="ทรัพยากร JLPT N3" draggable="false"></a></div>
+        <div class="manga-slide"><a href="/文法N3.html" aria-label="ไปหน้าไวยากรณ์ JLPT N3"><img src="/maxresdefault.jpg" alt="ไวยากรณ์ JLPT N3" draggable="false"></a></div>
+        <div class="manga-slide"><a href="/漫画読み.html" aria-label="ไปหน้ารวมมังงะ"><img src="/images%20%281%29.png" alt="หน้ารวมมังงะ" draggable="false"></a></div>
     </div>
 
     <!-- ปุ่มลูกศรซ้าย-ขวา -->
@@ -1027,61 +1035,6 @@ body {
     <!-- จุดไข่ปลาบอกตำแหน่ง -->
     <div class="manga-dots" id="mangaDots"></div>
 </div>
-    </nav>
-<script>
-    const slides = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.dot');
-    let currentIndex = 0;
-    let slideInterval;
-
-    // ฟังก์ชันจัดการตำแหน่งและคลาสของแต่ละรูป
-    function updateSlider() {
-        slides.forEach((slide, index) => {
-            // ลบคลาสเก่าออกก่อน
-            slide.classList.remove('active', 'prev', 'next');
-            
-            // คำนวณหาลำดับภาพก่อนหน้าและถัดไป เพื่อทำระบบลูป
-            let prevIndex = (currentIndex - 1 + slides.length) % slides.length;
-            let nextIndex = (currentIndex + 1) % slides.length;
-
-            // กำหนดคลาสใหม่ตามตำแหน่ง
-            if (index === currentIndex) {
-                slide.classList.add('active'); // รูปตรงกลาง
-            } else if (index === prevIndex) {
-                slide.classList.add('prev');   // รูปซ้าย
-            } else if (index === nextIndex) {
-                slide.classList.add('next');   // รูปขวา
-            }
-        });
-        // อัปเดตจุดไข่ปลา
-        dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentIndex);
-        });
-    }
-
-    // ฟังก์ชันเลื่อนไปยังภาพถัดไป
-    function nextSlide() {
-        currentIndex = (currentIndex + 1) % slides.length;
-        updateSlider();
-    }
-
-    // ฟังก์ชันเมื่อคลิกเลือกรูปหรือจุดไข่ปลา
-    function goToSlide(index) {
-        currentIndex = index;
-        updateSlider();
-        resetInterval(); // รีเซ็ตเวลาเลื่อนอัตโนมัติเมื่อมีการคลิก
-    }
-
-    // ฟังก์ชันตั้งเวลาเลื่อนอัตโนมัติ
-    function resetInterval() {
-        clearInterval(slideInterval);
-        slideInterval = setInterval(nextSlide, 3500); // 3500 คือ 3.5 วินาที เปลี่ยนแปลงได้
-    }
-
-    // เริ่มต้นทำงาน
-    updateSlider();
-    resetInterval();
-    </script>
     <script>
 window.addEventListener('load', function() {
     const container = document.getElementById('mangaSlider');
@@ -1253,7 +1206,7 @@ window.addEventListener('load', function() {
                 </a>
 
                 <a href="/manga-umaru-9.html" class="manga-cards">
-                    <div class="manga-cover"><img src="/anime第2/718K+wn8r5L._AC_UF1000,1000_QL80_.jpg" alt="干物妹！うまるちゃん 第9巻" draggable="false"></div>
+                    <div class="manga-cover"><img src="/anime第2/718K%2Bwn8r5L._AC_UF1000,1000_QL80_.jpg" alt="干物妹！うまるちゃん 第9巻" draggable="false"></div>
                     <h3 class="manga-title">干物妹！うまるちゃん 第9巻</h3>
                     <p class="manga-subtext"></p>
                 </a>
@@ -1345,7 +1298,7 @@ window.addEventListener('load', function() {
                     </a>
                     <!-- สามารถเพิ่มการ์ดเรื่องที่ 7, 8, 9 ไปได้เรื่อยๆ ครับ -->
                     <a href="/manga-umaru-9.html" class="manga-card">
-                        <div class="manga-cover"><img src="/anime第2/718K+wn8r5L._AC_UF1000,1000_QL80_.jpg" alt="干物妹！うまるちゃん 第9巻" draggable="false"></div>
+                        <div class="manga-cover"><img src="/anime第2/718K%2Bwn8r5L._AC_UF1000,1000_QL80_.jpg" alt="干物妹！うまるちゃん 第9巻" draggable="false"></div>
                         <h3 class="manga-title">干物妹！うまるちゃん 第9巻</h3>
                         <p class="manga-subtext"></p>
                     </a>

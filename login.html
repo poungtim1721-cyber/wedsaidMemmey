@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เข้าสู่ระบบ | みさこ</title>
+<style>
+:root {
+    --ink: #27364a;
+    --muted: #718092;
+    --purple: #5db7df;
+    --purple-dark: #347da9;
+    --pink: #86b0ff;
+    --cream: #fffdf7;
+    --line: #dce9ef;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 24px;
+    overflow: auto;
+    color: var(--ink);
+    background: #bfe7f3;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.fullscreen-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background-image: linear-gradient(135deg, rgba(255, 251, 229, .78), rgba(154, 220, 239, .62)), url("wallpapersden.com_jujutsu-kaisen-shibuya-incident-arc-art_2029x1080.jpg");
+    background-size: cover;
+    background-position: center;
+    filter: saturate(.72) brightness(1.12);
+}
+
+.fullscreen-bg::after {  
+    position: absolute; 
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, .18) 1px, transparent 1px);
+    background-size: 16px 16px;
+    content: "";
+    opacity: .25;
+}
+
+.login-card {
+    display: flex;
+    width: min(860px, 100%);
+    min-height: 500px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .45);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, .88);
+    box-shadow: 0 24px 65px rgba(54, 112, 139, .3);
+    backdrop-filter: blur(16px);
+}
+
+.left-side {
+    position: relative;
+    display: flex;
+    flex: 1 1 60%;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 500px;
+    padding: 60px;
+    overflow: hidden;
+    color: #244057;
+    background: linear-gradient(155deg, rgba(218, 248, 255, .96), rgba(255, 238, 213, .96));
+}
+
+.left-side::before,
+.left-side::after {
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    border: 1px solid rgba(77, 153, 183, .2);
+    border-radius: 50%;
+    content: "";
+}
+
+.left-side::before {
+    top: -100px;
+    right: -80px;
+}
+
+.left-side::after {
+    bottom: -140px;
+    left: -110px;
+    width: 300px;
+    height: 300px;
+}
+
+.brand-mark,
+.anime-panel,
+.panel-kicker,
+.left-side h1,
+.panel-caption {
+    position: relative;
+    z-index: 1;
+}
+
+.brand-mark {
+    position: absolute;
+    top: 30px;
+    left: 42px;
+    color: #347da9;
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.anime-panel {
+    display: grid;
+    place-items: center;
+    width: 190px;
+    height: 190px;
+    margin: 0 auto auto;
+    border: 1px solid rgba(93, 183, 223, .5);
+    border-radius: 42% 58% 54% 46%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, .75), rgba(242, 139, 168, .3));
+    transform: rotate(-7deg);
+}
+
+.character-orb {
+    display: grid;
+    place-items: center;
+    width: 108px;
+    height: 108px;
+    border: 5px solid #fff;
+    border-radius: 50%;
+    color: var(--purple-dark);
+    background: #fff0b8;
+    box-shadow: 8px 10px 0 rgba(52, 125, 169, .2);
+    font-size: 53px;
+    font-weight: 900;
+    transform: rotate(7deg);
+}
+
+.speed-line {
+    position: absolute;
+    width: 80px;
+    height: 3px;
+    border-radius: 4px;
+    background: #f28ba8;
+    transform: rotate(-22deg);
+}
+
+.speed-line-one { top: 35px; left: 18px; }
+.speed-line-two { right: 12px; bottom: 42px; width: 54px; }
+
+.spark {
+    position: absolute;
+    color: #ffe66d;
+    font-size: 28px;
+    transform: rotate(7deg);
+}
+
+.spark-one { top: 24px; right: 30px; }
+.spark-two { bottom: 22px; left: 28px; font-size: 20px; }
+
+.panel-kicker {
+    margin: 22px 0 8px;
+    color: #347da9;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.left-side h1 {
+    margin: 0;
+    font-size: clamp(28px, 4vw, 43px);
+    line-height: 1.12;
+}
+
+.left-side h1 span {
+    color: #ffd3e2;
+}
+
+.panel-caption {
+    max-width: 330px;
+    margin: 14px 0 0;
+    color: #58748a;
+    line-height: 1.7;
+}
+
+.right-side {
+    flex: 0 0 40%;
+    padding: 38px clamp(24px, 3vw, 42px);
+    background: var(--cream);
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+    color: var(--pink);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+h2 {
+    margin: 0;
+    color: var(--ink);
+    font-size: 32px;
+}
+
+.form-intro {
+    margin: 8px 0 28px;
+    color: var(--muted);
+}
+
+.textbox {
+    position: relative;
+    margin-bottom: 19px;
+}
+
+.textbox input {
+    width: 100%;
+    padding: 16px 15px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    outline: none;
+    color: var(--ink);
+    background: #fff;
+    font-size: 15px;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.textbox input:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 4px rgba(93, 183, 223, .18);
+}
+
+.textbox label {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    padding: 0 4px;
+    color: #9a99a9;
+    background: #fff;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: .2s ease;
+}
+
+.textbox input:focus + label,
+.textbox input:not(:placeholder-shown) + label {
+    top: 0;
+    color: var(--purple);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.forgot-container {
+    margin: -4px 0 20px;
+    text-align: right;
+}
+
+.forgot-link {
+    color: var(--purple-dark);
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.forgot-link:hover {
+    color: var(--pink);
+    text-decoration: underline;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 15px;
+    border: 0;
+    border-radius: 13px;
+    color: #fff;
+    background: linear-gradient(100deg, var(--purple-dark), var(--pink));
+    box-shadow: 0 8px 18px rgba(52, 125, 169, .25);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 800;
+    transition: transform .2s, box-shadow .2s;
+}
+
+.action-btn:hover:not(:disabled) {
+    box-shadow: 0 12px 24px rgba(52, 125, 169, .3);
+    transform: translateY(-2px);
+}
+
+.action-btn:disabled {
+    cursor: not-allowed;
+}
+
+.guest-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    color: var(--purple-dark);
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    transition: border-color .2s, background .2s;
+}
+
+.guest-btn:hover {
+    border-color: var(--purple);
+    background: #f5fbff;
+}
+
+.switch-text {
+    margin: 20px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+.switch-text span {
+    color: var(--purple-dark);
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.switch-text span:hover {
+    color: var(--pink);
+    text-decoration: underline;
+}
+
+.shake {
+    animation: shake .35s ease-in-out;
+}
+
+@keyframes shake {
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+}
+
+@media (max-width: 720px) {
+    body {
+        padding: 14px;
+    }
+
+    .login-card {
+        flex-direction: column;
+    }
+
+    .left-side {
+        min-height: 260px;
+        padding: 30px;
+    }
+
+    .anime-panel {
+        width: 125px;
+        height: 125px;
+        margin-top: 32px;
+        margin-bottom: 0;
+    }
+
+    .character-orb {
+        width: 72px;
+        height: 72px;
+        font-size: 34px;
+    }
+
+    .left-side h1 {
+        font-size: 28px;
+    }
+
+    .brand-mark {
+        top: 22px;
+        left: 30px;
+    }
+
+    .right-side {
+        flex-basis: auto;
+        padding: 30px 26px 34px;
+    }
+}
+
+</style>
+</head>
+<body>
+    <div class="fullscreen-bg" aria-hidden="true"></div>
+
+    <div class="login-card">
+        <div class="left-side">
+            <h1 class="brand-mark">みさこ</h1>
+            <div class="anime-panel">
+                <span class="speed-line speed-line-one"></span>
+                <span class="speed-line speed-line-two"></span>
+                <span class="spark spark-one">✦</span>
+                <span class="spark spark-two">✧</span>
+                <div class="character-orb">漢</div>
+            </div>
+        </div>
+        <div class="right-side">
+            
+            <div id="loginSection">
+                <p class="eyebrow">みさこภาษาญี่ปุ่นยินดีต้อนรับ</p>
+                <h2>เข้าสู่ระบบ</h2>
+                <p class="form-intro">เข้ามาเรียนต่อในโลกของ みさこ</p>
+                <form id="loginForm">
+                    <div class="textbox">
+                        <input id="LoginUser" required type="text" autocomplete="username" placeholder=" " />
+                        <label for="LoginUser">ชื่อผู้ใช้ / Email</label>
+                    </div>
+                    <div class="textbox">
+                        <input id="LoginPass" required type="password" autocomplete="current-password" placeholder=" " />
+                        <label for="LoginPass">รหัสผ่าน</label>
+                    </div>
+                    <button class="action-btn" type="submit">Sign in</button>
+                </form>
+                <button class="guest-btn" type="button" onclick="continueAsGuest()">ข้าม ไม่ต้องลงทะเบียน</button>
+                <p class="switch-text">คุณพึ่งเคยเข้า みさこ ใช่หรือไม่ <span onclick="showRegister()">สมัครใหม่ที่นี่</span></p>
+            </div>
+
+            <div id="registerSection" style="display: none;">
+                
+                <p class="eyebrow">เริ่มต้นการผจญภัย</p>
+                <h2>สมัครสมาชิก</h2>
+                <p class="form-intro">สร้างบัญชีเพื่อบันทึกการเรียนของคุณ</p>
+              <form id="regForm">
+                    <div class="textbox">
+                    <input id="RegEmail" required type="email" placeholder=" " />
+                    <label for="RegEmail">Email</label>
+                </div>
+                    <div class="textbox">
+                    <input id="RegUser" required type="text" placeholder=" " />
+                    <label for="RegUser">ชื่อผู้ใช้</label>
+                </div>
+                    <div class="textbox">
+                    <input id="RegPass" required type="password" placeholder=" " />
+                    <label for="RegPass">รหัสผ่าน</label>
+                </div>
+                    <div class="textbox">
+                    <input id="ConfirmPass" required type="password" placeholder=" " />
+                    <label for="ConfirmPass">ยืนยันรหัส</label>
+                </div>
+                    <button id="RegBtn" type="submit" class="action-btn" disabled>Sign Up</button>
+                    </form>
+                <button class="guest-btn" type="button" onclick="continueAsGuest()">ข้าม ไม่ต้องลงทะเบียน</button>
+                <p class="switch-text"><span onclick="showLogin()">กลับไปหน้า Sign in</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+</body>
+</html>

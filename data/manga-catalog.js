@@ -54,7 +54,7 @@ window.siteMangaCatalog = [
     id: "/manga-umaru-9.html",
     title: "干物妹！うまるちゃん 第9巻",
     href: "/manga-umaru-9.html",
-    image: "/anime第2/718K+wn8r5L._AC_UF1000,1000_QL80_.jpg",
+    image: "/anime第2/718K%2Bwn8r5L._AC_UF1000,1000_QL80_.jpg",
     coverId: "umaru-9",
     note: "第9巻 · มีภาพปก ยังไม่มีหน้ามังงะ",
     keywords: ["干物妹", "うまるちゃん", "Umaru", "เล่ม 9", "manga-cover"]

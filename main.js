@@ -1,7 +1,3 @@
-// --- สภาพ/สีของแท่งความแรงรหัสผ่าน (ส่วนที่ขาดหายไป) ---
-const colors = ["#ff4d4d", "#ff9f43", "#feca57", "#26de81", "#26de81"];
-const status = ["", "อ่อน", "ปานกลาง", "ดี", "แข็งแรงมาก"];
-
 // =================================================================
 //  ฟังก์ชันสลับหน้าจอ (getElementById ใหม่ทุกครั้ง ป้องกัน error หน้าไม่มี element)
 // =================================================================
@@ -23,18 +19,35 @@ function showLogin() {
     if (msgBubble) msgBubble.innerText = "Welcome Back!";
 }
 
+function continueAsGuest() {
+    localStorage.removeItem("registeredName");
+    localStorage.removeItem("registeredEmail");
+    sessionStorage.setItem("guestMode", "true");
+    window.location.href = "home.html";
+}
+
 // =================================================================
 //  เริ่มทำงานเมื่อ HTML โหลดเสร็จ
 // =================================================================
 document.addEventListener("DOMContentLoaded", function () {
 
+    const loginForm = document.getElementById("loginForm");
     const regPass = document.getElementById("RegPass");
     const confirmPass = document.getElementById("ConfirmPass");
-    const bars = document.querySelector("#bars div");
     const regBtn = document.getElementById("RegBtn");
     const regForm = document.getElementById("regForm");
 
-    // --- เช็คความแรงรหัสผ่าน + เปิดปิดปุ่มสมัคร ---
+    if (new URLSearchParams(window.location.search).get("register") === "1") {
+        showRegister();
+    }
+
+    if (loginForm) {
+        loginForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            handleSignIn();
+        });
+    }
+
     function validateForm() {
         if (!regBtn || !regPass || !confirmPass) return;
         const isMatch = (regPass.value === confirmPass.value && regPass.value !== "");
@@ -46,24 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (regPass && confirmPass) {
-        regPass.addEventListener("input", () => {
-            let strength = 0;
-            const val = regPass.value;
-
-            if (val.length >= 6) strength++;
-            if (/[A-Z]/.test(val)) strength++;
-            if (/[0-9]/.test(val)) strength++;
-            if (/[^A-Za-z0-9]/.test(val)) strength++;
-
-            if (bars) {
-                bars.style.width = (strength * 25) + "%";
-                bars.style.backgroundColor = colors[strength];
-            }
-            const msgBubble = document.getElementById("msgBubble");
-            if (msgBubble) msgBubble.innerText = status[strength];
-            validateForm();
-        });
-
+        regPass.addEventListener("input", validateForm);
         confirmPass.addEventListener("input", validateForm);
     }
 
@@ -80,8 +76,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let users = JSON.parse(localStorage.getItem("users")) || [];
 
-            if (users.find(u => u.username === user)) {
-                alert("ชื่อผู้ใช้นี้ถูกใช้ไปแล้ว");
+            if (users.find(u => u.username === user || u.email === email)) {
+                alert("ชื่อผู้ใช้หรือ Email นี้ถูกใช้ไปแล้ว");
                 return;
             }
 
@@ -91,9 +87,10 @@ document.addEventListener("DOMContentLoaded", function () {
             //  บันทึกชื่อทันที หน้าแรกจะได้โชว์ทันที (แม้ยังไม่ Sign in)
             localStorage.setItem("registeredName", user);
             localStorage.setItem("registeredEmail", email);
+            sessionStorage.removeItem("guestMode");
 
             alert("ลงทะเบียนสำเร็จ! ยินดีต้อนรับ " + user);
-            showLogin();
+            window.location.href = "home.html";
         });
     }
 });
@@ -106,9 +103,12 @@ function handleSignIn() {
     const passInp = document.getElementById("LoginPass").value;
 
     let users = JSON.parse(localStorage.getItem("users")) || [];
-    const userMatch = users.find(u => u.username === userInp && u.password === passInp);
+    const userMatch = users.find(u =>
+        (u.username === userInp || u.email === userInp) && u.password === passInp
+    );
 
     if (userMatch) {
+        sessionStorage.removeItem("guestMode");
         localStorage.setItem("registeredName", userMatch.username);
         alert("ยินดีต้อนรับเข้าสู่ระบบ!");
         window.location.href = "home.html";
@@ -122,10 +122,6 @@ function handleSignIn() {
     }
 }
 
-
-function socialAuth(platform) {
-    alert("ระบบกำลังเชื่อมต่อกับ " + platform + "... (นี่คือระบบจำลอง)");
-}
 function loadUsername() {
     const savedName = localStorage.getItem("registeredName");
     const profileNameElement = document.getElementById("profileName");
