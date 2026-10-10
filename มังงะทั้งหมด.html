@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="รวมรายการมังงะทั้งหมด พร้อมจำนวนเรื่องและลิงก์สำหรับเข้าชม">
+  <title>มังงะทั้งหมด | みさこ</title>
+  <style>
+    :root {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: #1e293b;
+      background: #f5f8fc;
+    }
+
+    * { box-sizing: border-box; }
+
+    body { margin: 0; }
+
+    .page-header {
+      padding: 18px 24px;
+      background: #fff;
+      border-bottom: 1px solid #e5eaf1;
+    }
+
+    .header-content,
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .back-link {
+      color: #1769d3;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .back-link:hover { text-decoration: underline; }
+
+    main { padding: 36px 0 56px; }
+
+    .page-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      color: #12315c;
+      font-size: clamp(1.7rem, 4vw, 2.3rem);
+    }
+
+    .page-description {
+      margin: 6px 0 0;
+      color: #64748b;
+    }
+
+    .manga-count {
+      flex: 0 0 auto;
+      padding: 9px 15px;
+      border: 1px solid #cfe0fb;
+      border-radius: 999px;
+      color: #1455a5;
+      background: #eaf3ff;
+      font-weight: 700;
+    }
+
+    .manga-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 20px;
+    }
+
+    .manga-card {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid #e5eaf1;
+      border-radius: 14px;
+      color: inherit;
+      background: #fff;
+      box-shadow: 0 5px 18px rgba(31, 53, 84, 0.06);
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .manga-card:hover,
+    .manga-card:focus-visible {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 26px rgba(31, 53, 84, 0.14);
+    }
+
+    .manga-card:focus-visible {
+      outline: 3px solid rgba(23, 105, 211, 0.4);
+      outline-offset: 3px;
+    }
+
+    .manga-cover {
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      background: #e9eef5;
+    }
+
+    .manga-cover img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .manga-details { padding: 13px 14px 15px; }
+
+    .manga-title {
+      display: -webkit-box;
+      overflow: hidden;
+      margin: 0;
+      color: #12315c;
+      font-size: 0.98rem;
+      line-height: 1.5;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .manga-note {
+      margin: 8px 0 0;
+      color: #64748b;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 32px 20px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+      color: #64748b;
+      text-align: center;
+    }
+
+    @media (max-width: 520px) {
+      .page-header { padding: 15px 16px; }
+      main { padding-top: 26px; }
+      .page-heading { align-items: start; flex-direction: column; }
+      .manga-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .manga-card { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <div class="header-content">
+      <a class="back-link" href="/css/สร้าง wed/home.html">‹ กลับหน้าหลัก</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-heading">
+      <div>
+        <h1>มังงะทั้งหมด</h1>
+        <p class="page-description">เลือกเรื่องที่ต้องการดูจากรายการด้านล่าง</p>
+      </div>
+      <div class="manga-count" id="mangaCount" aria-live="polite">กำลังโหลดรายการ...</div>
+    </div>
+    <section class="manga-grid" id="mangaGrid" aria-label="รายการมังงะ"></section>
+  </main>
+
+  <script src="data/manga-catalog.js"></script>
+  <script>
+    const mangaGrid = document.getElementById('mangaGrid');
+    const mangaCount = document.getElementById('mangaCount');
+    const catalog = window.siteMangaCatalog;
+
+    if (!Array.isArray(catalog)) {
+      mangaCount.textContent = 'โหลดรายการมังงะไม่สำเร็จ';
+      const errorMessage = document.createElement('p');
+      errorMessage.className = 'empty-state';
+      errorMessage.textContent = 'ไม่พบข้อมูลรายการมังงะ กรุณาลองโหลดหน้าอีกครั้ง';
+      mangaGrid.append(errorMessage);
+    } else {
+      mangaCount.textContent = `ทั้งหมด ${catalog.length} เรื่อง`;
+
+      if (catalog.length === 0) {
+        const emptyMessage = document.createElement('p');
+        emptyMessage.className = 'empty-state';
+        emptyMessage.textContent = 'ยังไม่มีรายการมังงะ';
+        mangaGrid.append(emptyMessage);
+      }
+
+      catalog.forEach((manga) => {
+        const card = document.createElement('a');
+        card.className = 'manga-card';
+        card.href = manga.href;
+
+        const cover = document.createElement('div');
+        cover.className = 'manga-cover';
+        const image = document.createElement('img');
+        image.src = manga.image;
+        image.alt = manga.title;
+        image.loading = 'lazy';
+        cover.append(image);
+
+        const details = document.createElement('div');
+        details.className = 'manga-details';
+        const title = document.createElement('h2');
+        title.className = 'manga-title';
+        title.textContent = manga.title;
+        details.append(title);
+
+        if (manga.note) {
+          const note = document.createElement('p');
+          note.className = 'manga-note';
+          note.textContent = manga.note;
+          details.append(note);
+        }
+
+        card.append(cover, details);
+        mangaGrid.append(card);
+      });
+    }
+  </script>
+</body>
+</html>

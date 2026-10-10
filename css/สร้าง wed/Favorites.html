@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>みさこ | สิ่งที่ชอบ</title>
+    <style>
+        body { margin: 0; font-family: "Segoe UI", "Sarabun", Tahoma, sans-serif; background: #f5f7fa; color: #1e293b; }
+        .page-wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 60px; }
+        .page-title { font-size: 26px; font-weight: 800; margin: 0 0 6px; color: #244057; }
+        .page-desc { color: #718092; margin: 0 0 26px; font-size: 14px; }
+        .panel { background: #fff; border-radius: 16px; padding: 22px 24px; box-shadow: 0 6px 18px rgba(52,125,169,.08); margin-bottom: 22px; }
+        .panel h2 { font-size: 16px; margin: 0 0 16px; color: #347da9; }
+        .form-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+        .form-row input, .form-row select, .form-row textarea {
+            flex: 1 1 160px; padding: 11px 13px; border: 1px solid #dce9ef; border-radius: 10px;
+            font-size: 14px; outline: none; font-family: inherit;
+        }
+        .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: #5db7df; box-shadow: 0 0 0 3px rgba(93,183,223,.15); }
+        .btn-primary {
+            padding: 11px 22px; border: 0; border-radius: 10px; color: #fff; font-weight: 700; font-size: 14px;
+            background: linear-gradient(100deg, #347da9, #5db7df); cursor: pointer; transition: transform .15s, box-shadow .15s;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(52,125,169,.3); }
+        .btn-ghost {
+            padding: 10px 18px; border: 1px solid #dce9ef; border-radius: 10px; background: #fff; color: #718092;
+            font-weight: 600; font-size: 13px; cursor: pointer;
+        }
+        .btn-ghost:hover { border-color: #f28ba8; color: #d1477b; }
+        .btn-danger {
+            padding: 11px 22px; border: 0; border-radius: 10px; color: #fff; font-weight: 700; font-size: 14px;
+            background: #e6597a; cursor: pointer;
+        }
+        .card-list { display: flex; flex-direction: column; gap: 10px; }
+        .item-card {
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            padding: 14px 16px; border: 1px solid #eef2f6; border-radius: 12px; background: #fbfcfe;
+        }
+        .item-main { display: flex; flex-direction: column; gap: 3px; }
+        .site-title { display: flex; align-items: center; gap: 12px; }
+        .site-cover { width: 54px; height: 68px; border-radius: 7px; object-fit: cover; flex: 0 0 auto; }
+        .item-title { font-weight: 700; font-size: 15px; color: #244057; }
+        .item-title a { color: inherit; text-decoration: none; }
+        .item-title a:hover { color: #347da9; text-decoration: underline; }
+        .item-title a:focus-visible { outline: 2px solid #347da9; outline-offset: 3px; border-radius: 2px; }
+        .item-sub { font-size: 12px; color: #8b98a8; }
+        .favorite-group { margin-bottom: 22px; }
+        .favorite-group:last-child { margin-bottom: 0; }
+        .favorite-group h3 { margin: 0 0 10px; color: #244057; font-size: 15px; }
+        .favorite-open { align-self: center; flex: 0 0 auto; color: #347da9; font-size: 13px; font-weight: 700; text-decoration: none; }
+        .catalog-status { margin: 10px 0 14px; color: #718092; font-size: 13px; }
+        .catalog-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 14px; }
+        .catalog-item { display: flex; flex-direction: column; gap: 10px; min-width: 0; padding: 12px; border: 1px solid #eef2f6; border-radius: 12px; background: #fbfcfe; }
+        .catalog-item .site-title { flex-direction: column; align-items: stretch; gap: 8px; }
+        .catalog-cover-link { display: block; border-radius: 7px; }
+        .catalog-cover-link:focus-visible { outline: 2px solid #347da9; outline-offset: 3px; }
+        .catalog-item .site-cover { width: 100%; height: 190px; }
+        .catalog-item .item-title { line-height: 1.45; }
+        .catalog-item .item-title a { color: inherit; text-decoration: none; }
+        .catalog-item .item-title a:hover { color: #347da9; text-decoration: underline; }
+        .catalog-add { flex: 0 0 auto; width: 100%; margin-top: auto; }
+        .catalog-add:disabled { background: #aab8c2; cursor: default; box-shadow: none; transform: none; }
+        .cover-status { color: #704c0c; font-size: 12px; }
+        .item-tag {
+            display: inline-block; font-size: 11px; font-weight: 700; color: #347da9;
+            background: #e5f4fb; padding: 2px 9px; border-radius: 999px; margin-right: 6px;
+        }
+        .del-btn {
+            border: none; background: none; color: #c7cfd8; font-size: 20px; cursor: pointer; line-height: 1;
+            padding: 4px 8px; border-radius: 8px;
+        }
+        .del-btn:hover { color: #e6597a; background: #fdeef1; }
+        .empty-state { text-align: center; padding: 34px 10px; color: #a7b1bd; font-size: 14px; }
+        .empty-state .big { font-size: 34px; display: block; margin-bottom: 8px; }
+        .settings-row {
+            display: flex; align-items: center; justify-content: space-between; padding: 14px 0;
+            border-bottom: 1px solid #f0f3f6;
+        }
+        .settings-row:last-child { border-bottom: 0; }
+        .settings-label { font-weight: 700; font-size: 14px; color: #244057; }
+        .settings-hint { font-size: 12px; color: #8b98a8; margin-top: 2px; }
+        .color-swatch {
+            width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; display: inline-block;
+        }
+        .color-swatch.selected { border-color: #244057; }
+        .toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: #244057; color: #fff; padding: 11px 22px; border-radius: 999px; font-size: 13px;
+            opacity: 0; pointer-events: none; transition: .25s; z-index: 5000;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+    <link rel="stylesheet" href="profile-pages.css">
+</head>
+<body>
+    <div class="page-wrap">
+        <button type="button" class="back-button" id="backButton">← กลับ</button>
+        <h1 class="page-title">สิ่งที่ชอบ</h1>
+        <p class="page-desc">ค้นหาและบันทึกเรื่องที่มีให้อ่านในเว็บไซต์นี้เท่านั้น</p>
+
+        <div class="panel">
+            <h2>ค้นหาเรื่องในเว็บไซต์</h2>
+            <div class="form-row">
+                <input type="search" id="catalogSearch" placeholder="ค้นหาชื่อเรื่อง หรือคำภาษาญี่ปุ่น" aria-label="ค้นหาเรื่องอนิเมะและมังงะในเว็บไซต์">
+            </div>
+            <p class="catalog-status" id="catalogStatus" aria-live="polite"></p>
+            <p class="cover-status" id="mangaCoverStatus" role="alert" hidden></p>
+            <div class="catalog-list" id="catalogList" aria-live="polite"></div>
+        </div>
+
+        <div class="panel">
+            <h2>รายการที่ชอบ (<span id="favCount">0</span>)</h2>
+            <div class="card-list" id="favList"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script>
+        function showToast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(window.__toastTimer);
+            window.__toastTimer = setTimeout(function() { t.classList.remove('show'); }, 1800);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../data/supabase-client.js"></script>
+    <script src="../../data/manga-covers.js"></script>
+    <script src="../../data/manga-catalog.js"></script>
+    <script>
+        const FAV_KEY = "favoriteManga";
+        function getFav() { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; }
+        function setFav(list) { localStorage.setItem(FAV_KEY, JSON.stringify(list)); }
+        const siteManga = Array.isArray(window.siteMangaCatalog) ? window.siteMangaCatalog : [];
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, function(c) {
+                return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+            });
+        }
+
+        function isSaved(manga) {
+            return getFav().some(function(item) {
+                return item.mangaId === manga.id || item.href === manga.href;
+            });
+        }
+
+        function renderCatalog() {
+            const query = document.getElementById("catalogSearch").value.trim().toLocaleLowerCase();
+            const matches = siteManga.filter(function(manga) {
+                return [manga.title].concat(manga.keywords || [])
+                    .join(" ").toLocaleLowerCase().includes(query);
+            });
+            const list = document.getElementById("catalogList");
+            const status = document.getElementById("catalogStatus");
+            list.replaceChildren();
+            status.textContent = matches.length
+                ? "พบ " + matches.length + " เรื่องจากรายการที่มีในเว็บไซต์"
+                : "ไม่พบเรื่องที่ตรงกับคำค้นหา ลองค้นด้วยชื่อภาษาญี่ปุ่น";
+
+            matches.forEach(function(manga) {
+                const card = document.createElement("div");
+                card.className = "catalog-item";
+                const details = document.createElement("div");
+                details.className = "site-title";
+                const cover = document.createElement("img");
+                cover.className = "site-cover";
+                cover.src = manga.image;
+                cover.alt = manga.title;
+                if (manga.coverId) cover.dataset.mangaCover = manga.coverId;
+                const safeHref = typeof manga.href === "string" && /^\/(?!\/)/.test(manga.href) ? manga.href : "";
+                if (safeHref) {
+                    const coverLink = document.createElement("a");
+                    coverLink.className = "catalog-cover-link";
+                    coverLink.href = safeHref;
+                    coverLink.setAttribute("aria-label", "เปิดอ่าน " + manga.title);
+                    coverLink.appendChild(cover);
+                    details.appendChild(coverLink);
+                } else {
+                    details.appendChild(cover);
+                }
+                const text = document.createElement("div");
+                text.className = "item-main";
+                const title = document.createElement("div");
+                title.className = "item-title";
+                if (safeHref) {
+                    const link = document.createElement("a");
+                    link.href = safeHref;
+                    link.textContent = manga.title;
+                    title.appendChild(link);
+                } else {
+                    title.textContent = manga.title;
+                }
+                const note = document.createElement("div");
+                note.className = "item-sub";
+                note.textContent = manga.note;
+                text.append(title, note);
+                details.appendChild(text);
+
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "btn-primary catalog-add";
+                button.textContent = isSaved(manga) ? "บันทึกแล้ว" : "เพิ่มรายการโปรด";
+                button.disabled = isSaved(manga);
+                button.addEventListener("click", function() {
+                    if (isSaved(manga)) return;
+                    const favorites = getFav();
+                    favorites.unshift({
+                        mangaId: manga.id,
+                        title: manga.title,
+                        href: manga.href,
+                        image: manga.image,
+                        note: manga.note,
+                        category: "มังงะ",
+                        type: "manga",
+                        date: new Date().toISOString()
+                    });
+                    setFav(favorites);
+                    renderCatalog();
+                    renderFav();
+                    showToast("เพิ่มลงรายการโปรดแล้ว");
+                });
+                card.append(details, button);
+                list.appendChild(card);
+            });
+        }
+
+        function renderFav() {
+            const list = getFav();
+            const wrap = document.getElementById("favList");
+            document.getElementById("favCount").textContent = list.length;
+            if (list.length === 0) {
+                wrap.innerHTML = '<div class="empty-state"><span class="big">💗</span>ยังไม่มีรายการโปรด<br>กดเพิ่มเรื่องที่คุณชอบด้านบนได้เลย</div>';
+                return;
+            }
+            const groups = new Map();
+            list.forEach(function(item, index) {
+                const category = item.category || item.type || "ทั่วไป";
+                if (!groups.has(category)) groups.set(category, []);
+                groups.get(category).push({ item: item, index: index });
+            });
+            wrap.innerHTML = Array.from(groups.entries()).map(function(group) {
+                return '<section class="favorite-group"><h3>' + escapeHtml(group[0]) + ' (' + group[1].length + ')</h3><div class="card-list">' +
+                    group[1].map(function(entry) {
+                        const item = entry.item;
+                        const safeHref = typeof item.href === "string" && /^\/(?!\/)/.test(item.href) ? item.href : "";
+                        const title = escapeHtml(item.title);
+                        const auto = item.mangaId ? '<span class="item-tag">จากหน้าเว็บ</span>' : '';
+                        return '<div class="item-card">' +
+                            '<div class="item-main">' +
+                                '<div class="item-title">' + auto + '<span class="item-tag">' + escapeHtml(group[0]) + '</span>' +
+                                    (safeHref ? '<a href="' + escapeHtml(safeHref) + '">' + title + '</a>' : title) + '</div>' +
+                                (item.note ? '<div class="item-sub">' + escapeHtml(item.note) + '</div>' : '') +
+                            '</div>' +
+                            (safeHref ? '<a class="favorite-open" href="' + escapeHtml(safeHref) + '">เปิดอ่าน</a>' : '') +
+                            '<button class="del-btn" onclick="removeFav(' + entry.index + ')" title="ลบ">&times;</button>' +
+                        '</div>';
+                    }).join("") +
+                '</div></section>';
+            }).join("");
+        }
+
+        function removeFav(i) {
+            const list = getFav();
+            list.splice(i, 1);
+            setFav(list);
+            renderCatalog();
+            renderFav();
+            showToast("ลบออกจากรายการโปรดแล้ว");
+        }
+
+        document.getElementById("backButton").addEventListener("click", function() {
+            if (window.history.length > 1) window.history.back();
+            else window.location.href = "home.html";
+        });
+
+        document.getElementById("catalogSearch").addEventListener("input", renderCatalog);
+        if (!siteManga.length) {
+            document.getElementById("catalogStatus").textContent = "โหลดรายการเรื่องในเว็บไซต์ไม่สำเร็จ";
+            document.getElementById("catalogStatus").setAttribute("role", "alert");
+        }
+        renderCatalog();
+        renderFav();
+    </script>
+</body>
+</html>

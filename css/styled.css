@@ -1,0 +1,117 @@
+.fullscreen-bg {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background-image: url('wallpapersden.com_jujutsu-kaisen-shibuya-incident-arc-art_2029x1080.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.4; 
+    z-index: -1;  
+}
+body, html {
+    height: 100%;
+    margin: 0;
+    min-width: 100%;
+    font-family: 'Kanit', sans-serif; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-side {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px; 
+    text-align: center;
+}
+
+h2, h3 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.textbox {
+    position: relative;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.textbox input {
+    width: 100%;
+    padding: 12px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    font-size: 16px;
+    box-sizing: border-box; 
+    transition: 0.3s;
+}
+
+.textbox input:focus {
+    border-color: #ff0000; 
+}
+
+.textbox label {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.textbox input:focus + label,
+.textbox input:not(:placeholder-shown) + label {
+    top: -10px;
+    left: 8px;
+    font-size: 12px;
+    color: #ff0000;
+    background: white;
+    padding: 0 5px;
+}
+
+.action-btn, .action-btn-orange {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.action-btn {
+    background-color: #6a11cb;
+    color: white;
+}
+
+.action-btn-orange {
+    background-color: #ff0000;
+    color: white;
+}
+
+.action-btn:hover, .action-btn-orange:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.back-nav {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.back-arrow {
+    font-size: 20px;
+    margin-right: 10px;
+}
+

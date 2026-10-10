@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ไวยากรณ์ JLPT | みさこ。</title>
+    <style>
+        :root {
+            --blue: #579aff;
+            --blue-hover: #4286eb;
+            --page: #f5f7fa;
+            --dark: #30343b;
+            --text: #1f2937;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--page);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        .jlpt-header {
+            background: var(--blue);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+        }
+
+        .nav-container {
+            width: min(1100px, 100%);
+            min-height: 70px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            color: #111;
+            text-decoration: none;
+            display: flex;
+            align-items: baseline;
+            gap: 7px;
+            white-space: nowrap;
+        }
+
+        .logo-main {
+            font-size: 29px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .logo-mark {
+            color: #b83030;
+        }
+
+        .logo-subtitle {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: stretch;
+            align-self: stretch;
+        }
+
+        .nav-item {
+            color: #111;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .page-content {
+            width: min(960px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 44px 0 64px;
+            text-align: center;
+        }
+
+        .intro {
+            margin-bottom: 46px;
+        }
+
+        .intro h1 {
+            color: var(--dark);
+            font-size: clamp(24px, 4vw, 32px);
+            margin-bottom: 20px;
+        }
+
+        .all-lessons {
+            display: inline-block;
+            padding: 11px 20px;
+            border-radius: 5px;
+            background: #df3045;
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .all-lessons:hover {
+            background: #c92539;
+            transform: translateY(-2px);
+        }
+
+        .section-heading {
+            background: var(--dark);
+            color: #fff;
+            padding: 14px 20px;
+            margin-bottom: 30px;
+            font-size: clamp(22px, 4vw, 30px);
+            font-weight: 800;
+        }
+
+        .section-heading span {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 2px 8px;
+            background: #df3045;
+            font-size: 18px;
+            vertical-align: middle;
+        }
+
+        .question {
+            margin-bottom: 24px;
+            font-size: clamp(21px, 3vw, 27px);
+            font-weight: 700;
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 52px 40px;
+        }
+
+        .level-card {
+            color: var(--text);
+            text-decoration: none;
+            display: block;
+            transition: transform 0.2s ease;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .level-image {
+            min-height: 130px;
+            padding: 8px 12px 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #07111c;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .level-image::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.08) 0,
+                rgba(255, 255, 255, 0.08) 18px,
+                transparent 18px,
+                transparent 36px
+            );
+            pointer-events: none;
+        }
+
+        .level-name,
+        .level-number,
+        .level-caption {
+            position: relative;
+            z-index: 1;
+        }
+
+        .level-name {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .level-number {
+            color: #fff;
+            font-size: 80px;
+            font-weight: 900;
+            line-height: 0.9;
+            text-shadow: 1px 2px 1px rgba(0, 0, 0, 0.12);
+        }
+
+        .level-caption {
+            font-size: 16px;
+            font-style: italic;
+            font-weight: 800;
+        }
+
+        .level-link {
+            display: block;
+            margin-top: 10px;
+            color: #087cf0;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .n5 .level-image { background: #347fc9; }
+        .n4 .level-image { background: #43a9a0; }
+        .n3 .level-image { background: #80c41c; }
+        .n2 .level-image { background: #ff9414; }
+        .n1 .level-image { background: #ed1688; }
+
+        @media (max-width: 800px) {
+            .nav-container {
+                flex-direction: column;
+                padding-top: 14px;
+                padding-bottom: 14px;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+
+            .nav-item {
+                padding: 8px 10px;
+            }
+
+            .level-grid {
+                gap: 34px 18px;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .page-content {
+                width: min(360px, calc(100% - 24px));
+                padding-top: 30px;
+            }
+
+            .logo-subtitle {
+                display: none;
+            }
+
+            .level-grid {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+
+            .level-image {
+                min-height: 145px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="jlpt-header">
+        <div class="nav-container">
+            <a href="home.html" class="logo" aria-label="กลับหน้าหลัก">
+                <span class="logo-main">みさ<span class="logo-mark">こ。</span></span>
+                <span class="logo-subtitle">ศัพท์และไวยากรณ์</span>
+            </a>
+            <nav class="nav-links" aria-label="เมนูหลัก">
+                <a href="home.html" class="nav-item">หน้าหลัก</a>
+                <a href="文法.html" class="nav-item active">คำศัพท์ & ไวยากรณ์</a>
+                <a href="文法N5.html" class="nav-item">N5</a>
+                <a href="文法N4.html" class="nav-item">N4</a>
+                <a href="文法N3.html" class="nav-item">N3</a>
+                <a href="文法N2.html" class="nav-item">N2</a>
+                <a href="文法N1.html" class="nav-item">N1</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <section class="intro" aria-labelledby="intro-title">
+            <h1 id="intro-title">JLPT Grammar Exam</h1>
+            <a class="all-lessons" href="文法N1.html">ดูบทเรียนไวยากรณ์ทั้งหมด</a>
+        </section>
+
+        <section aria-labelledby="grammar-title">
+            <h2 class="section-heading" id="grammar-title">
+                Learn JLPT Grammar <span>法強</span>
+            </h2>
+            <p class="question">กำลังเตรียมไวยากรณ์ภาษาญี่ปุ่นระดับไหนอยู่?</p>
+
+            <div class="level-grid">
+                <a class="level-card n5" href="文法N5.html">
+                    <div class="level-image">
+                        <span class="level-name">JLPT Sensei</span>
+                        <span class="level-number">N5</span>
+                        <span class="level-caption">GRAMMAR LIST</span>
+                    </div>
+                    <span class="level-link">ดูไวยากรณ์ JLPT N5</span>
+                </a>
+                <a class="level-card n4" href="文法N4.html">
+                    <div class="level-image">
+                        <span class="level-name">JLPT Sensei</span>
+                        <span class="level-number">N4</span>
+                        <span class="level-caption">GRAMMAR LIST</span>
+                    </div>
+                    <span class="level-link">ดูไวยากรณ์ JLPT N4</span>
+                </a>
+                <a class="level-card n3" href="文法N3.html">
+                    <div class="level-image">
+                        <span class="level-name">JLPT Sensei</span>
+                        <span class="level-number">N3</span>
+                        <span class="level-caption">GRAMMAR LIST</span>
+                    </div>
+                    <span class="level-link">ดูไวยากรณ์ JLPT N3</span>
+                </a>
+                <a class="level-card n2" href="文法N2.html">
+                    <div class="level-image">
+                        <span class="level-name">JLPT Sensei</span>
+                        <span class="level-number">N2</span>
+                        <span class="level-caption">GRAMMAR LIST</span>
+                    </div>
+                    <span class="level-link">ดูไวยากรณ์ JLPT N2</span>
+                </a>
+                <a class="level-card n1" href="文法N1.html">
+                    <div class="level-image">
+                        <span class="level-name">JLPT Sensei</span>
+                        <span class="level-number">N1</span>
+                        <span class="level-caption">GRAMMAR LIST</span>
+                    </div>
+                    <span class="level-link">ดูไวยากรณ์ JLPT N1</span>
+                </a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
