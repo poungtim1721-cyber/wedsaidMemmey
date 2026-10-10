@@ -5,6 +5,10 @@
   const rows = document.getElementById("rows");
   const pagination = document.getElementById("pagination");
   const count = document.getElementById("count");
+  const requestedLevel = new URLSearchParams(window.location.search).get("level");
+  if (requestedLevel && Array.from(level.options).some((option) => option.value === requestedLevel)) {
+    level.value = requestedLevel;
+  }
   let allItems;
   let currentPage = 1;
   let currentPageCount = 1;
