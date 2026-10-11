@@ -50,6 +50,20 @@ is [`Supabase-JLPT-Setup-TH.pdf`](./Supabase-JLPT-Setup-TH.pdf).
     page stores the display name, avatar color, and weekly reading goal in the
     signed-in user's Supabase Auth metadata. Older unassigned local history can
     be explicitly imported from the history page after signing in.
+11. Run [`user-data.sql`](./user-data.sql) to create the RLS-protected
+    `user_favorites` and `user_saved_vocab` tables. The favorites page, saved
+    vocabulary page, vocabulary stars, and Settings page sync these records for
+    signed-in users; existing browser-only entries are imported on first sync.
+    Favorites store the manga route as text because the site's manga IDs are
+    paths such as `/manga-reader.html`, and saved vocabulary stores the site's
+    `word`, `reading`, JLPT level, and meanings. If the legacy favorites or
+    vocabulary tables from the supplied SQL already exist, this script adds the
+    required columns; duplicate saved words for the same account and level are
+    reduced to the latest saved row so the app can enforce its one-entry rule.
+
+The supplied legacy SQL for `reading_history` uses a different schema from this
+site's existing `reading-history.sql`. Do not run both definitions: continue to
+use `reading-history.sql`, which matches the history page and sync code.
 
 ## Set the browser key
 

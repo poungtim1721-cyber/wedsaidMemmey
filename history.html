@@ -161,6 +161,30 @@
         .history-grid .del-btn {
             flex: 0 0 auto;
         }
+        .history-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .history-pagination[hidden] {
+            display: none;
+        }
+        .history-pagination button {
+            min-width: 38px;
+            padding: 8px 12px;
+        }
+        .history-pagination button[aria-current="page"] {
+            border-color: #347da9;
+            background: #e5f4fb;
+            color: #244057;
+        }
+        .history-pagination .page-ellipsis {
+            color: #8b98a8;
+            padding: 0 2px;
+        }
         @media (max-width: 760px) {
             .history-page {
                 width: min(100% - 24px, 600px);
@@ -327,6 +351,7 @@
           <section class="panel">
             <h2>🕘 ประวัติล่าสุด (<span id="histCount">0</span>)</h2>
             <div class="card-list" id="histList"></div>
+            <nav class="history-pagination" id="historyPagination" aria-label="หน้าในประวัติการอ่าน" hidden></nav>
           </section>
         </div>
     </main>
@@ -344,12 +369,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/data/supabase-client.js"></script>
     <script src="/data/user-data.js"></script>
+    <script src="/data/manga-catalog.js"></script>
     <script>
         const HIST_KEY = "mangaHistory";
         const WEEKLY_GOAL_KEY = "readingWeeklyGoalHours";
         const DEFAULT_WEEKLY_GOAL_HOURS = 5;
+        const HISTORY_PAGE_SIZE = 6;
+        const HISTORY_PAGE_WINDOW = 5;
         let historyUser = null;
         let historyRecords = [];
+        let historyPage = 1;
         function getHist() { return JSON.parse(localStorage.getItem(HIST_KEY)) || []; }
         function setHist(list, clearUnassigned) {
             const stored = getHist();
@@ -392,6 +421,15 @@
             if (hours) return hours + ' ชม. ' + minutes + ' นาที';
             if (minutes) return minutes + ' นาที ' + remainingSeconds + ' วินาที';
             return remainingSeconds + ' วินาที';
+        }
+
+        function getHistoryTitle(item) {
+            if (item.type !== "manga") return item.title;
+            const mangaId = String(item.mangaId || "");
+            const manga = (window.siteMangaCatalog || []).find(function(entry) {
+                return String(entry.id) === mangaId || String(entry.href) === mangaId;
+            });
+            return manga ? manga.title : item.title;
         }
 
         function getWeekStart(date) {
@@ -438,24 +476,79 @@
         function renderHist() {
             const list = historyRecords;
             const wrap = document.getElementById("histList");
+            const pagination = document.getElementById("historyPagination");
             document.getElementById("histCount").textContent = list.length;
             if (list.length === 0) {
+                historyPage = 1;
                 wrap.innerHTML = '<div class="empty-state"><span class="big">🕘</span>ยังไม่มีประวัติการอ่าน<br>เริ่มอ่านมังงะหรือศึกษาคำศัพท์เพื่อบันทึกเวลาอัตโนมัติ</div>';
+                pagination.replaceChildren();
+                pagination.hidden = true;
                 return;
             }
-            wrap.innerHTML = list.map(function(item, i) {
+            const pageCount = Math.ceil(list.length / HISTORY_PAGE_SIZE);
+            historyPage = Math.min(historyPage, pageCount);
+            const startIndex = (historyPage - 1) * HISTORY_PAGE_SIZE;
+            const visibleRecords = list.slice(startIndex, startIndex + HISTORY_PAGE_SIZE);
+            wrap.innerHTML = visibleRecords.map(function(item, i) {
                 var progress = (item.page && item.totalPages) ? ('หน้า ' + item.page + '/' + item.totalPages + ' • ') : '';
                 var auto = item.type === "manga" ? '<span class="item-tag">อัตโนมัติ</span>' : '';
                 var type = item.type === "vocabulary" ? '<span class="item-tag">คำศัพท์</span>' : '';
                 var duration = item.durationSeconds ? (formatDuration(item.durationSeconds) + ' • ') : '';
                 return '<div class="item-card">' +
                     '<div class="item-main">' +
-                        '<div class="item-title">' + type + auto + escapeHtml(item.title) + '</div>' +
+                        '<div class="item-title">' + type + auto + escapeHtml(getHistoryTitle(item)) + '</div>' +
                         '<div class="item-sub">' + duration + (item.chapter ? escapeHtml(item.chapter) + ' • ' : '') + progress + formatDate(item.date) + '</div>' +
                     '</div>' +
-                    '<button class="del-btn" onclick="removeHist(' + i + ')" title="ลบ">&times;</button>' +
+                    '<button class="del-btn" onclick="removeHist(' + (startIndex + i) + ')" title="ลบ">&times;</button>' +
                 '</div>';
             }).join("");
+            renderHistoryPagination(pagination, pageCount);
+        }
+
+        function renderHistoryPagination(container, pageCount) {
+            container.replaceChildren();
+            container.hidden = pageCount <= 1;
+            if (pageCount <= 1) return;
+
+            function addPageButton(label, page, ariaLabel, disabled, current) {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "btn-ghost";
+                button.textContent = label;
+                button.setAttribute("aria-label", ariaLabel);
+                button.disabled = disabled;
+                if (current) button.setAttribute("aria-current", "page");
+                button.addEventListener("click", function() {
+                    historyPage = page;
+                    renderHist();
+                });
+                container.appendChild(button);
+            }
+
+            addPageButton("ก่อนหน้า", historyPage - 1, "หน้าก่อนหน้า", historyPage === 1, false);
+            const halfWindow = Math.floor(HISTORY_PAGE_WINDOW / 2);
+            const firstPage = Math.max(
+                1,
+                Math.min(historyPage - halfWindow, pageCount - HISTORY_PAGE_WINDOW + 1)
+            );
+            const lastPage = Math.min(pageCount, firstPage + HISTORY_PAGE_WINDOW - 1);
+
+            if (firstPage > 1) {
+                const ellipsis = document.createElement("span");
+                ellipsis.className = "page-ellipsis";
+                ellipsis.textContent = "…";
+                container.appendChild(ellipsis);
+            }
+            for (let page = firstPage; page <= lastPage; page += 1) {
+                addPageButton(String(page), page, "หน้า " + page, false, page === historyPage);
+            }
+            if (lastPage < pageCount) {
+                const ellipsis = document.createElement("span");
+                ellipsis.className = "page-ellipsis";
+                ellipsis.textContent = "…";
+                container.appendChild(ellipsis);
+            }
+            addPageButton("ถัดไป", historyPage + 1, "หน้าถัดไป", historyPage === pageCount, false);
         }
 
         function removeHist(i) {
@@ -506,6 +599,7 @@
                 try {
                     await window.userDataStore.clearReadingHistory();
                     setHist([]);
+                    historyPage = 1;
                     renderHist();
                     renderWeeklyGoal();
                     showToast("ล้างประวัติแล้ว");

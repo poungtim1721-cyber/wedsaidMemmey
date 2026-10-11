@@ -245,7 +245,12 @@
         document.getElementById("resetDataBtn").addEventListener("click", async function() {
             if (confirm("ต้องการล้างคำศัพท์ที่ชอบ มังงะที่ชอบ และประวัติการอ่านทั้งหมดใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้")) {
                 try {
-                    const clearedUserId = await window.userDataStore.clearReadingHistory();
+                    const clearedUserIds = await Promise.all([
+                        window.userDataStore.clearReadingHistory(),
+                        window.userDataStore.clearFavorites(),
+                        window.userDataStore.clearSavedVocab()
+                    ]);
+                    const clearedUserId = clearedUserIds.find(Boolean);
                     const accountId = clearedUserId || (settingsUser && settingsUser.id);
                     const history = readLocalList("mangaHistory");
                     const remainingHistory = accountId
@@ -264,8 +269,28 @@
         });
 
         async function renderStats() {
-            document.getElementById("statVocab").textContent = readLocalList("favoriteVocab").length + " คำ";
-            document.getElementById("statFav").textContent = readLocalList("favoriteManga").length + " รายการ";
+            const vocabCount = document.getElementById("statVocab");
+            const favoriteCount = document.getElementById("statFav");
+            vocabCount.textContent = "กำลังโหลด...";
+            favoriteCount.textContent = "กำลังโหลด...";
+            try {
+                const result = await window.userDataStore.loadSavedVocab(readLocalList("favoriteVocab"));
+                vocabCount.textContent = result.records.length + " คำ";
+            } catch (error) {
+                console.error("Could not load saved-vocabulary count:", error);
+                vocabCount.textContent = readLocalList("favoriteVocab").length + " คำ (ข้อมูลในเครื่อง)";
+                document.getElementById("settingsSyncStatus").textContent =
+                    "โหลดคำศัพท์ที่บันทึกจาก Supabase ไม่สำเร็จ: " + error.message;
+            }
+            try {
+                const result = await window.userDataStore.loadFavorites(readLocalList("favoriteManga"));
+                favoriteCount.textContent = result.records.length + " รายการ";
+            } catch (error) {
+                console.error("Could not load favorites count:", error);
+                favoriteCount.textContent = readLocalList("favoriteManga").length + " รายการ (ข้อมูลในเครื่อง)";
+                document.getElementById("settingsSyncStatus").textContent =
+                    "โหลดรายการโปรดจาก Supabase ไม่สำเร็จ: " + error.message;
+            }
             const historyCount = document.getElementById("statHist");
             historyCount.textContent = "กำลังโหลด...";
             try {

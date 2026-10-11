@@ -12,6 +12,7 @@
   let allItems;
   let currentPage = 1;
   let currentPageCount = 1;
+  const favoriteSyncStatus = document.getElementById("favoriteSyncStatus");
 
   function getFavoriteVocab() {
     const saved = JSON.parse(localStorage.getItem("favoriteVocab") || "[]");
@@ -24,14 +25,31 @@
     );
   }
 
-  function toggleFavorite(item) {
+  const favoritesReady = window.userDataStore.loadSavedVocab(getFavoriteVocab())
+    .then((result) => {
+      localStorage.setItem("favoriteVocab", JSON.stringify(result.records));
+      favoriteSyncStatus.textContent = result.user
+        ? "ซิงค์คำศัพท์ที่บันทึกกับ Supabase แล้ว"
+        : "คำศัพท์ที่ชอบบันทึกไว้ในอุปกรณ์";
+      if (allItems) render();
+    })
+    .catch((error) => {
+      console.error("Could not sync saved vocabulary:", error);
+      favoriteSyncStatus.textContent = "ซิงค์คำศัพท์ที่ชอบไม่สำเร็จ: " + error.message;
+    });
+
+  async function toggleFavorite(item) {
+    await favoritesReady;
     const favorites = getFavoriteVocab();
     const index = favorites.findIndex((favorite) =>
       favorite.word === item.word && favorite.level === item.level
     );
     if (index === -1) {
-      favorites.unshift({ ...item, date: new Date().toISOString() });
+      const savedVocab = { ...item, date: new Date().toISOString() };
+      await window.userDataStore.saveSavedVocab(savedVocab);
+      favorites.unshift(savedVocab);
     } else {
+      await window.userDataStore.deleteSavedVocab(favorites[index]);
       favorites.splice(index, 1);
     }
     localStorage.setItem("favoriteVocab", JSON.stringify(favorites));
@@ -79,7 +97,16 @@
         favoriteButton.textContent = favorite ? "★" : "☆";
         favoriteButton.setAttribute("aria-label", favorite ? "นำออกจากคำศัพท์ที่ชอบ" : "เพิ่มในคำศัพท์ที่ชอบ");
         favoriteButton.setAttribute("aria-pressed", String(favorite));
-        favoriteButton.addEventListener("click", () => toggleFavorite(item));
+        favoriteButton.addEventListener("click", async () => {
+          favoriteButton.disabled = true;
+          try {
+            await toggleFavorite(item);
+          } catch (error) {
+            console.error("Could not update saved vocabulary:", error);
+            favoriteSyncStatus.textContent = "บันทึกคำศัพท์ที่ชอบไม่สำเร็จ: " + error.message;
+            favoriteButton.disabled = false;
+          }
+        });
         favoriteCell.appendChild(favoriteButton);
         row.appendChild(favoriteCell);
         rows.appendChild(row);

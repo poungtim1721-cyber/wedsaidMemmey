@@ -82,6 +82,7 @@
       <span class="count" id="count"></span>
     </div>
     <section class="panel">
+      <p id="favoriteSyncStatus" role="status" aria-live="polite"></p>
       <table>
         <thead><tr><th>คำศัพท์ / 漢字</th><th>คำอ่าน</th><th>ความหมาย</th><th>ระดับ</th><th>ชอบ</th></tr></thead>
         <tbody id="rows"></tbody>
@@ -92,6 +93,7 @@
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="data/supabase-client.js"></script>
+  <script src="data/user-data.js"></script>
   <script src="data/supabase-data.js"></script>
   <script src="data/reading-tracker.js"></script>
   <script src="data/vocabulary-page.js"></script>

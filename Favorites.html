@@ -111,6 +111,7 @@
 
         <div class="panel">
             <h2>รายการที่ชอบ (<span id="favCount">0</span>)</h2>
+            <p id="favoriteSyncStatus" role="status" aria-live="polite"></p>
             <div class="card-list" id="favList"></div>
         </div>
     </div>
@@ -127,6 +128,7 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/data/supabase-client.js"></script>
+    <script src="/data/user-data.js"></script>
     <script src="/data/manga-covers.js"></script>
     <script src="/data/manga-catalog.js"></script>
     <script>
@@ -134,6 +136,7 @@
         function getFav() { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; }
         function setFav(list) { localStorage.setItem(FAV_KEY, JSON.stringify(list)); }
         const siteManga = Array.isArray(window.siteMangaCatalog) ? window.siteMangaCatalog : [];
+        const favoriteSyncStatus = document.getElementById("favoriteSyncStatus");
 
         function escapeHtml(s) {
             return String(s).replace(/[&<>"']/g, function(c) {
@@ -204,10 +207,9 @@
                 button.className = "btn-primary catalog-add";
                 button.textContent = isSaved(manga) ? "บันทึกแล้ว" : "เพิ่มรายการโปรด";
                 button.disabled = isSaved(manga);
-                button.addEventListener("click", function() {
+                button.addEventListener("click", async function() {
                     if (isSaved(manga)) return;
-                    const favorites = getFav();
-                    favorites.unshift({
+                    const favorite = {
                         mangaId: manga.id,
                         title: manga.title,
                         href: manga.href,
@@ -216,11 +218,21 @@
                         category: "มังงะ",
                         type: "manga",
                         date: new Date().toISOString()
-                    });
-                    setFav(favorites);
-                    renderCatalog();
-                    renderFav();
-                    showToast("เพิ่มลงรายการโปรดแล้ว");
+                    };
+                    button.disabled = true;
+                    try {
+                        await window.userDataStore.saveFavorite(favorite);
+                        const favorites = getFav();
+                        favorites.unshift(favorite);
+                        setFav(favorites);
+                        renderCatalog();
+                        renderFav();
+                        showToast("เพิ่มลงรายการโปรดแล้ว");
+                    } catch (error) {
+                        console.error("Could not save favorite:", error);
+                        button.disabled = false;
+                        showToast("บันทึกรายการโปรดไม่สำเร็จ: " + error.message);
+                    }
                 });
                 card.append(details, button);
                 list.appendChild(card);
@@ -262,8 +274,17 @@
             }).join("");
         }
 
-        function removeFav(i) {
+        async function removeFav(i) {
             const list = getFav();
+            const favorite = list[i];
+            if (!favorite) return;
+            try {
+                await window.userDataStore.deleteFavorite(favorite.mangaId || favorite.href);
+            } catch (error) {
+                console.error("Could not delete favorite:", error);
+                showToast("ลบรายการโปรดไม่สำเร็จ: " + error.message);
+                return;
+            }
             list.splice(i, 1);
             setFav(list);
             renderCatalog();
@@ -281,8 +302,21 @@
             document.getElementById("catalogStatus").textContent = "โหลดรายการเรื่องในเว็บไซต์ไม่สำเร็จ";
             document.getElementById("catalogStatus").setAttribute("role", "alert");
         }
-        renderCatalog();
-        renderFav();
+        async function initializeFavorites() {
+            try {
+                const result = await window.userDataStore.loadFavorites(getFav());
+                setFav(result.records);
+                favoriteSyncStatus.textContent = result.user
+                    ? "ซิงค์รายการโปรดกับ Supabase แล้ว"
+                    : "รายการโปรดนี้บันทึกไว้ในอุปกรณ์";
+            } catch (error) {
+                console.error("Could not load favorites from Supabase:", error);
+                favoriteSyncStatus.textContent = "ซิงค์รายการโปรดไม่สำเร็จ: " + error.message;
+            }
+            renderCatalog();
+            renderFav();
+        }
+        initializeFavorites();
     </script>
 </body>
 </html>

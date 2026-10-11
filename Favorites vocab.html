@@ -196,6 +196,7 @@
 
         <div class="panel">
             <h2>📚 คำศัพท์ที่บันทึกไว้ (<span id="vocabCount">0</span>)</h2>
+            <p id="vocabSyncStatus" role="status" aria-live="polite"></p>
             <div class="card-list" id="vocabList"></div>
         </div>
     </div>
@@ -210,13 +211,18 @@
             window.__toastTimer = setTimeout(function() { t.classList.remove('show'); }, 1800);
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/data/supabase-client.js"></script>
+    <script src="/data/user-data.js"></script>
     <script src="/data/jlpt-vocab.js"></script>
     <script>
         const VOCAB_KEY = "favoriteVocab";
         function getVocab() { return JSON.parse(localStorage.getItem(VOCAB_KEY)) || []; }
         function setVocab(list) { localStorage.setItem(VOCAB_KEY, JSON.stringify(list)); }
+        const vocabSyncStatus = document.getElementById("vocabSyncStatus");
         let searchableVocab = [];
         let searchPage = 1;
+        let savedVocabReady = Promise.resolve();
         const searchPageSize = 40;
 
         function renderSearchResults() {
@@ -304,23 +310,33 @@
                 addButton.className = "btn-primary";
                 addButton.textContent = alreadySaved ? "บันทึกแล้ว" : "บันทึกคำนี้";
                 addButton.disabled = alreadySaved;
-                addButton.addEventListener("click", function() {
+                addButton.addEventListener("click", async function() {
+                    await savedVocabReady;
                     const favorites = getVocab();
                     if (favorites.some(function(saved) {
                         return saved.word === item.word && (saved.level || "") === (item.level || "");
                     })) return;
-                    favorites.unshift({
+                    const savedVocab = {
                         word: item.word,
                         reading: item.reading,
                         meaning: item.meaning,
                         meaningTh: item.meaningTh,
                         level: item.level,
                         date: new Date().toISOString()
-                    });
-                    setVocab(favorites);
-                    renderVocab();
-                    renderSearchResults();
-                    showToast("บันทึกคำศัพท์เรียบร้อย");
+                    };
+                    addButton.disabled = true;
+                    try {
+                        await window.userDataStore.saveSavedVocab(savedVocab);
+                        favorites.unshift(savedVocab);
+                        setVocab(favorites);
+                        renderVocab();
+                        renderSearchResults();
+                        showToast("บันทึกคำศัพท์เรียบร้อย");
+                    } catch (error) {
+                        console.error("Could not save vocabulary:", error);
+                        addButton.disabled = false;
+                        showToast("บันทึกคำศัพท์ไม่สำเร็จ: " + error.message);
+                    }
                 });
                 card.append(main, addButton);
                 results.appendChild(card);
@@ -372,8 +388,17 @@
             });
         }
 
-        function removeVocab(i) {
+        async function removeVocab(i) {
             const list = getVocab();
+            const savedVocab = list[i];
+            if (!savedVocab) return;
+            try {
+                await window.userDataStore.deleteSavedVocab(savedVocab);
+            } catch (error) {
+                console.error("Could not delete saved vocabulary:", error);
+                showToast("ลบคำศัพท์ไม่สำเร็จ: " + error.message);
+                return;
+            }
             list.splice(i, 1);
             setVocab(list);
             renderVocab();
@@ -409,7 +434,21 @@
             renderSearchResults();
         });
 
-        renderVocab();
+        async function initializeSavedVocabulary() {
+            try {
+                const result = await window.userDataStore.loadSavedVocab(getVocab());
+                setVocab(result.records);
+                vocabSyncStatus.textContent = result.user
+                    ? "ซิงค์คำศัพท์กับ Supabase แล้ว"
+                    : "คำศัพท์นี้บันทึกไว้ในอุปกรณ์";
+            } catch (error) {
+                console.error("Could not load saved vocabulary from Supabase:", error);
+                vocabSyncStatus.textContent = "ซิงค์คำศัพท์ไม่สำเร็จ: " + error.message;
+            }
+            renderVocab();
+            renderSearchResults();
+        }
+        savedVocabReady = initializeSavedVocabulary();
     </script>
 </body>
 </html>
