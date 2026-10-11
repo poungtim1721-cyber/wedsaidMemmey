@@ -947,7 +947,11 @@ body {
             var displayName = isGuest ? "誰は君" : savedName || "日本語";
             profileNameElement.innerText = displayName;
             var userAvatar = document.getElementById("userAvatar");
-            if (userAvatar) userAvatar.innerText = isGuest ? "G" : displayName.charAt(0).toUpperCase();
+            if (userAvatar) {
+                userAvatar.innerText = isGuest ? "G" : displayName.charAt(0).toUpperCase();
+                var savedColor = localStorage.getItem("userAvatarColor");
+                if (savedColor) userAvatar.style.background = savedColor;
+            }
         }
         document.addEventListener("DOMContentLoaded", loadUsername);
         // ฟังก์ชันสำหรับเปิด Sidebar

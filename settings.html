@@ -80,6 +80,7 @@
 
         <div class="panel">
             <h2>👤 โปรไฟล์</h2>
+            <p id="settingsSyncStatus" role="status" aria-live="polite"></p>
             <div class="form-row">
                 <input type="text" id="sName" placeholder="ชื่อที่แสดง">
             </div>
@@ -138,7 +139,12 @@
             window.__toastTimer = setTimeout(function() { t.classList.remove('show'); }, 1800);
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/data/supabase-client.js"></script>
+    <script src="/data/user-data.js"></script>
     <script>
+        let settingsUser = null;
+
         function currentAvatarGradient() {
             return localStorage.getItem("userAvatarColor") || 'linear-gradient(135deg, #9ac2ed, #5090d8)';
         }
@@ -160,38 +166,112 @@
             });
         }
 
-        function loadSettingsForm() {
+        async function loadSettingsForm() {
+            const status = document.getElementById("settingsSyncStatus");
             document.getElementById("sName").value = localStorage.getItem("registeredName") || "";
             renderSwatches();
+            try {
+                settingsUser = await window.userDataStore.getCurrentUser();
+                const result = await window.userDataStore.loadSettings();
+                if (result.user) {
+                    settingsUser = result.user;
+                    const metadata = result.settings;
+                    document.getElementById("sName").value = metadata.user_name || "";
+                    localStorage.setItem("registeredName", metadata.user_name || "");
+                    if (metadata.user_avatar_color) {
+                        localStorage.setItem("userAvatarColor", metadata.user_avatar_color);
+                    }
+                    if (metadata.reading_weekly_goal_hours) {
+                        localStorage.setItem("readingWeeklyGoalHours", String(metadata.reading_weekly_goal_hours));
+                    } else {
+                        localStorage.removeItem("readingWeeklyGoalHours");
+                    }
+                    renderSwatches();
+                    status.textContent = "เชื่อมต่อการตั้งค่ากับ Supabase แล้ว";
+                } else {
+                    status.textContent = "กำลังใช้การตั้งค่าที่บันทึกไว้ในอุปกรณ์นี้";
+                }
+            } catch (error) {
+                console.error("Could not load account settings:", error);
+                status.textContent = "โหลดการตั้งค่าจาก Supabase ไม่สำเร็จ: " + error.message;
+            }
         }
 
-        document.getElementById("saveProfileBtn").addEventListener("click", function() {
+        document.getElementById("saveProfileBtn").addEventListener("click", async function() {
             const name = document.getElementById("sName").value.trim();
-            if (name) localStorage.setItem("registeredName", name);
-            else localStorage.removeItem("registeredName");
             const picked = document.querySelector('#colorSwatches .color-swatch.selected');
             if (!picked) {
                 showToast("กรุณาเลือกสีอวาตาร์");
                 return;
             }
-            localStorage.setItem("userAvatarColor", picked.dataset.grad);
-            showToast("บันทึกโปรไฟล์แล้ว");
-        });
-
-        document.getElementById("resetDataBtn").addEventListener("click", function() {
-            if (confirm("ต้องการล้างคำศัพท์ที่ชอบ มังงะที่ชอบ และประวัติการอ่านทั้งหมดใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้")) {
-                localStorage.removeItem("favoriteVocab");
-                localStorage.removeItem("favoriteManga");
-                localStorage.removeItem("mangaHistory");
-                renderStats();
-                showToast("ล้างข้อมูลเรียบร้อยแล้ว");
+            try {
+                const updatedUser = await window.userDataStore.saveSettings({
+                    user_name: name,
+                    user_avatar_color: picked.dataset.grad
+                });
+                if (updatedUser) settingsUser = updatedUser;
+                if (name) localStorage.setItem("registeredName", name);
+                else localStorage.removeItem("registeredName");
+                localStorage.setItem("userAvatarColor", picked.dataset.grad);
+                document.getElementById("settingsSyncStatus").textContent = settingsUser
+                    ? "บันทึกการตั้งค่าไว้ใน Supabase แล้ว"
+                    : "บันทึกการตั้งค่าไว้ในอุปกรณ์นี้แล้ว";
+                showToast("บันทึกโปรไฟล์แล้ว");
+            } catch (error) {
+                console.error("Could not save account settings:", error);
+                showToast("บันทึกโปรไฟล์ไม่สำเร็จ: " + error.message);
             }
         });
 
-        function renderStats() {
-            document.getElementById("statVocab").textContent = (JSON.parse(localStorage.getItem("favoriteVocab")) || []).length + " คำ";
-            document.getElementById("statFav").textContent = (JSON.parse(localStorage.getItem("favoriteManga")) || []).length + " รายการ";
-            document.getElementById("statHist").textContent = (JSON.parse(localStorage.getItem("mangaHistory")) || []).length + " รายการ";
+        document.getElementById("resetDataBtn").addEventListener("click", async function() {
+            if (confirm("ต้องการล้างคำศัพท์ที่ชอบ มังงะที่ชอบ และประวัติการอ่านทั้งหมดใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้")) {
+                try {
+                    const clearedUserId = await window.userDataStore.clearReadingHistory();
+                    const accountId = clearedUserId || (settingsUser && settingsUser.id);
+                    const history = readLocalList("mangaHistory");
+                    const remainingHistory = accountId
+                        ? history.filter(function(record) { return record.userId !== accountId; })
+                        : history.filter(function(record) { return Boolean(record.userId); });
+                    localStorage.removeItem("favoriteVocab");
+                    localStorage.removeItem("favoriteManga");
+                    localStorage.setItem("mangaHistory", JSON.stringify(remainingHistory));
+                    await renderStats();
+                    showToast("ล้างข้อมูลเรียบร้อยแล้ว");
+                } catch (error) {
+                    console.error("Could not reset account data:", error);
+                    showToast("ล้างประวัติจาก Supabase ไม่สำเร็จ: " + error.message);
+                }
+            }
+        });
+
+        async function renderStats() {
+            document.getElementById("statVocab").textContent = readLocalList("favoriteVocab").length + " คำ";
+            document.getElementById("statFav").textContent = readLocalList("favoriteManga").length + " รายการ";
+            const historyCount = document.getElementById("statHist");
+            historyCount.textContent = "กำลังโหลด...";
+            try {
+                const result = await window.userDataStore.loadReadingHistory(readLocalList("mangaHistory"));
+                settingsUser = result.user || settingsUser;
+                historyCount.textContent = result.records.length + " รายการ";
+            } catch (error) {
+                console.error("Could not load reading-history count:", error);
+                const cachedHistory = readLocalList("mangaHistory").filter(function(record) {
+                    return settingsUser ? record.userId === settingsUser.id : !record.userId;
+                });
+                historyCount.textContent = cachedHistory.length + " รายการ (ข้อมูลในเครื่อง)";
+                document.getElementById("settingsSyncStatus").textContent =
+                    "โหลดประวัติจาก Supabase ไม่สำเร็จ: " + error.message;
+            }
+        }
+
+        function readLocalList(key) {
+            try {
+                const value = JSON.parse(localStorage.getItem(key) || "[]");
+                return Array.isArray(value) ? value : [];
+            } catch (error) {
+                console.error("Could not read local setting " + key + ":", error);
+                return [];
+            }
         }
 
         document.getElementById("backButton").addEventListener("click", function() {

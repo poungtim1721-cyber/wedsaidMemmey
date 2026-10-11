@@ -1,7 +1,8 @@
 # Supabase setup
 
-This site uses the Supabase project `hrhhbahxwbolhvhrbhjn` and reads content from
-the JLPT tables, `manga_translations`, and `manga_vocabularies`.
+This site uses the Supabase project `hrhhbahxwbolhvhrbhjn` for JLPT content,
+manga translations and vocabulary, and signed-in users' reading history and
+account settings.
 
 The printable Thai guide with setup steps, existing data totals, and the full SQL
 is [`Supabase-JLPT-Setup-TH.pdf`](./Supabase-JLPT-Setup-TH.pdf).
@@ -43,6 +44,12 @@ is [`Supabase-JLPT-Setup-TH.pdf`](./Supabase-JLPT-Setup-TH.pdf).
    manga page files.
 9. Check the rows in `manga_translations` and `manga_vocabularies`, then test
    their corresponding reader modal.
+10. Run [`reading-history.sql`](./reading-history.sql) to enable per-account
+    reading history. The history page and reading tracker use this table for
+    signed-in users; guest history remains in the current browser. The settings
+    page stores the display name, avatar color, and weekly reading goal in the
+    signed-in user's Supabase Auth metadata. Older unassigned local history can
+    be explicitly imported from the history page after signing in.
 
 ## Set the browser key
 

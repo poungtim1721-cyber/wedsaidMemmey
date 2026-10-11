@@ -85,6 +85,7 @@
       <li>รัน <code>supabase/manga-schema.sql</code> เพื่อสร้างตารางคำแปล พร้อมเพิ่มคำแปล 2 รายการที่มีอยู่แล้วในชุด <code>manga-kana</code>; หากมีตาราง <code>manga_vocabularies</code> อยู่แล้ว ไฟล์นี้จะเปิดสิทธิ์อ่านสาธารณะและเพิ่มได้เฉพาะผู้ล็อกอินสำหรับ <code>manga_id = 1</code> และ <code>category = manga-jp</code></li>
       <li>เพิ่มคำแปลอื่นใน <code>manga_translations</code> โดยระบุชุดมังงะ บท หน้า และลำดับบรรทัดให้ตรงกัน</li>
       <li>เพิ่มรายการไวยากรณ์ที่ตรวจสอบแล้วลง <code>jlpt_grammar</code> เมื่อมีข้อมูลพร้อม</li>
+      <li>รัน <code>supabase/reading-history.sql</code> เพื่อเปิดประวัติการอ่านแยกตามบัญชี โดยตั้งค่าชื่อ สีอวาตาร์ และเป้าหมายรายสัปดาห์ไว้ใน Supabase Auth metadata; ประวัติเก่าที่ยังไม่ผูกบัญชีเลือกนำเข้าได้จากหน้าประวัติ</li>
       <li>ตั้งค่า publishable key ใน <code>data/supabase-client.js</code> แล้วทดสอบเว็บไซต์ผ่านเว็บเซิร์ฟเวอร์</li>
     </ol>
     <p class="small">อย่านำเข้า <code>id</code> หรือ <code>created_at</code> จาก CSV ฐานข้อมูลจะสร้างค่าให้เอง ส่วนระดับให้ใช้ N5, N4, N3, N2 หรือ N1 เท่านั้น</p>
