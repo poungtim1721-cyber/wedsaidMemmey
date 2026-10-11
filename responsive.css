@@ -18,46 +18,58 @@ canvas {
     max-width: 100%;
 }
 
+code {
+    overflow-wrap: anywhere;
+}
+
 @media (max-width: 900px) {
-    .navbar {
+    body .navbar {
         height: auto;
         min-height: 60px;
         padding-block: 8px;
     }
 
-    .navbar > .nav-right {
+    body .navbar > .nav-right {
         flex: 1 1 100%;
         flex-wrap: wrap;
         gap: 12px;
         min-width: 0;
     }
 
-    .navbar .search-box {
+    body .navbar .search-box {
         flex: 1 1 220px;
         min-width: 0;
         max-width: 100%;
     }
 
-    .navbar .nav-menu {
-        flex-wrap: wrap;
+    body .navbar .nav-menu {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+        scrollbar-width: thin;
         min-width: 0;
     }
 
-    .nav-container {
+    body .nav-container {
+        width: 100%;
         height: auto;
         min-height: 65px;
         flex-wrap: wrap;
         padding-block: 10px;
     }
 
-    .nav-links {
+    body .nav-container > .nav-links {
+        width: 100%;
         height: auto;
         min-width: 0;
         flex-wrap: wrap;
     }
 
-    .nav-item,
-    .nav-links a {
+    body .nav-container > .nav-links > .nav-item,
+    body .nav-container > .nav-links > a {
         min-height: 40px;
         height: auto;
         padding: 8px 12px;
@@ -71,49 +83,48 @@ canvas {
         font-size: 16px;
     }
 
-    .navbar {
+    body .navbar {
         align-items: flex-start;
         gap: 8px;
         padding-inline: 12px;
     }
 
-    .navbar > .nav-right {
+    body .navbar > .nav-right {
         align-items: stretch;
         flex-direction: column;
         gap: 8px;
     }
 
-    .navbar .search-box {
+    body .navbar .search-box {
         flex: 0 1 auto;
         width: 100%;
     }
 
-    .navbar .nav-menu {
-        width: 100%;
+    body .navbar .nav-menu {
         justify-content: flex-start;
-        gap: 0;
+        gap: 4px;
     }
 
-    .navbar .nav-link {
+    body .navbar .nav-link {
         min-height: 40px;
         padding-inline: 8px;
         font-size: 12px;
     }
 
-    .nav-container {
+    body .nav-container {
         width: calc(100% - 24px);
         align-items: flex-start;
         gap: 8px;
     }
 
-    .nav-links {
+    body .nav-container > .nav-links {
         width: 100%;
         align-self: stretch;
         justify-content: flex-start;
         gap: 2px;
     }
 
-    .nav-links a {
+    body .nav-container > .nav-links > a {
         padding-inline: 10px;
     }
 
@@ -162,6 +173,120 @@ canvas {
 
     .manga-slide img {
         height: clamp(150px, 52vw, 220px);
+    }
+}
+
+@media (orientation: portrait) {
+    body {
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+
+    main,
+    header,
+    footer,
+    section,
+    article,
+    form {
+        min-width: 0;
+    }
+
+    .page-content,
+    .page-wrap,
+    .history-page,
+    .container,
+    .page {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .panel,
+    .table-wrap {
+        max-width: 100%;
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+    }
+
+    body table {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+    }
+
+    img,
+    svg,
+    video,
+    canvas {
+        height: auto;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 900px) and (orientation: portrait) {
+    .page-content,
+    .page-wrap,
+    .history-page,
+    .container,
+    .page {
+        width: min(100% - 32px, 760px);
+        margin-inline: auto;
+    }
+
+    .page-heading,
+    .history-heading {
+        flex-wrap: wrap;
+    }
+
+    .history-actions {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 600px) and (orientation: portrait) {
+    .page-content,
+    .page-wrap,
+    .history-page,
+    .container,
+    .page {
+        width: calc(100% - 24px);
+        margin-inline: auto;
+    }
+
+    .page-content,
+    .page-wrap {
+        padding-inline: 0;
+    }
+
+    .page-heading,
+    .history-heading,
+    .history-actions,
+    .history-sync-row,
+    .settings-row,
+    .item-card {
+        min-width: 0;
+        flex-wrap: wrap;
+    }
+
+    .history-actions {
+        width: 100%;
+    }
+
+    .history-actions > * {
+        max-width: 100%;
+    }
+
+    .panel {
+        padding-inline: 12px;
+    }
+
+    .panel > table {
+        min-width: 560px;
+    }
+
+    button,
+    a {
+        touch-action: manipulation;
     }
 }
 

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/responsive.css" media="screen">
+  <link rel="stylesheet" href="data/manga-learning.css">
   <meta name="description" content="ตัวอ่านมังงะภาษาญี่ปุ่นพร้อมตารางคำแปลภาษาไทยประจำแต่ละหน้า">
   <title>อ่านมังงะ | みさこ</title>
   <style>
@@ -95,7 +96,7 @@ button { cursor: pointer; }
 </style>
 </head>
 <body>
-  <main class="reader" aria-label="ตัวอ่านมังงะ">
+  <main class="reader" aria-label="ตัวอ่านมังงะ" data-manga-id="15">
     <header class="reader-header">
       <button class="icon-button" id="closeReader" type="button" aria-label="กลับหน้าหลัก">×</button>
       <div class="title-group">
@@ -117,7 +118,7 @@ button { cursor: pointer; }
     </section>
 
     <footer class="reader-footer">
-      <button class="footer-button" id="commentButton" type="button"><span aria-hidden="true">◌</span><small>คอมเมนต์</small></button>
+      <button class="footer-button" id="learningButton" type="button" aria-haspopup="dialog"><span aria-hidden="true">文</span><small>แปลคำศัพท์</small></button>
       <button class="footer-button" id="openChapterModal" type="button"><span aria-hidden="true">▤</span><small>เปลี่ยนตอน</small></button>
       <button class="footer-button" id="nextFooter" type="button"><span aria-hidden="true">▮</span><small>ถัดไป</small></button>
       <button class="footer-button" id="lastFooter" type="button"><span aria-hidden="true">▮</span><small>หน้าสุดท้าย</small></button>
@@ -133,6 +134,77 @@ button { cursor: pointer; }
       </header>
       <div class="chapter-grid" id="chapterGrid"></div>
     </div>
+  </div>
+
+  <div class="learning-backdrop" id="learningBackdrop" aria-hidden="true">
+    <section class="learning-panel" role="dialog" aria-modal="true" aria-labelledby="learningTitle">
+      <header class="learning-header">
+        <div>
+          <h2 id="learningTitle">แปลคำศัพท์</h2>
+          <p>เลือกข้อความจากภาพหรือพิมพ์ภาษาญี่ปุ่นเพื่อเริ่มเรียน หากออนไลน์ไม่พร้อม ระบบจะลองค้นคลังคำศัพท์ JLPT ที่มีในเว็บให้</p>
+          <button class="learning-clear-history" id="learningClearHistory" type="button" disabled>ล้างประวัติแชท</button>
+        </div>
+        <button class="learning-close" id="closeLearning" type="button" aria-label="ปิด">×</button>
+      </header>
+      <div class="learning-messages" id="learningMessages" aria-live="polite">
+        <p class="learning-welcome">ลองเลือกบริเวณข้อความบนหน้ามังงะ หรือพิมพ์คำ/ประโยคภาษาญี่ปุ่นด้านล่าง</p>
+        <section class="learning-page-vocab" aria-labelledby="learningPageTitle">
+          <header class="learning-page-heading">
+            <div>
+              <p class="learning-eyebrow">จากฐานข้อมูลมังงะ</p>
+              <h3 id="learningPageTitle">คำศัพท์และคำแปลในหน้านี้</h3>
+            </div>
+            <span id="learningPageCount" class="learning-page-count">—</span>
+          </header>
+          <div id="learningPageEntries" class="learning-page-entries" aria-live="polite">
+            <p class="learning-page-state">เปิดแผงนี้เพื่อโหลดคำศัพท์ของหน้าที่กำลังอ่าน</p>
+          </div>
+        </section>
+      </div>
+      <form class="learning-compose" id="learningForm">
+        <div class="learning-options">
+          <label for="learningMode">ตัวช่วย</label>
+          <select id="learningMode">
+            <option value="full">แปลเต็ม</option>
+            <option value="difficult">แสดงเฉพาะคำยาก</option>
+            <option value="hidden">ซ่อนคำแปลเพื่อทดลองอ่าน</option>
+          </select>
+          <button class="learning-scan" id="learningScan" type="button">เลือกข้อความจากภาพ</button>
+        </div>
+        <label class="learning-input-label" for="learningInput">ข้อความภาษาญี่ปุ่น</label>
+        <textarea id="learningInput" rows="2" placeholder="พิมพ์หรือสแกนข้อความภาษาญี่ปุ่น..." maxlength="500" required></textarea>
+        <div class="learning-keyboard-toolbar">
+          <span>พิมพ์ด้วยแป้นญี่ปุ่น</span>
+          <button class="learning-keyboard-toggle" id="learningKeyboardToggle" type="button" aria-expanded="false" aria-controls="learningKeyboard">เปิดแป้นพิมพ์</button>
+        </div>
+        <div class="learning-keyboard" id="learningKeyboard" hidden aria-label="แป้นพิมพ์ภาษาญี่ปุ่น">
+          <div class="learning-keyboard-tabs" role="group" aria-label="เลือกรูปแบบตัวอักษร">
+            <button class="learning-kana-tab active" type="button" data-kana-script="hiragana" aria-pressed="true">ฮิรางานะ</button>
+            <button class="learning-kana-tab" type="button" data-kana-script="katakana" aria-pressed="false">คาตาคานะ</button>
+          </div>
+          <div class="learning-kana-keys" id="learningKanaKeys" role="group" aria-label="ตัวอักษรภาษาญี่ปุ่น"></div>
+          <div class="learning-keyboard-tools">
+            <button type="button" data-kana-action="dakuten" aria-label="เติมเสียงขุ่น">゛</button>
+            <button type="button" data-kana-action="handakuten" aria-label="เติมเสียงพ่นลม">゜</button>
+            <button type="button" data-kana-action="backspace" aria-label="ลบตัวอักษรก่อนหน้า">⌫</button>
+            <button type="button" data-kana-value="、">、</button>
+            <button type="button" data-kana-value="。">。</button>
+            <button type="button" data-kana-value="ー">ー</button>
+            <button type="button" data-kana-value="・">・</button>
+            <button type="button" data-kana-value="「">「</button>
+            <button type="button" data-kana-value="」">」</button>
+            <button type="button" data-kana-value="？">？</button>
+            <button type="button" data-kana-value="！">！</button>
+            <button type="button" data-kana-action="space" aria-label="เว้นวรรค">เว้นวรรค</button>
+            <button type="button" data-kana-action="clear" aria-label="ล้างข้อความ">ล้าง</button>
+          </div>
+        </div>
+        <div class="learning-compose-footer">
+          <p id="learningStatus" role="status"></p>
+          <button class="learning-send" type="submit">ส่งข้อความ</button>
+        </div>
+      </form>
+    </section>
   </div>
 
   <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
@@ -180,6 +252,7 @@ button { cursor: pointer; }
   <script src="data/manga-images.js"></script>
   <script src="data/manga-catalog.js"></script>
   <script src="data/reading-tracker.js"></script>
+  <script src="data/manga-learning.js"></script>
   
   <!-- สคริปต์หลักสำหรับแสดงมังงะ ดึงคำศัพท์ และชื่อเรื่อง -->
   <script>
@@ -238,6 +311,9 @@ button { cursor: pointer; }
         currentPage = Math.max(0, Math.min(pageIndex, pages.length - 1));
         if (track) track.style.transform = `translateX(-${currentPage * 100}%)`;
         if (pageCounter) pageCounter.textContent = `หน้า ${currentPage + 1} / ${pages.length}`;
+        window.dispatchEvent(new CustomEvent("manga:pagechange", {
+          detail: { chapter: currentChapter + 1, page: currentPage + 1 }
+        }));
         
         if (dots) [...dots.children].forEach((dot, idx) => dot.classList.toggle("active", idx === currentPage));
         
