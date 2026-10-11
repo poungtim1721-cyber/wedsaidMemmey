@@ -416,43 +416,35 @@ h2 {
     body {
         padding: 14px;
     }
-
     .login-card {
         flex-direction: column;
     }
-
     .left-side {
         min-height: 300px;
         padding: 30px;
     }
-
     .anime-panel {
         width: 125px;
         height: 125px;
         margin-top: 32px;
         margin-bottom: 0;
     }
-
     .character-orb {
         width: 72px;
         height: 72px;
         font-size: 34px;
     }
-
     .left-side h1 {
         font-size: 28px;
     }
-
     .brand-mark {
         top: 22px;
         left: 30px;
     }
-
     .right-side {
         padding: 34px 26px 38px;
     }
 }
-
 </style>
 </head>
 <body>
@@ -579,6 +571,9 @@ function setFormBusy(form, busy) {
 
 document.addEventListener("DOMContentLoaded", function () {
     localStorage.removeItem("users");
+    if (new URLSearchParams(window.location.search).get("register") === "1") {
+        showRegister();
+    }
 
     var loginForm = document.getElementById("loginForm");
     var registerForm = document.getElementById("regForm");

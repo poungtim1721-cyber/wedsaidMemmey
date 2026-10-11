@@ -82,7 +82,7 @@
             <h2>👤 โปรไฟล์</h2>
             <p id="settingsSyncStatus" role="status" aria-live="polite"></p>
             <div class="form-row">
-                <input type="text" id="sName" placeholder="ชื่อที่แสดง">
+                <input type="text" id="sName" placeholder="เข้าสู่ระบบเพื่อกำหนดชื่อ" disabled>
             </div>
             <div style="margin: 4px 0 16px;">
                 <div class="settings-label" style="margin-bottom:8px;">สีอวาตาร์</div>
@@ -168,15 +168,24 @@
 
         async function loadSettingsForm() {
             const status = document.getElementById("settingsSyncStatus");
-            document.getElementById("sName").value = localStorage.getItem("registeredName") || "";
+            const nameInput = document.getElementById("sName");
             renderSwatches();
+            if (sessionStorage.getItem("guestMode") === "true") {
+                settingsUser = null;
+                nameInput.value = "";
+                status.textContent = "เข้าสู่ระบบด้วย Supabase ก่อนจึงจะตั้งชื่อโปรไฟล์ได้";
+                return;
+            }
+
             try {
                 settingsUser = await window.userDataStore.getCurrentUser();
                 const result = await window.userDataStore.loadSettings();
                 if (result.user) {
                     settingsUser = result.user;
                     const metadata = result.settings;
-                    document.getElementById("sName").value = metadata.user_name || "";
+                    nameInput.disabled = false;
+                    nameInput.placeholder = "ชื่อที่แสดง";
+                    nameInput.value = metadata.user_name || "";
                     localStorage.setItem("registeredName", metadata.user_name || "");
                     if (metadata.user_avatar_color) {
                         localStorage.setItem("userAvatarColor", metadata.user_avatar_color);
@@ -189,10 +198,14 @@
                     renderSwatches();
                     status.textContent = "เชื่อมต่อการตั้งค่ากับ Supabase แล้ว";
                 } else {
-                    status.textContent = "กำลังใช้การตั้งค่าที่บันทึกไว้ในอุปกรณ์นี้";
+                    nameInput.value = "";
+                    nameInput.disabled = true;
+                    status.textContent = "เข้าสู่ระบบด้วย Supabase ก่อนจึงจะตั้งชื่อโปรไฟล์ได้";
                 }
             } catch (error) {
                 console.error("Could not load account settings:", error);
+                nameInput.value = "";
+                nameInput.disabled = true;
                 status.textContent = "โหลดการตั้งค่าจาก Supabase ไม่สำเร็จ: " + error.message;
             }
         }
@@ -205,18 +218,24 @@
                 return;
             }
             try {
-                const updatedUser = await window.userDataStore.saveSettings({
-                    user_name: name,
-                    user_avatar_color: picked.dataset.grad
-                });
-                if (updatedUser) settingsUser = updatedUser;
-                if (name) localStorage.setItem("registeredName", name);
-                else localStorage.removeItem("registeredName");
+                const canSaveName = settingsUser && sessionStorage.getItem("guestMode") !== "true";
+                if (canSaveName) {
+                    const updatedUser = await window.userDataStore.saveSettings({
+                        user_name: name,
+                        user_avatar_color: picked.dataset.grad
+                    });
+                    if (!updatedUser) {
+                        throw new Error("เข้าสู่ระบบด้วย Supabase ก่อนบันทึกชื่อโปรไฟล์");
+                    }
+                    settingsUser = updatedUser;
+                    if (name) localStorage.setItem("registeredName", name);
+                    else localStorage.removeItem("registeredName");
+                }
                 localStorage.setItem("userAvatarColor", picked.dataset.grad);
-                document.getElementById("settingsSyncStatus").textContent = settingsUser
+                document.getElementById("settingsSyncStatus").textContent = canSaveName
                     ? "บันทึกการตั้งค่าไว้ใน Supabase แล้ว"
-                    : "บันทึกการตั้งค่าไว้ในอุปกรณ์นี้แล้ว";
-                showToast("บันทึกโปรไฟล์แล้ว");
+                    : "บันทึกสีอวาตาร์ไว้ในอุปกรณ์นี้แล้ว — ตั้งชื่อได้เมื่อเข้าสู่ระบบ";
+                showToast(canSaveName ? "บันทึกโปรไฟล์แล้ว" : "บันทึกสีอวาตาร์แล้ว");
             } catch (error) {
                 console.error("Could not save account settings:", error);
                 showToast("บันทึกโปรไฟล์ไม่สำเร็จ: " + error.message);

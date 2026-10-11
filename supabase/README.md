@@ -77,8 +77,11 @@ to their profiles, creates a profile automatically for each new signup, and
 restricts profile reads to the signed-in account. It replaces existing RLS
 policies on `public.users`; manage all profiles from the Supabase Dashboard.
 
-The login form accepts email and password. If email confirmation is enabled in
-Supabase Auth, new members must confirm their email before signing in. Existing
+The login form accepts email and password and also allows visitors to continue
+as guests without registering. Guests can use the site, but setting a profile
+name requires signing in with Supabase Auth; avatar colors can still be saved
+locally. Enable email confirmation in Supabase Auth if new members must verify
+their email before signing in. Existing
 rows in `public.users` that do not yet have a matching Supabase Auth account
 remain in the table but cannot sign in with their old `password_hash`; each
 member must register again with the same email to link that row and set a new
