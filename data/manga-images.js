@@ -15,7 +15,7 @@ window.mangaImages = {
     ["HSvtRu9bwAA1Tt5.jpg"]
   ],
   "manga-th": [
-    ["HSvtRu-bAAATjdT.jpg" ,"anime第2/31.png", "anime第2/32.png", "anime第2/33.png", "anime第2/34.png", "anime第2/35.png",
+    ["HSvtRu-bAAATJdT.jpg" ,"anime第2/31.png", "anime第2/32.png", "anime第2/33.png", "anime第2/34.png", "anime第2/35.png",
       "anime第2/36.png", "anime第2/37.png", "anime第2/38.png", "anime第2/39.png", "anime第2/40.png",
       "anime第2/41.png", "anime第2/42.png", "anime第2/43.png", "anime第2/44.png", "anime第2/45.png",
       "anime第2/46.png", "anime第2/47.png", "anime第2/48.png", "anime第2/49.png", "anime第2/50.png",
