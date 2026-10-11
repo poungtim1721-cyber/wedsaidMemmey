@@ -391,6 +391,17 @@ h2 {
     transition: .4s;
 }
 
+.auth-message {
+    margin: 16px 0 0;
+    color: #287a52;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.auth-message[data-state="error"] {
+    color: #b42318;
+}
+
 .shake {
     animation: shake .35s ease-in-out;
 }
@@ -444,20 +455,11 @@ h2 {
 </style>
 </head>
 <body>
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>みさこ Login</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
     <div class="fullscreen-bg" aria-hidden="true"></div>
 
     <div class="login-card">
         <div class="left-side">
-            <h1></h1><div class="brand-mark">みさこ</div></h2>
+            <div class="brand-mark">みさこ</div>
             <div class="anime-panel">
                 <span class="speed-line speed-line-one"></span>
                 <span class="speed-line speed-line-two"></span>
@@ -467,20 +469,21 @@ h2 {
             </div>
         </div>
         <div class="right-side">
-            
             <div id="loginSection">
                 <p class="eyebrow">みさこภาษาญี่ปุ่นยินดีต้อนรับ</p>
                 <h2>เข้าสู่ระบบ</h2>
                 <p class="form-intro">เข้ามาเรียนต่อในโลกของ みさこ</p>
-                <div class="textbox">
-                    <input id="LoginUser" required type="text" placeholder=" " />
-                    <label>ชื่อผู้ใช้ / Email / หมายเลขโทรศัพท์</label>
-                </div>
-                <div class="textbox">
-                    <input id="LoginPass" required type="password" maxlength="14" placeholder=" " />
-                    <label>รหัสผ่าน</label>
-                </div>
-                <button class="action-btn" onclick="handleSignIn()">Sign in</button>
+                <form id="loginForm">
+                    <div class="textbox">
+                        <input id="LoginUser" required type="email" autocomplete="email" placeholder=" " />
+                        <label>Email</label>
+                    </div>
+                    <div class="textbox">
+                        <input id="LoginPass" required type="password" autocomplete="current-password" placeholder=" " />
+                        <label>รหัสผ่าน</label>
+                    </div>
+                    <button id="LoginBtn" class="action-btn" type="submit">Sign in</button>
+                </form>
                 <div class="divider">
                     <span>หรือ</span>
                 </div>
@@ -489,112 +492,178 @@ h2 {
             </div>
 
             <div id="registerSection" style="display: none;">
-                
                 <p class="eyebrow">เริ่มต้นการผจญภัย</p>
                 <h2>สมัครสมาชิก</h2>
                 <p class="form-intro">สร้างบัญชีเพื่อบันทึกการเรียนของคุณ</p>
-              <form id="regForm">
+                <form id="regForm">
                     <div class="textbox">
-                    <input id="RegEmail" required type="email" placeholder=" " />
-                    <label>Email หมายเลขโทรศัพท์</label>
-                </div>
+                        <input id="RegEmail" required type="email" autocomplete="email" placeholder=" " />
+                        <label>Email</label>
+                    </div>
                     <div class="textbox">
-                    <input id="RegUser" required type="text" placeholder=" " />
-                    <label>ชื่อผู้ใช้</label>
-                </div>
+                        <input id="RegUser" required type="text" maxlength="50" autocomplete="username" placeholder=" " />
+                        <label>ชื่อผู้ใช้</label>
+                    </div>
                     <div class="textbox">
-                    <input id="RegPass" required type="password" placeholder=" " />
-                    <label>รหัสผ่าน</label>
-                </div>
+                        <input id="RegPass" required type="password" minlength="6" autocomplete="new-password" placeholder=" " />
+                        <label>รหัสผ่าน (อย่างน้อย 6 ตัว)</label>
+                    </div>
                     <div class="textbox">
-                    <input id="ConfirmPass" required type="password" placeholder=" " />
-                    <label>ยืนยันรหัส</label>
-                </div>
+                        <input id="ConfirmPass" required type="password" minlength="6" autocomplete="new-password" placeholder=" " />
+                        <label>ยืนยันรหัสผ่าน</label>
+                    </div>
                     <div class="bars" id="bars"><div></div></div>
                     <button id="RegBtn" type="submit" class="action-btn" disabled>Sign Up</button>
-                    </form>
+                </form>
                 <p class="switch-text"><span onclick="showLogin()">กลับไปหน้า Sign in</span></p>
             </div>
+            <p id="authMessage" class="auth-message" role="status" aria-live="polite"></p>
         </div>
     </div>
-    
-    <script src="main.js"></script>
-</body>
-</html>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="data/supabase-client.js"></script>
 <script>
 function showRegister() {
     document.getElementById("loginSection").style.display = "none";
     document.getElementById("registerSection").style.display = "block";
-    var m = document.getElementById("msgBubble");
-    if (m) m.innerText = " ようこそ"; 
+    clearAuthMessage();
 }
+
 function showLogin() {
     document.getElementById("loginSection").style.display = "block";
     document.getElementById("registerSection").style.display = "none";
-    var m = document.getElementById("msgBubble");
-    if (m) m.innerText = " こんにちは"; 
+    clearAuthMessage();
 }
-function handleSignIn() {
-    var u = document.getElementById("LoginUser").value.trim();
-    var p = document.getElementById("LoginPass").value;
-    if (!u || !p) { alert("กรุณากรอกชื่อผู้ใช้และรหัสผ่าน"); return; }
-    var users = JSON.parse(localStorage.getItem("users")) || [];
-    var ok = false;
-    for (var i = 0; i < users.length; i++) {
-        if (users[i].username === u && users[i].password === p) { ok = true; break; }
-    }
-    if (ok) {
-        sessionStorage.removeItem("guestMode");
-        localStorage.setItem("registeredName", u);
-        alert("ยินดีต้อนรับเข้าสู่ระบบ!");
-        window.location.href = "home.html"; 
-    } else {
-        alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
-    }
-}
+
 function enterAsGuest() {
+    localStorage.removeItem("registeredName");
+    localStorage.removeItem("registeredEmail");
     sessionStorage.setItem("guestMode", "true");
     window.location.href = "home.html";
 }
-function socialAuth(platform) { alert("กำลังเชื่อมต่อกับ " + platform + "... (ระบบจำลอง)"); }
+
+function setAuthMessage(message, isError) {
+    var messageElement = document.getElementById("authMessage");
+    messageElement.textContent = message;
+    if (isError) {
+        messageElement.dataset.state = "error";
+    } else {
+        delete messageElement.dataset.state;
+    }
+}
+
+function clearAuthMessage() {
+    setAuthMessage("", false);
+}
+
+function getAuthErrorMessage(error) {
+    if (error.message === "Invalid login credentials") {
+        return "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+    }
+    if (error.message.toLowerCase().includes("email not confirmed")) {
+        return "กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ";
+    }
+    if (error.message.includes("users_user_name_lower_uidx")) {
+        return "ชื่อผู้ใช้นี้ถูกใช้แล้ว กรุณาเลือกชื่ออื่น";
+    }
+    return error.message;
+}
+
+function setFormBusy(form, busy) {
+    form.querySelectorAll("button").forEach(function (button) {
+        button.disabled = busy;
+    });
+}
 
 document.addEventListener("DOMContentLoaded", function () {
+    localStorage.removeItem("users");
+
+    var loginForm = document.getElementById("loginForm");
+    var registerForm = document.getElementById("regForm");
+    var loginPass = document.getElementById("LoginPass");
     var regPass = document.getElementById("RegPass");
     var confirmPass = document.getElementById("ConfirmPass");
     var regBtn = document.getElementById("RegBtn");
 
-    function enable() {
-        if (!regBtn || !regPass || !confirmPass) return;
-        var match = regPass.value === confirmPass.value && regPass.value !== "";
-        var long = regPass.value.length >= 6;
-        regBtn.disabled = !(match && long);
-        regBtn.style.opacity = (match && long) ? "1" : "0.5";
+    function validateRegistration() {
+        var passwordsMatch = regPass.value === confirmPass.value && regPass.value.length >= 6;
+        regBtn.disabled = !passwordsMatch;
+        regBtn.style.opacity = passwordsMatch ? "1" : "0.5";
     }
 
-    if (regPass) regPass.addEventListener("input", enable);
-    if (confirmPass) confirmPass.addEventListener("input", enable);
+    regPass.addEventListener("input", validateRegistration);
+    confirmPass.addEventListener("input", validateRegistration);
 
-    var regForm = document.getElementById("regForm");
-    if (regForm) regForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-        var user = document.getElementById("RegUser").value.trim();
-        var email = document.getElementById("RegEmail").value.trim();
-        var pass = regPass.value;
-        if (!user) { alert("กรุณากรอกชื่อผู้ใช้"); return; }
-        if (!email || email.indexOf("@") === -1) { alert("กรุณากรอก Email ให้ถูกต้อง"); return; }
-        if (pass.length < 6) { alert("รหัสผ่านต้องอย่างน้อย 6 ตัว"); return; }
-        var users = JSON.parse(localStorage.getItem("users")) || [];
-        for (var i = 0; i < users.length; i++) {
-            if (users[i].username === user) { alert("ชื่อผู้ใช้นี้ถูกใช้ไปแล้ว"); return; }
+    loginForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        clearAuthMessage();
+        setFormBusy(loginForm, true);
+
+        try {
+            var client = window.getSupabaseClient();
+            var result = await client.auth.signInWithPassword({
+                email: document.getElementById("LoginUser").value.trim(),
+                password: loginPass.value
+            });
+            if (result.error) throw result.error;
+
+            var user = result.data.user;
+            var displayName = user.user_metadata.user_name || user.email.split("@")[0];
+            sessionStorage.removeItem("guestMode");
+            localStorage.setItem("registeredName", displayName);
+            localStorage.setItem("registeredEmail", user.email);
+            window.location.href = "home.html";
+        } catch (error) {
+            setAuthMessage("เข้าสู่ระบบไม่สำเร็จ: " + getAuthErrorMessage(error), true);
+            setFormBusy(loginForm, false);
         }
-        users.push({ username: user, email: email, password: pass });
-        localStorage.setItem("users", JSON.stringify(users));
-        localStorage.setItem("registeredName", user);
-        alert("ลงทะเบียนสำเร็จ! ยินดีต้อนรับ " + user);
-        showLogin();
-        document.getElementById("LoginUser").value = user;
-        document.getElementById("LoginPass").value = "";
+    });
+
+    registerForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        clearAuthMessage();
+
+        if (regPass.value !== confirmPass.value) {
+            setAuthMessage("รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน", true);
+            return;
+        }
+
+        setFormBusy(registerForm, true);
+        try {
+            var client = window.getSupabaseClient();
+            var result = await client.auth.signUp({
+                email: document.getElementById("RegEmail").value.trim(),
+                password: regPass.value,
+                options: {
+                    data: {
+                        user_name: document.getElementById("RegUser").value.trim()
+                    }
+                }
+            });
+            if (result.error) throw result.error;
+            if (!result.data.user) throw new Error("Supabase did not return the registered user.");
+
+            if (result.data.session) {
+                var email = result.data.user.email;
+                var displayName = result.data.user.user_metadata.user_name;
+                sessionStorage.removeItem("guestMode");
+                localStorage.setItem("registeredName", displayName);
+                localStorage.setItem("registeredEmail", email);
+                window.location.href = "home.html";
+                return;
+            }
+
+            registerForm.reset();
+            validateRegistration();
+            showLogin();
+            setAuthMessage("สมัครสมาชิกสำเร็จ กรุณาตรวจสอบอีเมลเพื่อยืนยันบัญชีก่อนเข้าสู่ระบบ", false);
+        } catch (error) {
+            setAuthMessage("สมัครสมาชิกไม่สำเร็จ: " + getAuthErrorMessage(error), true);
+        } finally {
+            setFormBusy(registerForm, false);
+            validateRegistration();
+        }
     });
 });
 </script>

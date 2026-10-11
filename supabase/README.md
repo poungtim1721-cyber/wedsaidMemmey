@@ -57,6 +57,28 @@ rows limited by policy to manga ID 1 and category `manga-jp`. No update or delet
 policy is provided. `manga-schema.sql` configures these policies only when that
 table exists.
 
+## Connect login and user profiles
+
+The login and registration forms use Supabase Auth. New Auth accounts are also
+stored in the existing `public.users` table so they can be counted and managed
+in the Supabase Table Editor. The `password_hash` column is not used for new
+accounts; Supabase Auth securely stores and verifies passwords.
+
+Before deploying the updated `login.html`, run [`users-auth.sql`](./users-auth.sql)
+in the project's SQL Editor. This migration links matching existing Auth users
+to their profiles, creates a profile automatically for each new signup, and
+restricts profile reads to the signed-in account. It replaces existing RLS
+policies on `public.users`; manage all profiles from the Supabase Dashboard.
+
+The login form accepts email and password. If email confirmation is enabled in
+Supabase Auth, new members must confirm their email before signing in. Existing
+rows in `public.users` that do not yet have a matching Supabase Auth account
+remain in the table but cannot sign in with their old `password_hash`; each
+member must register again with the same email to link that row and set a new
+password. Linked legacy hashes are cleared. The login page also removes the
+old browser-only `localStorage.users` list, which stored passwords in plaintext;
+those local-only accounts must register again.
+
 ## Load manga covers from Supabase Storage
 
 The six newer manga covers are configured to load from the public
