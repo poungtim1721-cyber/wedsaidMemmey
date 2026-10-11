@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/responsive.css" media="screen">
     <title>みさこ</title>
     <style>
 .logo-box {
@@ -433,17 +434,22 @@
 .manga-title {
     font-size: 0.78rem;
     color: #20324d;
-    margin: 8px 0 4px;
-    line-height: 1.3;
+    margin: 8px 0 0;
+    line-height: 1.9;
     font-weight: 700;
-    
-    /* เพิ่มบรรทัดด้านล่างนี้เพื่อล็อกความสูงกล่องข้อความให้เท่ากันทุกอัน */
-    height: 2.6em; 
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    
+    overflow-wrap: anywhere;
     transition: color 0.25s ease, text-shadow 0.25s ease, letter-spacing 0.25s ease;
+}
+.manga-title rt {
+    color: #64748b;
+    font-size: 0.62em;
+    font-weight: 500;
+}
+.manga-translation {
+    margin: 3px 0 4px;
+    color: #64748b;
+    font-size: 0.67rem;
+    line-height: 1.5;
 }
 .manga-card:hover .manga-title,
 .manga-cards:hover .manga-title {
@@ -899,8 +905,8 @@ body {
     </div>
         <div class="nav-menu">
             <a href="/home.html" class="nav-link">หน้าเเรก</a>
-            <a href="/漢字.html" class="nav-link">คันจิ (漢字)</a>
-            <a href="/文法.html" class="nav-link">ศัพท์เเละไวยากรณ์ (文法)</a>
+            <a href="/kanji.html" class="nav-link">คันจิ (漢字)</a>
+            <a href="/grammar.html" class="nav-link">ศัพท์เเละไวยากรณ์ (文法)</a>
             <a href="/login.html" class="nav-link">เข้าสู่ระบบ</a>
             
             <button class="icon" type="button" onclick="openNav()" aria-label="เปิดเมนูผู้ใช้" aria-controls="mySidebar" aria-expanded="false" style="font-size: 20px; margin-left: 15px; padding: 0; border: 0; background: transparent;">☰</button>
@@ -1023,11 +1029,11 @@ body {
 </style>
    <div class="manga-slider-container" id="mangaSlider">
     <div class="manga-slider-track" id="mangaTrack">
-        <div class="manga-slide"><a href="/มังงะ.html" aria-label="ไปหน้ามังงะ"><img src="/HSvtRu-bAAATJdT.jpg" alt="มังงะ" draggable="false"></a></div>
+        <div class="manga-slide"><a href="/manga.html" aria-label="ไปหน้ามังงะ"><img src="/HSvtRu-bAAATJdT.jpg" alt="มังงะ" draggable="false"></a></div>
         <div class="manga-slide"><a href="/N3.html" aria-label="ไปหน้า JLPT N3"><img src="/jlpt-n3-practice-test.jpg" alt="แบบฝึก JLPT N3" draggable="false"></a></div>
-        <div class="manga-slide"><a href="/คำศัพท์.html?level=N3" aria-label="ไปหน้าคำศัพท์ JLPT N3"><img src="/jlpt-n3-resources.png" alt="ทรัพยากร JLPT N3" draggable="false"></a></div>
-        <div class="manga-slide"><a href="/文法N3.html" aria-label="ไปหน้าไวยากรณ์ JLPT N3"><img src="/maxresdefault.jpg" alt="ไวยากรณ์ JLPT N3" draggable="false"></a></div>
-        <div class="manga-slide"><a href="/漫画読み.html" aria-label="ไปหน้ารวมมังงะ"><img src="/images%20%281%29.png" alt="หน้ารวมมังงะ" draggable="false"></a></div>
+        <div class="manga-slide"><a href="/vocabulary.html?level=N3" aria-label="ไปหน้าคำศัพท์ JLPT N3"><img src="/jlpt-n3-resources.png" alt="ทรัพยากร JLPT N3" draggable="false"></a></div>
+        <div class="manga-slide"><a href="/grammar-n3.html" aria-label="ไปหน้าไวยากรณ์ JLPT N3"><img src="/maxresdefault.jpg" alt="ไวยากรณ์ JLPT N3" draggable="false"></a></div>
+        <div class="manga-slide"><a href="/manga-reader.html" aria-label="ไปหน้ารวมมังงะ"><img src="/images%20%281%29.png" alt="หน้ารวมมังงะ" draggable="false"></a></div>
     </div>
 
     <!-- ปุ่มลูกศรซ้าย-ขวา -->
@@ -1171,7 +1177,7 @@ window.addEventListener('load', function() {
     <div class="manga-list-container">
         <div class="manga-list-header">
             <h3> ทดสอบคันจิ (日本語意味)</h3>
-             <a href="../../มังงะทั้งหมด.html" class="see-more-btn">ดูเพิ่มเติม <span class="see-more-arrow" aria-hidden="true">❯</span></a>
+             <a href="../../all-manga.html" class="see-more-btn">ดูเพิ่มเติม <span class="see-more-arrow" aria-hidden="true">❯</span></a>
         </div>
             <div class="row-wrap">
                 <button class="row-arrow left-arrow" id="row1LeftBtn" type="button" aria-label="Previous">❮</button>
@@ -1262,19 +1268,19 @@ window.addEventListener('load', function() {
             <div class="row-wrap">
                 <button class="row-arrow left-arrow" id="rowLeftBtn" type="button" aria-label="Previous">❮</button>
                 <div class="manga-grid" id="mangaRow2">
-                    <a href="/漫画読み.html" class="manga-card">
+                    <a href="/manga-reader.html" class="manga-card">
                         <div class="manga-cover"><img src="/images.jpg" alt="1" draggable="false"></div>
                         <h3 class="manga-title"><ruby>幼<rt>おさな</rt><ruby>なじみ<ruby>見<rt>み</rt><ruby>る<ruby>目<rt>め</rt><ruby>が<ruby>変<rt>か</rt><ruby>わってしまった</ruby></h3>
                         <p class="manga-subtext">第1 (ตอนที่1)</p>
                     </a>
 
-                    <a href="/มังงะ.html" class="manga-card">
+                    <a href="/manga.html" class="manga-card">
                         <div class="manga-cover"><img src="/HSvtRu-bAAATJdT.jpg" alt="2" draggable="false"></div>
                         <h3 class="manga-title"><ruby>つつ゛<ruby>生輩<rt>なまやから</rt>は<ruby>元<rt>げん</rt>カノだから</ruby></h3>
                         <p class="manga-subtext"><ruby>第1<rt>だい</rt>(ตอนที่1)</p></ruby>
                     </a>
 
-                    <a href="/まんか読み.html" class="manga-card">
+                    <a href="/manga-kana-reader.html" class="manga-card">
                         <div class="manga-cover"><img src="/HSvtRu9bwAA1Tt5.jpg" alt="3" draggable="false"></div>
                         <h3 class="manga-title"><ruby>宵<rt>よい</rt><ruby>宮<rt>みや</rt><ruby>凪<rt>なぎ</rt><ruby>がマネに<ruby>夜<rt>よ</rt><ruby>食<rt>しょく</rt><ruby>を<ruby>作る<rt>つくる</rt><ruby>理由<rt>りゆう</rt></ruby></h3>
                         <p class="manga-subtext"><ruby>第1<rt>だい</rt>(ตอนที่1)</p></ruby>
@@ -1350,10 +1356,42 @@ window.addEventListener('DOMContentLoaded', function() {
     const cards = Array.from(document.querySelectorAll('#mangaRow1 .manga-cards, #mangaRow2 .manga-card'));
     const sections = Array.from(new Set(cards.map(card => card.closest('.manga-list-section'))));
     const catalog = Array.isArray(window.siteMangaCatalog) ? window.siteMangaCatalog : [];
+    const catalogByHref = new Map(catalog.map(manga => [
+        manga.href.split(/[?#]/)[0].split('/').pop().toLocaleLowerCase(),
+        manga
+    ]));
     const catalogByImage = new Map(catalog.map(manga => [
         decodeURIComponent(manga.image.split('/').pop()).toLocaleLowerCase(),
         [manga.title].concat(manga.keywords || [], manga.note || []).join(' ')
     ]));
+
+    cards.forEach(function(card) {
+        const href = card.getAttribute('href');
+        const manga = href && catalogByHref.get(href.split(/[?#]/)[0].split('/').pop().toLocaleLowerCase());
+        const title = card.querySelector('.manga-title');
+        if (!manga || !title) return;
+
+        title.lang = 'ja';
+        title.replaceChildren();
+        const rubyTitle = document.createElement('ruby');
+        const baseText = document.createElement('rb');
+        baseText.textContent = manga.title;
+        rubyTitle.append(baseText);
+        if (manga.titleKana) {
+            const reading = document.createElement('rt');
+            reading.textContent = manga.titleKana;
+            rubyTitle.append(reading);
+        }
+        title.append(rubyTitle);
+
+        if (manga.titleThai) {
+            const translation = document.createElement('p');
+            translation.className = 'manga-translation';
+            translation.lang = 'th';
+            translation.textContent = manga.titleThai;
+            title.after(translation);
+        }
+    });
 
     function normalize(value) {
         return String(value || '').toLocaleLowerCase().replace(/\s+/g, '');

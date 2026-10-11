@@ -1,0 +1,172 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+img,
+svg,
+video,
+canvas {
+    max-width: 100%;
+}
+
+@media (max-width: 900px) {
+    .navbar {
+        height: auto;
+        min-height: 60px;
+        padding-block: 8px;
+    }
+
+    .navbar > .nav-right {
+        flex: 1 1 100%;
+        flex-wrap: wrap;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .navbar .search-box {
+        flex: 1 1 220px;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .navbar .nav-menu {
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+
+    .nav-container {
+        height: auto;
+        min-height: 65px;
+        flex-wrap: wrap;
+        padding-block: 10px;
+    }
+
+    .nav-links {
+        height: auto;
+        min-width: 0;
+        flex-wrap: wrap;
+    }
+
+    .nav-item,
+    .nav-links a {
+        min-height: 40px;
+        height: auto;
+        padding: 8px 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    input:not([type="checkbox"]):not([type="radio"]),
+    select:not(.chapter-select),
+    textarea {
+        font-size: 16px;
+    }
+
+    .navbar {
+        align-items: flex-start;
+        gap: 8px;
+        padding-inline: 12px;
+    }
+
+    .navbar > .nav-right {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .navbar .search-box {
+        flex: 0 1 auto;
+        width: 100%;
+    }
+
+    .navbar .nav-menu {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 0;
+    }
+
+    .navbar .nav-link {
+        min-height: 40px;
+        padding-inline: 8px;
+        font-size: 12px;
+    }
+
+    .nav-container {
+        width: calc(100% - 24px);
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .nav-links {
+        width: 100%;
+        align-self: stretch;
+        justify-content: flex-start;
+        gap: 2px;
+    }
+
+    .nav-links a {
+        padding-inline: 10px;
+    }
+
+    .page-content {
+        width: 100%;
+        padding: 28px 12px 48px;
+    }
+
+    .container {
+        width: calc(100% - 24px);
+        margin: 20px auto;
+        padding: 16px;
+    }
+
+    .panel {
+        overflow-x: auto;
+        padding: 16px;
+    }
+
+    .panel > table {
+        min-width: 560px;
+    }
+
+    .manga-list-header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .manga-list-section {
+        padding-inline: 10px;
+    }
+
+    .manga-row-wrapper,
+    .row-wrap {
+        padding-inline: 10px;
+    }
+
+    .manga-slider-container {
+        padding-block: 20px 14px;
+    }
+
+    .manga-slide {
+        min-width: 72%;
+    }
+
+    .manga-slide img {
+        height: clamp(150px, 52vw, 220px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}

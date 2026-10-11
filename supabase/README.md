@@ -30,9 +30,9 @@ is [`Supabase-JLPT-Setup-TH.pdf`](./Supabase-JLPT-Setup-TH.pdf).
    source content.
 6. `schema.sql` or `manga-schema.sql` creates the translation table.
    `manga-schema.sql` seeds the two translations currently present in
-   `まんか読み.html`. Add more translation lines to `manga_translations` using
+   `manga-kana-reader.html`. Add more translation lines to `manga_translations` using
    the correct `series`, chapter, page, and line numbers.
-7. `漫画読み.html` reads vocabulary from `manga_vocabularies` for `manga_id = 1`,
+7. `manga-reader.html` reads vocabulary from `manga_vocabularies` for `manga_id = 1`,
    matching each row's `page_no` and `seq_no` to the reader. Confirm that the
    vocabulary rows use that manga ID and have the expected columns:
    `vocab_id`, `manga_id`, `page_no`, `seq_no`, `kana`, `kanji`, and `meaning`.
@@ -113,6 +113,6 @@ those must already exist in `manga_vocabularies`. The six newer manga cover
 images use the `manga-covers` Supabase Storage bucket; follow the steps above
 to upload them.
 
-Manga series keys: `漫画読み.html` uses `manga-jp`, `まんか読み.html` uses
-`manga-kana`, and `มังงะ.html` uses `manga-th`. The two pre-existing translation
-entries belong to `manga-kana`, matching the 19-page `まんか読み.html` reader.
+Manga series keys: `manga-reader.html` uses `manga-jp`, `manga-kana-reader.html` uses
+`manga-kana`, and `manga.html` uses `manga-th`. The two pre-existing translation
+entries belong to `manga-kana`, matching the 19-page `manga-kana-reader.html` reader.

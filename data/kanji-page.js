@@ -66,7 +66,7 @@
         const pagination = document.getElementById("pagination");
         for (let pageNumber = 1; pageNumber <= pages; pageNumber += 1) {
           const link = document.createElement("a");
-          link.href = `漢字.html?page=${pageNumber}#${level}`;
+          link.href = `kanji.html?page=${pageNumber}#${level}`;
           link.textContent = String(pageNumber);
           link.className = pageNumber === currentPage ? "active" : "";
           link.setAttribute("aria-label", `หน้าที่ ${pageNumber}`);
@@ -81,7 +81,7 @@
       grid.hidden = false;
       const back = document.createElement("a");
       back.className = "all-kanji";
-      back.href = "漢字.html";
+      back.href = "kanji.html";
       back.textContent = "← กลับหน้าเลือกระดับ";
       document.querySelector(".top-card").prepend(back);
     } else {

@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/responsive.css" media="screen">
 <title>คู่มือเชื่อมต่อ Supabase — JLPT みさこ</title>
 <style>
   @page { size: A4; margin: 16mm 16mm 17mm; }
@@ -196,7 +197,7 @@ do update set
   romaji = excluded.romaji,
   japanese = excluded.japanese,
   meaning = excluded.meaning;</pre>
-    <p class="small">RLS จำกัดการเขียนข้อมูลจากหน้าเว็บไว้เฉพาะผู้ล็อกอิน โดยหน้า <code>漫画読み.html</code> เพิ่มได้เฉพาะ <code>manga_id = 1</code> และ <code>category = manga-jp</code>; ไม่มีสิทธิ์แก้ไขหรือลบ ผู้ใช้ต้องถูกสร้างหรือเชิญใน Supabase ก่อน</p>
+    <p class="small">RLS จำกัดการเขียนข้อมูลจากหน้าเว็บไว้เฉพาะผู้ล็อกอิน โดยหน้า <code>manga-reader.html</code> เพิ่มได้เฉพาะ <code>manga_id = 1</code> และ <code>category = manga-jp</code>; ไม่มีสิทธิ์แก้ไขหรือลบ ผู้ใช้ต้องถูกสร้างหรือเชิญใน Supabase ก่อน</p>
     <p class="small">ตารางคำแปลมีคอลัมน์ series, chapter_number, page_number, line_number, romaji, japanese และ meaning</p>
     <p class="small">ตาราง <code>manga_vocabularies</code> ต้องมีคอลัมน์ vocab_id, manga_id, page_no, seq_no, kana, kanji และ meaning</p>
   </section>

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/responsive.css" media="screen">
   <meta name="description" content="รวมรายการมังงะทั้งหมด พร้อมจำนวนเรื่องและลิงก์สำหรับเข้าชม">
   <title>มังงะทั้งหมด | みさこ</title>
   <style>
@@ -68,6 +69,22 @@
       font-weight: 700;
     }
 
+    .manga-search {
+      width: 100%;
+      margin-bottom: 20px;
+      padding: 13px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      color: #1e293b;
+      background: #fff;
+      font: inherit;
+    }
+
+    .manga-search:focus-visible {
+      outline: 3px solid rgba(23, 105, 211, 0.25);
+      border-color: #1769d3;
+    }
+
     .manga-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
@@ -113,14 +130,25 @@
     .manga-details { padding: 13px 14px 15px; }
 
     .manga-title {
-      display: -webkit-box;
-      overflow: hidden;
       margin: 0;
       color: #12315c;
-      font-size: 0.98rem;
-      line-height: 1.5;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.9;
+      overflow-wrap: anywhere;
+    }
+
+    .manga-title rt {
+      color: #64748b;
+      font-size: 0.62em;
+      font-weight: 500;
+    }
+
+    .manga-translation {
+      margin: 5px 0 0;
+      color: #64748b;
+      font-size: 0.84rem;
+      line-height: 1.6;
     }
 
     .manga-note {
@@ -166,6 +194,15 @@
       </div>
       <div class="manga-count" id="mangaCount" aria-live="polite">กำลังโหลดรายการ...</div>
     </div>
+    <input
+      class="manga-search"
+      id="mangaSearch"
+      type="search"
+      placeholder="ค้นหาชื่อมังงะ..."
+      aria-label="ค้นหามังงะจากชื่อหรือคำสำคัญ"
+      autocomplete="off"
+    >
+    <p class="empty-state" id="mangaNoResults" hidden>ไม่พบมังงะที่ตรงกับคำค้นหา</p>
     <section class="manga-grid" id="mangaGrid" aria-label="รายการมังงะ"></section>
   </main>
 
@@ -173,6 +210,8 @@
   <script>
     const mangaGrid = document.getElementById('mangaGrid');
     const mangaCount = document.getElementById('mangaCount');
+    const mangaSearch = document.getElementById('mangaSearch');
+    const mangaNoResults = document.getElementById('mangaNoResults');
     const catalog = window.siteMangaCatalog;
 
     if (!Array.isArray(catalog)) {
@@ -195,6 +234,16 @@
         const card = document.createElement('a');
         card.className = 'manga-card';
         card.href = manga.href;
+        card.dataset.search = [
+          manga.title,
+          manga.titleKana,
+          manga.titleThai,
+          manga.note,
+          ...(manga.keywords || [])
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLocaleLowerCase();
 
         const cover = document.createElement('div');
         cover.className = 'manga-cover';
@@ -208,8 +257,26 @@
         details.className = 'manga-details';
         const title = document.createElement('h2');
         title.className = 'manga-title';
-        title.textContent = manga.title;
+        title.lang = 'ja';
+        const rubyTitle = document.createElement('ruby');
+        const baseText = document.createElement('rb');
+        baseText.textContent = manga.title;
+        rubyTitle.append(baseText);
+        if (manga.titleKana) {
+          const reading = document.createElement('rt');
+          reading.textContent = manga.titleKana;
+          rubyTitle.append(reading);
+        }
+        title.append(rubyTitle);
         details.append(title);
+
+        if (manga.titleThai) {
+          const translation = document.createElement('p');
+          translation.className = 'manga-translation';
+          translation.lang = 'th';
+          translation.textContent = manga.titleThai;
+          details.append(translation);
+        }
 
         if (manga.note) {
           const note = document.createElement('p');
@@ -220,6 +287,23 @@
 
         card.append(cover, details);
         mangaGrid.append(card);
+      });
+
+      mangaSearch.addEventListener('input', () => {
+        const query = mangaSearch.value.trim().toLocaleLowerCase();
+        const cards = mangaGrid.querySelectorAll('.manga-card');
+        let visibleCount = 0;
+
+        cards.forEach((card) => {
+          const matches = card.dataset.search.includes(query);
+          card.hidden = !matches;
+          if (matches) visibleCount += 1;
+        });
+
+        mangaCount.textContent = query
+          ? `พบ ${visibleCount} จากทั้งหมด ${catalog.length} เรื่อง`
+          : `ทั้งหมด ${catalog.length} เรื่อง`;
+        mangaNoResults.hidden = !query || visibleCount > 0;
       });
     }
   </script>
