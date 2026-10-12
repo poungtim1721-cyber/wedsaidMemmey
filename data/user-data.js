@@ -153,6 +153,16 @@
     };
   }
 
+  function operationError(action, description, error) {
+    const detail = error.message || String(error);
+    const missingVocabLevel = description === "saved vocabulary" &&
+      /Could not find the ['"]level['"] column of ['"]user_saved_vocab['"] in the schema cache/i.test(detail);
+    const recovery = missingVocabLevel
+      ? " Run supabase/user-data.sql in the Supabase SQL editor, then retry."
+      : "";
+    return new Error(`Could not ${action} ${description}: ${detail}${recovery}`);
+  }
+
   async function upsertUserRows(client, table, rows, conflictColumns, description) {
     const batchSize = 100;
     for (let start = 0; start < rows.length; start += batchSize) {
@@ -160,7 +170,7 @@
         .from(table)
         .upsert(rows.slice(start, start + batchSize), { onConflict: conflictColumns });
       if (error) {
-        throw new Error(`Could not sync ${description}: ${error.message}`);
+        throw operationError("sync", description, error);
       }
     }
   }
@@ -203,7 +213,7 @@
     if (options.orderColumn) query = query.order(options.orderColumn, { ascending: false });
     const { data, error } = await query;
     if (error) {
-      throw new Error(`Could not load ${options.description}: ${error.message}`);
+      throw operationError("load", options.description, error);
     }
     const records = data.map(options.fromRow);
     localStorage.setItem(options.localStorageKey, JSON.stringify(records));
@@ -219,7 +229,7 @@
       .from(options.table)
       .upsert(row, { onConflict: options.conflictColumns });
     if (error) {
-      throw new Error(`Could not save ${options.description}: ${error.message}`);
+      throw operationError("save", options.description, error);
     }
     return true;
   }
@@ -236,7 +246,7 @@
     });
     const { error } = await request;
     if (error) {
-      throw new Error(`Could not delete ${options.description}: ${error.message}`);
+      throw operationError("delete", options.description, error);
     }
     return true;
   }
@@ -249,7 +259,7 @@
       .delete()
       .eq("auth_user_id", user.id);
     if (error) {
-      throw new Error(`Could not clear ${description}: ${error.message}`);
+      throw operationError("clear", description, error);
     }
     return user.id;
   }

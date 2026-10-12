@@ -101,4 +101,6 @@ grant usage, select on sequence public.user_favorites_favorite_id_seq to authent
 grant select, insert, update, delete on public.user_saved_vocab to authenticated;
 grant usage, select on sequence public.user_saved_vocab_saved_vocab_id_seq to authenticated;
 
+notify pgrst, 'reload schema';
+
 commit;

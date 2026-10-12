@@ -60,6 +60,9 @@ is [`Supabase-JLPT-Setup-TH.pdf`](./Supabase-JLPT-Setup-TH.pdf).
     vocabulary tables from the supplied SQL already exist, this script adds the
     required columns; duplicate saved words for the same account and level are
     reduced to the latest saved row so the app can enforce its one-entry rule.
+    If saving a favorite vocabulary reports that the `level` column is missing,
+    run [`user-data.sql`](./user-data.sql) in the Supabase SQL editor. The script
+    adds the column if needed and asks PostgREST to reload its schema cache.
 
 The supplied legacy SQL for `reading_history` uses a different schema from this
 site's existing `reading-history.sql`. Do not run both definitions: continue to
