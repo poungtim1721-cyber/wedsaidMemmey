@@ -25,7 +25,7 @@ button { cursor: pointer; }
 .chapter-select { background: #333; color: #eee; border: 1px solid #555; border-radius: 4px; padding: 2px 6px; font-size: 11px; outline: none; cursor: pointer; transition: border-color .2s; }
 .chapter-select:hover, .chapter-select:focus { border-color: #7455e8; }
 
-.icon-button { border: 0; color: #eee; background: transparent; font-size: 25px; line-height: 1; padding: 2px 8px; }
+.icon-button { display: inline-flex; align-items: center; justify-content: center; border: 0; color: #eee; background: transparent; font-size: 25px; line-height: 1; padding: 2px 8px; text-decoration: none; }
 .icon-button:last-child { font-size: 14px; border: 1px solid #aaa; border-radius: 3px; }
 .reader-stage { position: relative; flex: 1; min-height: 0; background: #fff; color: #333; }
 .page-viewport { width: 100%; height: 100%; overflow: hidden; touch-action: pan-y; user-select: none; }
@@ -98,7 +98,7 @@ button { cursor: pointer; }
 <body>
   <main class="reader" aria-label="ตัวอ่านมังงะ" data-manga-id="15">
     <header class="reader-header">
-      <button class="icon-button" id="closeReader" type="button" aria-label="กลับหน้าหลัก">×</button>
+      <a class="icon-button" href="/home.html" aria-label="กลับหน้า Home" title="กลับหน้า Home"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 3 2.5 11h2.8v9h5.1v-5.8h3.2V20h5.1v-9h2.8L12 3z"/></svg></a>
       <div class="title-group">
         <select class="chapter-select" id="chapterSelect" aria-label="เลือกตอน"></select>
         <h1 id="mangaTitleJP">กำลังโหลดเรื่องมังงะ...</h1>
@@ -141,7 +141,6 @@ button { cursor: pointer; }
       <header class="learning-header">
         <div>
           <h2 id="learningTitle">แปลคำศัพท์</h2>
-          <p>เลือกข้อความจากภาพหรือพิมพ์ภาษาญี่ปุ่นเพื่อเริ่มเรียน หากออนไลน์ไม่พร้อม ระบบจะลองค้นคลังคำศัพท์ JLPT ที่มีในเว็บให้</p>
           <button class="learning-clear-history" id="learningClearHistory" type="button" disabled>ล้างประวัติแชท</button>
         </div>
         <button class="learning-close" id="closeLearning" type="button" aria-label="ปิด">×</button>
@@ -457,7 +456,6 @@ button { cursor: pointer; }
       document.getElementById("nextFooter")?.addEventListener("click", () => changePage(1));
       document.getElementById("lastFooter")?.addEventListener("click", () => goToPage(chapters[currentChapter].pages.length - 1));
       
-      document.getElementById("closeReader")?.addEventListener("click", () => history.length > 1 ? history.back() : window.location.href = "/home.html");
 
       document.addEventListener("keydown", (e) => {
         if (e.key === "ArrowLeft") changePage(-1);

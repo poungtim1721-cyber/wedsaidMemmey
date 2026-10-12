@@ -36,26 +36,18 @@ window.applySupabaseMangaCovers = async function () {
   const images = Array.from(document.querySelectorAll("img[data-manga-cover]"));
   if (images.length === 0) return;
 
-  const status = document.getElementById("mangaCoverStatus");
   try {
     const covers = await window.loadSupabaseMangaCovers();
     images.forEach(function (image) {
       const localUrl = image.getAttribute("src");
       image.addEventListener("error", function () {
-        if (status) {
-          status.hidden = false;
-          status.textContent = "โหลดรูปจาก Supabase Storage ไม่สำเร็จ กรุณาตรวจสอบไฟล์ใน Bucket manga-covers (แสดงรูปจากเครื่องแทน)";
-        }
+        console.error("โหลดรูปปกจาก Supabase Storage ไม่สำเร็จ:", image.dataset.mangaCover);
         image.src = localUrl;
       }, { once: true });
       image.src = covers.get(image.dataset.mangaCover);
     });
   } catch (error) {
     console.error("โหลดภาพปกจาก Supabase ไม่สำเร็จ:", error);
-    if (status) {
-      status.hidden = false;
-      status.textContent = `โหลดภาพปกจาก Supabase ไม่สำเร็จ: ${error.message} (กำลังแสดงรูปจากเครื่องแทน)`;
-    }
   }
 };
 

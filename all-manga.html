@@ -30,6 +30,9 @@
     }
 
     .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
       color: #1769d3;
       font-size: 0.95rem;
       font-weight: 700;
@@ -182,7 +185,10 @@
 <body>
   <header class="page-header">
     <div class="header-content">
-      <a class="back-link" href="/home.html">‹ กลับหน้าหลัก</a>
+      <a class="back-link" href="/home.html" aria-label="กลับหน้า Home">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 3 2.5 11h2.8v9h5.1v-5.8h3.2V20h5.1v-9h2.8L12 3z"/></svg>
+        กลับหน้าหลัก
+      </a>
     </div>
   </header>
 
