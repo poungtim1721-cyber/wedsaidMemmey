@@ -216,7 +216,10 @@
     document.getElementById("learningButton")?.focus();
   }
 
-  document.getElementById("learningButton")?.addEventListener("click", openPanel);
+  document.getElementById("learningButton")?.addEventListener("click", () => {
+    openPanel();
+    scanCurrentPageImage();
+  });
   document.getElementById("closeLearning")?.addEventListener("click", closePanel);
   backdrop.addEventListener("click", (event) => {
     if (event.target === backdrop) closePanel();
@@ -951,6 +954,46 @@
   function currentImage() {
     const currentPage = Number(document.getElementById("pageCounter")?.textContent.match(/\d+/)?.[0] || 1);
     return track.children[currentPage - 1]?.querySelector("img") || track.querySelector("img");
+  }
+
+  let pageScanInProgress = false;
+
+  async function scanCurrentPageImage() {
+    if (pageScanInProgress) return;
+    pageScanInProgress = true;
+    try {
+      status.textContent = "กำลังโหลดระบบสแกนข้อความ...";
+      await loadTesseract();
+      const image = currentImage();
+      if (!image) throw new Error("ไม่พบภาพหน้ามังงะที่กำลังอ่าน");
+      if (!image.complete) {
+        await new Promise((resolve, reject) => {
+          image.addEventListener("load", resolve, { once: true });
+          image.addEventListener("error", () => reject(new Error("โหลดภาพหน้ามังงะไม่สำเร็จ")), { once: true });
+        });
+      }
+      if (image.naturalWidth === 0) throw new Error("โหลดภาพหน้ามังงะไม่สำเร็จ");
+
+      status.textContent = "กำลังอ่านข้อความภาษาญี่ปุ่นจากภาพ...";
+      const result = await window.Tesseract.recognize(image, "jpn", {
+        logger: (message) => {
+          if (message.status === "recognizing text") {
+            status.textContent = `กำลังอ่านข้อความจากภาพ ${Math.round(message.progress * 100)}%`;
+          }
+        }
+      });
+      const text = result.data?.text?.replace(/\s+/g, " ").trim();
+      if (!text) throw new Error("ไม่พบข้อความภาษาญี่ปุ่นในภาพนี้");
+
+      input.value = text;
+      status.textContent = "อ่านข้อความแล้ว กำลังแปล...";
+      form.requestSubmit();
+    } catch (error) {
+      status.textContent = `อ่านหรือแปลข้อความจากภาพไม่สำเร็จ: ${error.message}`;
+      console.error("Japanese manga page OCR failed:", error);
+    } finally {
+      pageScanInProgress = false;
+    }
   }
 
   function clamp(value, min, max) {
